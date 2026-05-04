@@ -16,20 +16,8 @@ export default function Home() {
         </div>
         <nav className="hidden md:flex items-center gap-6">
           <Link className="text-indigo-600 font-semibold text-sm font-headline" href="/login">Login</Link>
-          <Link className="text-slate-500 dark:text-slate-400 hover:text-indigo-500 text-sm font-headline transition-colors" href="#">Marketplace</Link>
-          <Link className="text-slate-500 dark:text-slate-400 hover:text-indigo-500 text-sm font-headline transition-colors" href="#">Directory</Link>
+          <Link className="text-slate-500 dark:text-slate-400 hover:text-indigo-500 text-sm font-headline transition-colors" href="/register">Register</Link>
         </nav>
-        <div className="flex items-center gap-4">
-          <button className="text-slate-500 hover:bg-slate-50 p-2 rounded-full transition-colors">
-            <span className="material-symbols-outlined">notifications</span>
-          </button>
-          <button className="text-slate-500 hover:bg-slate-50 p-2 rounded-full transition-colors">
-            <span className="material-symbols-outlined">settings</span>
-          </button>
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-surface-container ml-2">
-            <img alt="User profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCt3nHY6XGkqHL7RoDWObhuVnvRK8oovFYV1Wv0WdMDIIiA6K1yZY6FGrCj6KUBmxoyoAamgdAu0MIRQ_MZbutESfibqbFJtn7gLkPotD_MvHdEa8r-h7vNgmCCF75zZNWEo43cA6suVcuR7ovClNtuuDg8Ss-FADdlL2zvA_mfyWPmRD0wHHEG4173fH3wTxOCqsw5xJAP7vAX6liypXEDT8VpmWFHJkFsPo3wAH5ikAeDyi2yo_k20X8ixdxdgB9voe27V0eoLfQ"/>
-          </div>
-        </div>
       </header>
 
       <main>
@@ -51,9 +39,11 @@ export default function Home() {
                 <button className="px-8 py-4 bg-white text-primary font-bold rounded-lg shadow-xl shadow-indigo-900/20 hover:scale-105 transition-transform active:scale-95">
                   Shop Now
                 </button>
-                <button className="px-8 py-4 bg-transparent border-2 border-white/30 text-white font-bold rounded-lg hover:bg-white/10 transition-colors active:scale-95">
-                  Register Your Store
-                </button>
+                <Link href="/business-register">
+                  <button className="px-8 py-4 bg-transparent border-2 border-white/30 text-white font-bold rounded-lg hover:bg-white/10 transition-colors active:scale-95">
+                    Register Your Store
+                  </button>
+                </Link>
               </div>
             </div>
             <div className="hidden md:block relative">

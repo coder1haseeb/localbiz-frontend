@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
+import Spinner from '../../components/Spinner';
+import signupImage from './../../assets/signup-image.png';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -32,7 +34,6 @@ export default function RegisterPage() {
     setLoading(true);
     setError('');
 
-    // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
@@ -41,7 +42,7 @@ export default function RegisterPage() {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/v1/auth/register/customer`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/register/customer`,
         {
           fullName: formData.fullName,
           email: formData.email,
@@ -54,7 +55,6 @@ export default function RegisterPage() {
 
       setSuccess(true);
 
-      // Redirect to verify email page after 1.5 seconds
       setTimeout(() => {
         window.location.href = `/verify-email?email=${encodeURIComponent(formData.email)}`;
       }, 1500);
@@ -82,50 +82,19 @@ export default function RegisterPage() {
               <div className="w-10 h-10 rounded-xl btn-gradient flex items-center justify-center text-white shadow-lg">
                 <span className="material-symbols-outlined">local_mall</span>
               </div>
-              <span className="font-headline font-bold text-2xl tracking-tight text-white">LocalBiz</span>
-            </div>
-            <h1 className="font-headline text-5xl font-extrabold text-white leading-[1.1] tracking-tighter mb-6">
-              Elevate Your <br />Local Experience.
-            </h1>
-            <p className="text-primary-fixed/80 text-lg max-w-md font-medium leading-relaxed text-white">
-              Join the digital atelier connecting Pakistan's finest craftsmanship with modern technology.
-            </p>
-          </div>
-
-          <div className="relative z-10 mt-auto">
-            <div className="glass-panel p-6 rounded-2xl border border-white/10 bg-white/5">
-              <div className="flex items-center space-x-4">
-                <div className="flex -space-x-2">
-                  <img
-                    className="w-10 h-10 rounded-full border-2 border-primary ring-2 ring-on-primary-container"
-                    alt="User 1"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3CxI_9gTkwH8ASMoz4g3xe9uk2cQjuQFR86P4jgGkpvfSO-zkyPW6BdTjKNdhU38Wo0LmqOtn7gQdNAihg9uAU5W-e2hVJ2oOZ5isPjboVd5pk5mp5XCyRHO3FD8ngMUKA_q8YO4vuh-3SqtTmp2umh44J6LGdHFSBOlgsRrSzPpQT-OEWdJ0ptPMXGwc72C25qDObzzz-S42wmoAqBBpEqBTMh-FIyF3zRB9vzcxeEtinHo4RdiyRabN9F2l11Vq48b2HXwqQpc"
-                  />
-                  <img
-                    className="w-10 h-10 rounded-full border-2 border-primary ring-2 ring-on-primary-container"
-                    alt="User 2"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCygOLYnoDS9xa-CY6ZZkuFbLcsBhUSvqPUupilejrJhQ_cVuxq4eZZuEx-UxoJmkZVlwfzNJqijC5pz_LiDCwgReq60oAV7dnjsCf8PLn0EGUSVny83lUHzWYyxtCIuYttpy-TyXLu_sDUCr5mySPFaBgjrbX3WTKAwx63U6dZdldvdySLuqWFjXJHcz4XiTxypR4mYRUjdu4mDthDOFkgimdYL86RiUTdD3QltQv80_a-BRiKp5Bp9q8FhO0DrzcDlXPBJpHrCOg"
-                  />
-                  <div className="w-10 h-10 rounded-full bg-secondary-container border-2 border-primary ring-2 ring-on-primary-container flex items-center justify-center text-[10px] font-bold text-white">
-                    +2k
-                  </div>
-                </div>
-                <p className="text-sm text-primary-fixed/60 font-medium">Trusted by local entrepreneurs across the country.</p>
-              </div>
+              <span className="font-headline font-bold text-2xl tracking-tight text-black">LocalBiz</span>
             </div>
           </div>
 
-          {/* Background Image */}
           <div className="absolute inset-0 z-0 opacity-90">
             <img
               className="w-full h-full object-cover"
+              src={signupImage.src}
               alt="Background"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8nXLIBIxOuy7sfuBtBiViQEkzA18G19Yz99gDWsWrh3KoN1IhujCKb9jr59JDMH1lraF4HjPmz_WEy74Dx4WypXJrYRdzbVl2VmRFXW2J6RXrTcT816GlYshDMET9NGo1itzB6s_jbrm6DLG6nM07xk1nYgXHrwUx42HaSDT7_3jiE24eTvb7FSqedc_Y519s2HZ8smy0pEQtX_F74KRmDMaOc7mouuGFP8IrgQOKaqTxZFF6SqyWLfZ1v46eSb1dKSxfKqMbS3g"
             />
           </div>
         </section>
 
-        {/* Right Column: Registration Form */}
         <section className="md:col-span-7 flex flex-col justify-center">
           <div className="w-full max-w-xl mx-auto space-y-8">
             {/* Step Indicator */}
@@ -152,7 +121,6 @@ export default function RegisterPage() {
               </div>
             </nav>
 
-            {/* Form Card */}
             <div className="bg-surface-container-lowest rounded-[2rem] p-8 md:p-12 shadow-[0_24px_48px_rgba(70,72,212,0.04)] border border-white/20">
               <div className="mb-10 text-center md:text-left">
                 <h2 className="font-headline text-3xl font-bold text-on-surface mb-2 tracking-tight">
@@ -170,7 +138,6 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              {/* Success Message */}
               {success && (
                 <div className="mb-6 p-4 bg-green-500/10 border border-green-500 rounded-2xl">
                   <p className="text-green-700 font-semibold text-sm">Registration successful! Redirecting to email verification...</p>
@@ -200,7 +167,6 @@ export default function RegisterPage() {
                   </div>
                 </div>
 
-                {/* Email Address */}
                 <div className="space-y-2">
                   <label htmlFor="email" className="block text-sm font-semibold text-on-surface ml-1">
                     Email Address
@@ -327,9 +293,7 @@ export default function RegisterPage() {
                 >
                   {loading ? (
                     <>
-                      <span className="animate-spin">
-                        <span className="material-symbols-outlined">loading</span>
-                      </span>
+                      <Spinner size="md" />
                       <span>Registering...</span>
                     </>
                   ) : (
@@ -342,7 +306,7 @@ export default function RegisterPage() {
               </form>
 
               {/* Footer Link */}
-              <div className="mt-8 text-center">
+              <div className="mt-8 text-center border-t pt-6">
                 <p className="text-sm font-medium text-on-surface-variant">
                   Already have an account?{' '}
                   <Link href="/login" className="text-primary font-bold hover:text-secondary transition-colors ml-1">
@@ -352,18 +316,6 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* AI Insight */}
-            <div className="bg-primary/5 rounded-2xl p-4 flex items-start space-x-4 border border-primary/10">
-              <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-primary shrink-0 shadow-sm">
-                <span className="material-symbols-outlined">auto_awesome</span>
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-primary mb-1">Local Insight</p>
-                <p className="text-sm text-on-surface-variant font-medium leading-tight">
-                  Your data is secured with AES-256 encryption using our regional servers in Karachi.
-                </p>
-              </div>
-            </div>
           </div>
         </section>
       </main>

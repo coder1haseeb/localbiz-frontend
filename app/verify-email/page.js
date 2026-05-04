@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 import { useSearchParams, useRouter } from 'next/navigation';
+import Spinner from '../../components/Spinner';
 
 export default function VerifyEmailPage() {
   const searchParams = useSearchParams();
@@ -16,6 +17,7 @@ export default function VerifyEmailPage() {
   const [success, setSuccess] = useState(false);
   const [resendLoading, setResendLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+  const [resendSuccess, setResendSuccess] = useState(false);
 
   // Countdown timer for resend
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function VerifyEmailPage() {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/v1/auth/verify-email`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/verify-email`,
         {
           email: email,
           otp: otp,
@@ -69,12 +71,19 @@ export default function VerifyEmailPage() {
     setError('');
 
     try {
-      await axios.post(`http://localhost:5000/api/v1/auth/resend-otp`, {
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/verify-email`, {
         email: email,
+        resend: true, // Flag to indicate this is a resend request
       });
 
       setResendTimer(60); // 60 seconds cooldown
       setOtp('');
+      setResendLoading(false);
+      setResendSuccess(true);
+
+      setTimeout(() => {
+        setResendSuccess(false);
+      }, 3000);
     } catch (err) {
       const errorMessage =
         err.response?.data?.message ||
@@ -104,14 +113,20 @@ export default function VerifyEmailPage() {
             </p>
           </div>
 
-          {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-error/10 border border-error rounded-2xl">
               <p className="text-error font-semibold text-sm">{error}</p>
             </div>
           )}
 
-          {/* Success Message */}
+          {resendSuccess && (
+            <div className="mb-6 p-4 bg-green-500/10 border border-green-500 rounded-2xl">
+              <p className="text-green-700 font-semibold text-sm">
+                New OTP sent to your email!
+              </p>
+            </div>
+          )}
+
           {success && (
             <div className="mb-6 p-4 bg-green-500/10 border border-green-500 rounded-2xl">
               <p className="text-green-700 font-semibold text-sm">
@@ -120,7 +135,6 @@ export default function VerifyEmailPage() {
             </div>
           )}
 
-          {/* OTP Form */}
           <form onSubmit={handleVerify} className="space-y-6 mb-8">
             {/* OTP Input */}
             <div className="space-y-3">
@@ -152,7 +166,6 @@ export default function VerifyEmailPage() {
               </p>
             </div>
 
-            {/* Verify Button */}
             <button
               type="submit"
               disabled={loading || success}
@@ -160,9 +173,7 @@ export default function VerifyEmailPage() {
             >
               {loading ? (
                 <>
-                  <span className="animate-spin">
-                    <span className="material-symbols-outlined">loading</span>
-                  </span>
+                  <Spinner size="md" />
                   <span>Verifying...</span>
                 </>
               ) : (
@@ -174,7 +185,6 @@ export default function VerifyEmailPage() {
             </button>
           </form>
 
-          {/* Resend OTP Section */}
           <div className="flex flex-col items-center gap-4 pt-6 border-t border-surface-container">
             <p className="text-sm text-on-surface-variant">
               Didn't receive the code?
@@ -185,16 +195,25 @@ export default function VerifyEmailPage() {
               disabled={resendTimer > 0 || resendLoading}
               className="text-primary font-bold hover:text-secondary transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
-              <span className="material-symbols-outlined">refresh</span>
-              {resendTimer > 0 ? (
-                <span>Resend in {resendTimer}s</span>
+              {resendLoading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span>Sending...</span>
+                </>
+              ) : resendTimer > 0 ? (
+                <>
+                  <span className="material-symbols-outlined">timer</span>
+                  <span>Resend in {resendTimer}s</span>
+                </>
               ) : (
-                <span>Resend OTP</span>
+                <>
+                  <span className="material-symbols-outlined">refresh</span>
+                  <span>Resend OTP</span>
+                </>
               )}
             </button>
           </div>
 
-          {/* Footer */}
           <div className="mt-8 text-center">
             <p className="text-sm text-on-surface-variant">
               Wrong email?{' '}
@@ -205,7 +224,6 @@ export default function VerifyEmailPage() {
           </div>
         </div>
 
-        {/* Security Info */}
         <div className="bg-primary/5 rounded-2xl p-4 flex items-start space-x-4 border border-primary/10 mt-8">
           <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-primary shrink-0 shadow-sm">
             <span className="material-symbols-outlined">security</span>

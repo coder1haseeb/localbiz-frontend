@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import Spinner from '../../components/Spinner';
+import loginImge from './../../assets/login-image.png';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,7 +16,6 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  // Load remembered email on mount
   useEffect(() => {
     const savedEmail = localStorage.getItem('rememberEmail');
     if (savedEmail) {
@@ -30,20 +31,33 @@ export default function LoginPage() {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/v1/auth/login`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/login`,
         {
           email: email,
           password: password,
         }
       );
 
+      console.log('=== LOGIN RESPONSE ===');
+      console.log('Full response:', response);
+      console.log('response.data:', response.data);
+      
       const { data } = response.data;
+      
+      console.log('Extracted data:', data);
+      console.log('data.user:', data.user);
+      console.log('data.user.role:', data.user?.role);
+      console.log('data.token:', data.token);
 
-      // Store token
-      localStorage.setItem('token', data.token);
+      // Store auth data consistently for all users
+      localStorage.setItem('authToken', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
+      
+      // Store business owner data if available
+      if (data.business) {
+        localStorage.setItem('userBusiness', JSON.stringify(data.business));
+      }
 
-      // Store remember me preference
       if (rememberMe) {
         localStorage.setItem('rememberEmail', email);
       } else {
@@ -52,14 +66,33 @@ export default function LoginPage() {
 
       setSuccess(true);
 
-      // Redirect based on role
+      console.log('Login successful, user data:', data.user);
+      console.log('User role:', data.user.role);
+
       setTimeout(() => {
-        if (data.role === 'seller') {
-          router.push('/seller/dashboard');
-        } else if (data.role === 'admin') {
-          router.push('/admin/dashboard');
-        } else {
-          router.push('/home');
+        console.log('Attempting redirect for role:', data.user.role);
+        
+        switch (data.user.role) {
+          case 'business_admin':
+            console.log('Redirecting to /dashboard');
+            router.push('/dashboard');
+            break;
+          case 'customer':
+            console.log('Redirecting to /home');
+            router.push('/home');
+            break;
+          case 'seller':
+            console.log('Redirecting to /seller/dashboard');
+            router.push('/seller/dashboard');
+            break;
+          case 'super_admin':
+          case 'admin':
+            console.log('Redirecting to /admin/dashboard');
+            router.push('/admin/dashboard');
+            break;
+          default:
+            console.log('Unknown role, redirecting to /home');
+            router.push('/home');
         }
       }, 1500);
     } catch (err) {
@@ -67,6 +100,19 @@ export default function LoginPage() {
         err.response?.data?.message ||
         err.message ||
         'Login failed. Please try again.';
+
+      // Check if email verification is required
+      if (errorMessage.toLowerCase().includes('verify your email') ||
+          errorMessage.toLowerCase().includes('email not verified')) {
+        setError('Please verify your email first. Redirecting...');
+        setLoading(false);
+
+        setTimeout(() => {
+          router.push(`/verify-email?email=${encodeURIComponent(email)}`);
+        }, 1500);
+        return;
+      }
+
       setError(errorMessage);
       setLoading(false);
     }
@@ -77,7 +123,6 @@ export default function LoginPage() {
       <main className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-[2rem] bg-surface-container-lowest shadow-2xl shadow-primary/10 min-h-[650px]">
         {/* Left Side: Login Form */}
         <section className="flex flex-col justify-center px-8 md:px-16 py-12 relative z-10 bg-white">
-          {/* Logo */}
           <div className="mb-10 flex items-center gap-2">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
               <span className="material-symbols-outlined text-white text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -89,7 +134,6 @@ export default function LoginPage() {
             </span>
           </div>
 
-          {/* Heading */}
           <div className="space-y-2 mb-8">
             <h1 className="font-headline text-3xl font-bold text-on-surface tracking-tight">
               Welcome Back
@@ -99,14 +143,12 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-error/10 border border-error rounded-xl">
               <p className="text-error font-semibold text-sm">{error}</p>
             </div>
           )}
 
-          {/* Success Message */}
           {success && (
             <div className="mb-6 p-4 bg-green-500/10 border border-green-500 rounded-xl">
               <p className="text-green-700 font-semibold text-sm">
@@ -115,7 +157,6 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Email Input */}
             <div className="floating-label-group">
@@ -136,7 +177,6 @@ export default function LoginPage() {
               </label>
             </div>
 
-            {/* Password Input */}
             <div className="floating-label-group">
               <input
                 type="password"
@@ -155,7 +195,6 @@ export default function LoginPage() {
               </label>
             </div>
 
-            {/* Checkbox & Forgot Password */}
             <div className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 cursor-pointer group">
                 <input
@@ -169,14 +208,13 @@ export default function LoginPage() {
                 </span>
               </label>
               <Link
-                href="#"
+                href="/forgot-password"
                 className="text-primary font-semibold hover:underline decoration-2 underline-offset-4"
               >
                 Forgot password?
               </Link>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading || success}
@@ -184,9 +222,7 @@ export default function LoginPage() {
             >
               {loading ? (
                 <>
-                  <span className="animate-spin">
-                    <span className="material-symbols-outlined">loading</span>
-                  </span>
+                  <Spinner size="md" />
                   <span>Signing in...</span>
                 </>
               ) : (
@@ -198,21 +234,7 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Divider & Google Sign-In */}
           <div className="mt-8 pt-8 border-t border-surface-container flex flex-col gap-4">
-            <button
-              type="button"
-              className="w-full h-12 border-2 border-surface-container text-on-surface font-semibold rounded-xl flex items-center justify-center gap-3 hover:bg-surface-container-low transition-colors"
-            >
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0qKqVFCARakyPydAodc4wUQDgwqVE-6aMBLYLbQv6i5N5y7bC5SajqSjHPzt8UJUqbZ8a_IJZzHEZ2_G5GmuqatqJigDGAXvxYplrT8ooMvjzT43LXYX1QNQxxek-GNMPFdGeHhPx3xJjZlGxJfxdMF5FopnK6HmPOo2QA00TK1r8TfaN9b4WXyM48IC2kpa_cRTQnj4NQIlO8q4d7_YHrvIOwBr3IhD4oyzsWb9oj7aSBXNJp10uYBc5VYPSLNi_XEsTmf3jvSY"
-                alt="Google logo"
-                className="w-5 h-5"
-              />
-              <span className="hidden sm:inline">Continue with Google</span>
-              <span className="sm:hidden">Google</span>
-            </button>
-
             <p className="text-center text-sm text-on-surface-variant">
               Don't have an account?{' '}
               <Link href="/register" className="text-primary font-bold hover:underline">
@@ -227,44 +249,11 @@ export default function LoginPage() {
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
             <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDviIPulVo6FROSVXGoBAM7wxy3NzGTXEdSVb9FijeNskm0lNH6MYu6YywVLzHO3QmPDFqLReIKppCchV9_FbGlSLq1DtuW6AiDyM2F9OWS6J7Ptu7yK8TjUzPzyzraNNIWq6mk2-HPPrgyBmGF538Rx6QZLVWh1rEYVz46pfiZhouTTlO6oDlyiIcxVBWSbbmrBwofVB4RBehoDQFNnObwBrtTO4MFvhfKWIGgcMRd51HvSo7QT0YcCKI7D0t1hpLaYicK6XKwKGw"
+              src={loginImge.src}
               alt="Background"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-br from-primary/40 to-secondary/60 mix-blend-multiply"></div>
-          </div>
-
-          {/* Glassmorphic Overlay */}
-          <div className="relative z-10 p-8 rounded-3xl border border-white/20 max-w-sm mx-auto shadow-2xl">
-            <div className="mb-6">
-              <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/30 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider mb-4 border border-white/20">
-                AI Insights Enabled
-              </div>
-              <h2 className="font-headline text-2xl font-bold text-white leading-tight mb-4">
-                Revolutionizing Local Commerce.
-              </h2>
-              <p className="text-white/80 text-base leading-relaxed">
-                Join over 2,000 Pakistani businesses scaling their operations with our Digital Atelier dashboard.
-              </p>
-            </div>
-
-            {/* Stats */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-4 bg-white/10 p-3 rounded-2xl border border-white/10">
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                  <span
-                    className="material-symbols-outlined text-white text-xl"
-                    style={{ fontVariationSettings: "'FILL' 1" }}
-                  >
-                    trending_up
-                  </span>
-                </div>
-                <div>
-                  <p className="text-white font-bold text-sm">+24% Revenue Growth</p>
-                  <p className="text-white/60 text-xs">Average user first month</p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Floating Shapes */}
