@@ -5,6 +5,22 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="bg-surface font-body text-on-surface antialiased">
+      <style>{`
+        @keyframes gradient {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+        .animate-gradient {
+          background-size: 200% 200%;
+          animation: gradient 3s ease infinite;
+        }
+        .animation-delay-2000 {
+          animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+          animation-delay: 4s;
+        }
+      `}</style>
       {/* TopAppBar */}
       <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm shadow-indigo-500/5 h-16 flex justify-between items-center px-6 w-full sticky top-0 z-40">
         <div className="flex items-center gap-8">
@@ -22,35 +38,71 @@ export default function Home() {
 
       <main>
         {/* Hero Section */}
-        <section className="hero-gradient relative overflow-hidden py-24 md:py-32">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute -top-24 -left-24 w-96 h-96 bg-white rounded-full blur-3xl"></div>
-            <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary rounded-full blur-3xl"></div>
+        <section className="hero-gradient relative overflow-hidden py-32 md:py-48">
+          {/* Animated Background Orbs */}
+          <div className="absolute inset-0">
+            <div className="absolute -top-32 -left-32 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
+            <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-secondary/10 rounded-full blur-3xl animate-pulse animation-delay-2000"></div>
+            <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-indigo-400/5 rounded-full blur-3xl animate-pulse animation-delay-4000"></div>
           </div>
-          <div className="max-w-7xl mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <h1 className="text-5xl md:text-7xl font-headline font-extrabold text-white leading-tight tracking-[-0.02em]">
-                Shop Local, <br/><span className="opacity-80">Smarter</span>.
-              </h1>
-              <p className="text-lg md:text-xl text-white/80 max-w-lg leading-relaxed">
-                Discover the finest local craftsmanship across Pakistan. Empowering community commerce with AI-driven curation and effortless digital payments.
-              </p>
-              <div className="flex flex-wrap gap-4">
-                <button className="px-8 py-4 bg-white text-primary font-bold rounded-lg shadow-xl shadow-indigo-900/20 hover:scale-105 transition-transform active:scale-95">
-                  Shop Now
-                </button>
-                <Link href="/business-register">
-                  <button className="px-8 py-4 bg-transparent border-2 border-white/30 text-white font-bold rounded-lg hover:bg-white/10 transition-colors active:scale-95">
-                    Register Your Store
-                  </button>
-                </Link>
-              </div>
+
+          {/* Gradient Mesh Background */}
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-indigo-500/5 to-violet-500/5"></div>
+          </div>
+
+          <div className="max-w-6xl mx-auto px-6 relative z-10 text-center space-y-12">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md rounded-full border border-white/20 text-white/90 text-sm font-medium">
+              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+              Join 50,000+ local entrepreneurs
             </div>
-            <div className="hidden md:block relative">
-              <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl shadow-black/20 transform rotate-3">
-                <img alt="Premium shopping experience" className="w-full aspect-[4/5] object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdh9RqFfuuRbYkgMMN8nzVXY34ByO0O4QsYDpP7A3fN_C_ValRwRbwzX-OX5zeS4cVq1_kD-4M7B43F1asHqfZepgiWbJ4gx-YYTjM1y0rzvDG_xtD1k-DRPp-reZ6ahnmpWlXKjE69pf9-AFECDIiHWaEgj3zvmXoWPyc3s2IiSmasY2ELHagmq-xM-7P7Xlc5pyMmVAMSqnZkESNJ-YvlteQhuQwQSK1A-glvzWFZ_tGBJ0XwrvfDcnKQ05ymiviiW1oiX6l-Ag"/>
+
+            {/* Main Heading */}
+            <div className="space-y-6">
+              <h1 className="text-6xl md:text-8xl font-headline font-extrabold text-white leading-tight tracking-[-0.03em]">
+                Shop Local,
+                <br />
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 animate-gradient">
+                  Smarter
+                </span>
+              </h1>
+              <p className="text-xl md:text-2xl text-white/70 max-w-3xl mx-auto leading-relaxed font-light">
+                Discover authentic local businesses, handpicked artisans, and community craftspeople. 
+                <br className="hidden md:block" />
+                Experience AI-powered recommendations & secure digital payments.
+              </p>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8">
+              <button className="px-10 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-2xl shadow-indigo-900/30 hover:shadow-2xl hover:shadow-indigo-900/50 hover:scale-105 transition-all active:scale-95 text-lg">
+                Explore Now
+              </button>
+              <Link href="/business-register">
+                <button className="px-10 py-4 bg-white/10 backdrop-blur-md border-2 border-white/30 text-white font-bold rounded-xl hover:bg-white/20 hover:border-white/50 transition-all active:scale-95 text-lg">
+                  Sell Your Products
+                </button>
+              </Link>
+            </div>
+
+            {/* Feature Pills */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-16 max-w-4xl mx-auto">
+              <div className="px-6 py-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 text-white/80 hover:bg-white/10 transition-all cursor-pointer">
+                <div className="text-3xl mb-2">🚀</div>
+                <p className="font-semibold text-sm">AI Powered</p>
+                <p className="text-xs text-white/60 mt-1">Smart recommendations just for you</p>
               </div>
-              <div className="absolute -top-6 -right-6 w-full h-full border-2 border-white/20 rounded-3xl -z-10 transform -rotate-3"></div>
+              <div className="px-6 py-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 text-white/80 hover:bg-white/10 transition-all cursor-pointer">
+                <div className="text-3xl mb-2">🛡️</div>
+                <p className="font-semibold text-sm">Secure & Fast</p>
+                <p className="text-xs text-white/60 mt-1">Protected payments & instant delivery</p>
+              </div>
+              <div className="px-6 py-4 bg-white/5 backdrop-blur-md rounded-xl border border-white/10 text-white/80 hover:bg-white/10 transition-all cursor-pointer">
+                <div className="text-3xl mb-2">🤝</div>
+                <p className="font-semibold text-sm">Support Local</p>
+                <p className="text-xs text-white/60 mt-1">Empower your community</p>
+              </div>
             </div>
           </div>
         </section>

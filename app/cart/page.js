@@ -9,6 +9,7 @@ export default function CartPage() {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(null); // itemId being updated
+  const [userName, setUserName] = useState('');
 
   const fetchCart = useCallback(async () => {
     const token = localStorage.getItem('authToken');
@@ -26,7 +27,18 @@ export default function CartPage() {
     }
   }, []);
 
-  useEffect(() => { fetchCart(); }, [fetchCart]);
+  useEffect(() => {
+    const name = localStorage.getItem('userName');
+    setUserName(name || '');
+    fetchCart();
+  }, [fetchCart]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userName');
+    router.push('/login');
+  };
+
 
   const updateQuantity = async (cartItemId, newQty) => {
     if (newQty < 1) return;
@@ -82,87 +94,65 @@ export default function CartPage() {
     <>
       <style>{`
         .material-symbols-outlined {
-            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
         .glass-summary {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+          background: rgba(255, 255, 255, 0.8);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
         }
       `}</style>
 
-      {/* TopNavBar */}
-      <header className="bg-[#f7f9fb]/80 backdrop-blur-xl dark:bg-slate-950/80 shadow-[0_4px_24px_rgba(70,72,212,0.07)] sticky top-0 z-50 flex justify-between items-center w-full px-8 py-4">
-        <div className="flex items-center gap-6">
-          <span className="text-xl font-bold bg-gradient-to-br from-[#4648d4] to-[#6b38d4] bg-clip-text text-transparent">LocalBiz</span>
-          {/* Search bar */}
-          <div className="hidden md:flex items-center bg-surface-container rounded-full px-4 py-2 gap-2 w-64">
-            <span className="material-symbols-outlined text-outline text-sm">search</span>
-            <input className="bg-transparent border-none focus:ring-0 text-sm w-full" placeholder="Search marketplace..." type="text" />
-          </div>
-        </div>
-        <nav className="hidden md:flex items-center gap-8 font-['Plus_Jakarta_Sans'] text-sm font-semibold tracking-tight">
-          <a className="text-slate-500 hover:text-[#6b38d4] transition-colors duration-200" href="#">Shop</a>
-          <a className="text-[#4648d4] font-bold border-b-2 border-[#4648d4]" href="#">Marketplace</a>
-          <a className="text-slate-500 hover:text-[#6b38d4] transition-colors duration-200" href="#">Deals</a>
-        </nav>
-        <div className="flex items-center gap-4">
-          <button className="material-symbols-outlined text-outline hover:text-primary transition-colors">notifications</button>
-          <button className="material-symbols-outlined text-outline hover:text-primary transition-colors">chat_bubble</button>
-          <button className="material-symbols-outlined text-outline hover:text-primary transition-colors">settings</button>
-          <div className="h-8 w-8 rounded-full bg-surface-container overflow-hidden">
-            <img alt="User Profile" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1wF_ufhXj47VFdxbx9e9T41olQJ_w0F-7NJwQn3IUt6nIHqvfXGl_4BJ_Ha1d2-VfcZSQCP0-bhyjcztsGs4jnHqTSfYZoiFHwD0yF-iRgeIsoB25uTZTR-7JluPsfbjT5mX3xC5wcDFb6QVexxZDkczVzs9TInRgGHA7xFm3-rBhXoHZ0QjL7gZF0Y4bhGB3sQ2jxHtyTNuUU-jsmlnFHBnrNXlYM57WWzb-4GMqod4xPJVIbwBpgrjo-WQp6glWyd0hQrPOO2Y" />
-          </div>
-        </div>
-      </header>
-
-      <div className="flex">
-        {/* SideNavBar */}
-        <aside className="hidden md:flex flex-col h-screen w-72 fixed left-0 top-0 bg-[#f2f4f6] dark:bg-slate-900 p-4 space-y-2 z-40">
-          <div className="flex items-center gap-3 px-2 mb-10 mt-2">
-            <div className="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center">
-              <span className="material-symbols-outlined text-on-primary">token</span>
+      <div className="flex min-h-screen bg-[#f7f9fb]">
+        {/* Sidebar Navigation */}
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f2f4f6] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
+          <div className="flex items-center gap-3 px-3 py-6 mb-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4648d4] to-[#6b38d4] flex items-center justify-center text-white">
+              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-[#191c1e] dark:text-white leading-tight">LocalBiz</h2>
-              <p className="text-[11px] text-slate-500 font-medium">Digital Atelier</p>
+              <h1 className="text-lg font-bold text-[#191c1e] leading-none">LocalBiz</h1>
+              <p className="text-[11px] text-slate-500 font-normal">Marketplace</p>
             </div>
           </div>
-          <nav className="flex-1 space-y-1 font-['Inter'] text-[13px] font-medium">
-            <a className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] transition-all duration-300 hover:translate-x-1 rounded-lg" href="#">
-              <span className="material-symbols-outlined">dashboard</span>
-              Overview
-            </a>
-            {/* Marketplace Active for Cart Context */}
-            <a className="flex items-center gap-3 px-4 py-3 bg-white text-[#4648d4] shadow-sm rounded-lg font-semibold transition-all duration-300 translate-x-1" href="#">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>storefront</span>
-              Marketplace
-            </a>
-            <a className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] transition-all duration-300 hover:translate-x-1 rounded-lg" href="#">
-              <span className="material-symbols-outlined">precision_manufacturing</span>
-              Operations
-            </a>
-            <a className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] transition-all duration-300 hover:translate-x-1 rounded-lg" href="#">
-              <span className="material-symbols-outlined">insights</span>
-              Analytics
-            </a>
-            <a className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] transition-all duration-300 hover:translate-x-1 rounded-lg" href="#">
-              <span className="material-symbols-outlined">admin_panel_settings</span>
-              Administration
-            </a>
+
+          <nav className="flex-1 space-y-1">
+            <Link href="/home" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] hover:translate-x-1 transition-all rounded-lg cursor-pointer">
+              <span className="material-symbols-outlined">storefront</span>
+              <span>Browse</span>
+            </Link>
+            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#4648d4] shadow-sm rounded-lg font-semibold">
+              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
+              <span>My Cart</span>
+              {cart?.items?.length > 0 && (
+                <span className="ml-auto bg-[#4648d4] text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                  {cart.items.length}
+                </span>
+              )}
+            </div>
           </nav>
-          <div className="mt-auto pt-4">
-            <button className="w-full bg-surface-container-lowest text-primary py-3 rounded-xl font-semibold text-xs border border-outline-variant/20 shadow-sm hover:bg-white transition-all">
-              Support Center
-            </button>
+
+          {/* User Info Card */}
+          <div className="p-4 bg-white/60 rounded-2xl border border-white/40">
+            <p className="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-1">Welcome</p>
+            <p className="text-sm font-bold text-[#191c1e]">{userName || 'Customer'}</p>
+            <p className="text-xs text-slate-500 mt-2">Explore local atelier and artisan shops.</p>
           </div>
+
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-3 w-full py-3 px-4 text-red-500 font-bold text-sm hover:bg-red-50 rounded-lg transition-all"
+          >
+            <span className="material-symbols-outlined">logout</span>
+            Logout
+          </button>
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 md:ml-72 p-6 md:p-12">
-          <header className="mb-10">
-            <h1 className="text-4xl md:text-5xl font-headline font-extrabold tracking-tight text-on-surface mb-2">My Basket</h1>
-            <p className="text-on-surface-variant body-lg">Review your selections from Pakistani artisans and local creators.</p>
+        <main className="ml-72 flex-1 p-8 space-y-8">
+          <header className="mb-6">
+            <h1 className="text-4xl font-bold text-[#191c1e]">My Cart</h1>
+            <p className="text-slate-500 text-sm mt-1">Review your selections from Pakistani artisans and local creators.</p>
           </header>
 
           {/* Two-Column Layout */}
