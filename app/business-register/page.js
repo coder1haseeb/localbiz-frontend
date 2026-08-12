@@ -63,10 +63,6 @@ export default function BusinessOwnerRegisterPage() {
               <a className="hover:text-[#6b38d4] transition-colors duration-200" href="#">Registration Portal</a>
               <a className="hover:text-[#6b38d4] transition-colors duration-200" href="#">Help Center</a>
             </div>
-            <div className="flex items-center gap-4">
-              <span className="material-symbols-outlined text-slate-500">notifications</span>
-              <span className="material-symbols-outlined text-slate-500">settings</span>
-            </div>
           </div>
         </header>
 

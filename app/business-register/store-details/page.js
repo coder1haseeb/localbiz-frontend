@@ -191,11 +191,11 @@ export default function StoreDetailsPage() {
               </div>
 
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full gradient-bg text-on-primary flex items-center justify-center font-bold shadow-[0_4px_12px_rgba(70,72,212,0.3)]">
+                <div className="w-10 h-10 rounded-full gradient-bg text-on-primary flex items-center justify-center font-bold shadow-[0_4px_12px_rgba(70,72,212,0.3)] text-white">
                   2
                 </div>
                 <div>
-                  <p className="text-sm font-label font-semibold uppercase tracking-wider text-primary">Step 2</p>
+                  <p className="text-sm font-label font-semibold uppercase tracking-wider text-primary ">Step 2</p>
                   <p className="font-headline font-bold text-on-surface">Store Details</p>
                 </div>
               </div>
@@ -208,16 +208,6 @@ export default function StoreDetailsPage() {
                   <p className="text-sm font-label font-semibold uppercase tracking-wider text-outline">Step 3</p>
                   <p className="font-headline font-bold text-on-surface">Verification</p>
                 </div>
-              </div>
-            </div>
-
-            {/* AI Insight */}
-            <div className="p-6 bg-primary-fixed/30 rounded-2xl border border-primary/10">
-              <div className="flex items-start gap-4">
-                <span className="material-symbols-outlined text-primary mt-1">auto_awesome</span>
-                <p className="text-sm text-on-primary-fixed-variant leading-relaxed">
-                  <span className="font-bold">AI Insight:</span> Businesses with detailed descriptions and high-quality logos see 40% higher customer engagement on LocalBiz.
-                </p>
               </div>
             </div>
           </aside>
@@ -359,7 +349,7 @@ export default function StoreDetailsPage() {
                     </button>
 
                     <button
-                      className="flex-1 sm:flex-none gradient-bg text-on-primary font-bold px-10 py-4 rounded-xl shadow-[0_10px_25px_rgba(70,72,212,0.2)] hover:shadow-[0_15px_30px_rgba(70,72,212,0.3)] active:scale-95 transition-all disabled:opacity-50"
+                      className="flex-1 sm:flex-none gradient-bg text-on-primary font-bold px-10 py-4 rounded-xl shadow-[0_10px_25px_rgba(70,72,212,0.2)] hover:shadow-[0_15px_30px_rgba(70,72,212,0.3)] active:scale-95 transition-all disabled:opacity-50 text-white"
                       type="submit"
                       disabled={loading}
                     >

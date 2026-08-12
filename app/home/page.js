@@ -203,8 +203,13 @@ export default function CustomerDashboard() {
                   <Link key={store._id} href={`/store/${store._id}`} className="glass-card rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-indigo-500/10 transition-all group">
                     <div className="h-40 w-full bg-gradient-to-br from-[#4648d4]/10 to-[#6b38d4]/10 relative overflow-hidden flex items-center justify-center border-b border-slate-200">
                       <div className="text-center">
-                        <div className="w-16 h-16 rounded-2xl bg-[#4648d4]/20 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
+                        <div className="relative w-16 h-16 rounded-2xl bg-[#4648d4]/20 flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform">
                           <span className="material-symbols-outlined text-3xl text-[#4648d4]" style={{ fontVariationSettings: "'FILL' 1" }}>store</span>
+                          {store.productCount && store.productCount > 0 && (
+                            <div className="absolute -bottom-2 -right-2 bg-[#4648d4] text-white text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center shadow-lg">
+                              {store.productCount}
+                            </div>
+                          )}
                         </div>
                       </div>
                       <div className="absolute top-3 left-3 bg-white/90 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-bold text-emerald-600 bg-emerald-100">
