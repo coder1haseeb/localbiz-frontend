@@ -95,20 +95,20 @@ export default function BusinessProfilePage() {
     router.replace('/login');
   };
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen bg-[#f8f6f3]"><div className="w-8 h-8 border-4 border-[#806794] border-t-transparent rounded-full animate-spin"></div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen bg-[#f7f5ef]"><div className="w-8 h-8 border-4 border-[#31543d] border-t-transparent rounded-full animate-spin"></div></div>;
 
   return (
     <>
-      <style>{`.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; } .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); } .p-input { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 0.75rem; background: #f8fafc; font-size: 0.875rem; outline: none; } .p-input:focus { border-color: #806794; background: #fff; }`}</style>
+      <style>{`.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; } .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); } .p-input { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 0.75rem; background: #f8fafc; font-size: 0.875rem; outline: none; } .p-input:focus { border-color: #31543d; background: #fff; }`}</style>
 
-      <div className="flex min-h-screen bg-[#f8f6f3]">
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f1eeeb] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
+      <div className="flex min-h-screen bg-[#f7f5ef]">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
           <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
             </div>
-            <div><h1 className="text-lg font-bold text-[#272a32] leading-none">LocalBiz</h1><p className="text-[11px] text-slate-500 font-normal">Business Admin</p></div>
+            <div><h1 className="text-lg font-bold text-[#253027] leading-none">LocalBiz</h1><p className="text-[11px] text-slate-500 font-normal">Business Admin</p></div>
           </div>
           <nav className="flex-1 space-y-1">
             <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">inventory_2</span><span>Products</span></Link>
@@ -116,7 +116,7 @@ export default function BusinessProfilePage() {
             <Link href="/dashboard/inventory" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">warehouse</span><span>Inventory</span></Link>
             <Link href="/dashboard/returns" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">assignment_return</span><span>Returns</span></Link>
             <Link href="/dashboard/analytics" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">bar_chart</span><span>Analytics</span></Link>
-            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#806794] shadow-sm rounded-lg font-semibold"><span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>storefront</span><span>Store Profile</span></div>
+            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold"><span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>storefront</span><span>Store Profile</span></div>
             <Link href="/notifications" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">notifications</span><span>Notifications</span></Link>
             <Link href="/" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">storefront</span><span>Public site</span></Link>
           </nav>
@@ -124,7 +124,7 @@ export default function BusinessProfilePage() {
         </aside>
 
         <main className="ml-72 flex-1 p-8 max-w-3xl">
-          <h1 className="text-3xl font-bold text-[#272a32] mb-2">Store Profile</h1>
+          <h1 className="text-3xl font-bold text-[#253027] mb-2">Store Profile</h1>
           <p className="text-slate-500 mb-6">Update how customers see your store</p>
 
           {business?.approvalStatus !== 'approved' && (
@@ -178,7 +178,7 @@ export default function BusinessProfilePage() {
                 )}
               </div>
             </div>
-            <button disabled={saving} className="px-6 py-2.5 bg-[#806794] text-white font-semibold rounded-xl disabled:opacity-50">{saving ? 'Saving...' : 'Save Changes'}</button>
+            <button disabled={saving} className="px-6 py-2.5 bg-[#31543d] text-white font-semibold rounded-xl disabled:opacity-50">{saving ? 'Saving...' : 'Save Changes'}</button>
           </form>
         </main>
       </div>

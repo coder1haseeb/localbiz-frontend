@@ -105,14 +105,14 @@ export default function AdminCategoriesPage() {
     <>
       <style>{`.glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); } .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }`}</style>
 
-      <div className="flex min-h-screen bg-[#f8f6f3]">
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f1eeeb] flex flex-col p-4 space-y-2 font-['Inter'] z-40">
+      <div className="flex min-h-screen bg-[#f7f5ef]">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] z-40">
           <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>admin_panel_settings</span>
             </div>
-            <div><h1 className="text-lg font-bold text-[#272a32] leading-none">LocalBiz</h1><p className="text-[11px] text-slate-500 font-normal">Super Admin</p></div>
+            <div><h1 className="text-lg font-bold text-[#253027] leading-none">LocalBiz</h1><p className="text-[11px] text-slate-500 font-normal">Super Admin</p></div>
           </div>
           <nav className="flex-1 space-y-1 mt-2 text-sm">
             <Link href="/admin/dashboard" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg font-semibold"><span className="material-symbols-outlined">domain_verification</span><span>Store Approvals</span></Link>
@@ -125,7 +125,7 @@ export default function AdminCategoriesPage() {
         </aside>
 
         <main className="ml-72 flex-1 p-8">
-          <h1 className="text-3xl font-bold text-[#272a32] mb-2">Categories &amp; Service Areas</h1>
+          <h1 className="text-3xl font-bold text-[#253027] mb-2">Categories &amp; Service Areas</h1>
           <p className="text-slate-500 mb-6">Manage platform-wide product categories and delivery cities</p>
 
           {loading ? (
@@ -134,7 +134,7 @@ export default function AdminCategoriesPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Categories */}
               <div className="glass-card rounded-2xl p-6">
-                <h3 className="font-bold text-[#272a32] mb-4">Categories</h3>
+                <h3 className="font-bold text-[#253027] mb-4">Categories</h3>
                 <form onSubmit={createCategory} className="flex gap-2 mb-4">
                   <input value={newCat.name} onChange={e => setNewCat(c => ({ ...c, name: e.target.value }))} placeholder="Category name" className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm" />
                   <input value={newCat.icon} onChange={e => setNewCat(c => ({ ...c, icon: e.target.value }))} placeholder="Icon (optional)" className="w-32 px-3 py-2 border border-slate-200 rounded-lg text-sm" />
@@ -152,11 +152,11 @@ export default function AdminCategoriesPage() {
                           className="flex-1 px-2 py-1 border border-slate-300 rounded text-sm mr-2"
                         />
                       ) : (
-                        <span className="text-sm font-semibold text-[#272a32]">{cat.icon ? `${cat.icon} ` : ''}{cat.name}</span>
+                        <span className="text-sm font-semibold text-[#253027]">{cat.icon ? `${cat.icon} ` : ''}{cat.name}</span>
                       )}
                       <div className="flex items-center gap-2">
                         <button onClick={() => updateCategory(cat, { isActive: !cat.isActive })} className={`text-xs font-bold px-2 py-1 rounded-full ${cat.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'}`}>{cat.isActive ? 'Active' : 'Inactive'}</button>
-                        <button onClick={() => setEditingCat(cat._id)} className="text-xs font-semibold text-[#806794] hover:underline">Edit</button>
+                        <button onClick={() => setEditingCat(cat._id)} className="text-xs font-semibold text-[#31543d] hover:underline">Edit</button>
                         <button onClick={() => deleteCategory(cat._id)} className="text-xs font-semibold text-red-500 hover:underline">Delete</button>
                       </div>
                     </div>
@@ -167,7 +167,7 @@ export default function AdminCategoriesPage() {
 
               {/* Service Areas */}
               <div className="glass-card rounded-2xl p-6">
-                <h3 className="font-bold text-[#272a32] mb-4">Service Areas</h3>
+                <h3 className="font-bold text-[#253027] mb-4">Service Areas</h3>
                 <form onSubmit={createArea} className="flex gap-2 mb-4">
                   <input value={newArea} onChange={e => setNewArea(e.target.value)} placeholder="City name" className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm" />
                   <button disabled={busy} className="px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded-lg hover:bg-red-600 disabled:opacity-50">Add</button>
@@ -175,7 +175,7 @@ export default function AdminCategoriesPage() {
                 <div className="space-y-2">
                   {areas.map(area => (
                     <div key={area._id} className="flex items-center justify-between p-3 bg-white/60 rounded-lg">
-                      <span className="text-sm font-semibold text-[#272a32]">{area.city}</span>
+                      <span className="text-sm font-semibold text-[#253027]">{area.city}</span>
                       <button onClick={() => toggleArea(area)} className={`text-xs font-bold px-2 py-1 rounded-full ${area.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'}`}>{area.isActive ? 'Active' : 'Inactive'}</button>
                     </div>
                   ))}

@@ -20,11 +20,11 @@ export default function PaymentCallbackPage() {
     }).catch(() => setMessage('Could not confirm payment yet. Check your order history.'));
   }, []);
 
-  return <main className="min-h-screen bg-[#f8f6f3] flex items-center justify-center p-6">
+  return <main className="min-h-screen bg-[#f7f5ef] flex items-center justify-center p-6">
     <div className="bg-white border border-slate-200 rounded-xl p-8 max-w-md w-full text-center">
       <h1 className="text-2xl font-bold mb-4">Payment status</h1>
       <p role="status" className="text-slate-600 mb-6">{message}</p>
-      <Link href="/orders" className="text-[#806794] font-semibold">View my orders →</Link>
+      <Link href="/orders" className="text-[#31543d] font-semibold">View my orders →</Link>
     </div>
   </main>;
 }

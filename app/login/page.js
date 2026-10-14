@@ -79,26 +79,26 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-surface-bright font-body text-on-surface antialiased flex items-center justify-center p-4">
-      <main className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-[2rem] bg-surface-container-lowest shadow-2xl shadow-primary/10 min-h-[650px]">
+      <main className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 overflow-hidden rounded-md bg-surface-container-lowest border border-outline-variant min-h-[620px]">
         {/* Left Side: Login Form */}
         <section className="flex flex-col justify-center px-8 md:px-16 py-12 relative z-10 bg-white">
           <div className="mb-10 flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+            <div className="w-10 h-10 rounded-md bg-primary flex items-center justify-center">
               <span className="material-symbols-outlined text-white text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                 storefront
               </span>
             </div>
-            <span className="font-headline text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">
+            <span className="font-body text-2xl font-bold tracking-tight text-on-surface">
               LocalBiz
             </span>
           </div>
 
           <div className="space-y-2 mb-8">
             <h1 className="font-headline text-3xl font-bold text-on-surface tracking-tight">
-              Welcome Back
+              Welcome back
             </h1>
             <p className="text-on-surface-variant text-base">
-              Enter your credentials to access your Digital Atelier.
+              Sign in to browse stores, track orders, or manage your shop.
             </p>
           </div>
 
@@ -177,7 +177,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading || success}
-              className="cursor-pointer w-full h-14 bg-blue-600 text-white font-headline font-bold rounded-xl shadow-lg shadow-blue-600/20 active:scale-[0.98] transition-transform flex items-center justify-center gap-2 hover:shadow-lg disabled:opacity-60 disabled:cursor-not-allowed"
+              className="cursor-pointer w-full h-14 bg-primary text-white font-body font-semibold rounded-md flex items-center justify-center gap-2 hover:bg-[#243f2e] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <>
@@ -197,7 +197,7 @@ export default function LoginPage() {
             <p className="text-center text-sm text-on-surface-variant">
               Don't have an account?{' '}
               <Link href="/register" className="text-primary font-bold hover:underline">
-                Start free trial
+                Create an account
               </Link>
             </p>
           </div>
@@ -210,14 +210,14 @@ export default function LoginPage() {
             <img
               src="/login-image.avif"
               alt="Background"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover saturate-75"
             />
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/40 to-secondary/60 mix-blend-multiply"></div>
+            <div className="absolute inset-0 bg-[#243f2e]/15"></div>
           </div>
 
           {/* Floating Shapes */}
           {/* <div className="absolute top-10 right-10 w-32 h-32 bg-white/10 backdrop-blur-2xl rounded-full border border-white/10"></div> */}
-          <div className="absolute bottom-20 -left-10 w-48 h-48 bg-white/5 backdrop-blur-3xl rounded-full border border-white/5"></div>
+
         </section>
       </main>
 

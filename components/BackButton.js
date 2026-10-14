@@ -57,7 +57,7 @@ export default function BackButton() {
     type="button"
     onClick={goBack}
     aria-label="Back to previous page"
-    className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-[90] inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white/95 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur hover:border-[#806794] hover:text-[#806794] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#806794]"
+    className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-[90] inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white/95 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm backdrop-blur hover:border-[#31543d] hover:text-[#31543d] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#31543d]"
   >
     <span className="material-symbols-outlined text-lg" aria-hidden="true">arrow_back</span>
     Back

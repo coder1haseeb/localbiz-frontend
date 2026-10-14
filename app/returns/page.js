@@ -20,9 +20,9 @@ export default function ReturnsPage() {
     }).catch(() => setError('Could not load returns.'));
   }, [router]);
 
-  return <main className="min-h-screen bg-[#f8f6f3] p-6 md:p-12 text-[#272a32]">
+  return <main className="min-h-screen bg-[#f7f5ef] p-6 md:p-12 text-[#253027]">
     <div className="max-w-4xl mx-auto">
-      <Link href="/orders" className="text-[#806794] text-sm">← My orders</Link>
+      <Link href="/orders" className="text-[#31543d] text-sm">← My orders</Link>
       <h1 className="text-3xl font-bold mt-6 mb-2">My returns</h1>
       <p className="text-slate-500 mb-8">Track requests for delivered orders.</p>
       {error && <p role="alert" className="text-red-600 mb-4">{error}</p>}

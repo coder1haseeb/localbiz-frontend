@@ -175,7 +175,7 @@ export default function EditProductPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8f6f3]">
+      <div className="min-h-screen flex items-center justify-center bg-[#f7f5ef]">
         <Spinner />
       </div>
     );
@@ -197,12 +197,12 @@ export default function EditProductPage() {
           border-radius: 0.75rem;
           background: #f8fafc;
           font-size: 0.875rem;
-          color: #272a32;
+          color: #253027;
           outline: none;
           transition: border-color 0.2s, box-shadow 0.2s;
         }
         .edit-input:focus {
-          border-color: #806794;
+          border-color: #31543d;
           box-shadow: 0 0 0 3px rgba(70, 72, 212, 0.1);
           background: #fff;
         }
@@ -217,22 +217,22 @@ export default function EditProductPage() {
         }
       `}</style>
 
-      <div className="flex min-h-screen bg-[#f8f6f3]">
+      <div className="flex min-h-screen bg-[#f7f5ef]">
         {/* Sidebar */}
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f1eeeb] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
           <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#272a32] leading-none">LocalBiz</h1>
+              <h1 className="text-lg font-bold text-[#253027] leading-none">LocalBiz</h1>
               <p className="text-[11px] text-slate-500 font-normal">Business Admin</p>
             </div>
           </div>
 
           <nav className="flex-1 space-y-1">
-            <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 bg-white text-[#806794] shadow-sm rounded-lg font-semibold">
+            <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
               <span>Products</span>
             </Link>
@@ -260,7 +260,7 @@ export default function EditProductPage() {
               </div>
               <div>
                 <p className="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-0.5">Editing</p>
-                <h2 className="text-xl font-bold text-[#272a32]">{product.name}</h2>
+                <h2 className="text-xl font-bold text-[#253027]">{product.name}</h2>
                 <p className="text-sm text-slate-500">PKR {product.price?.toLocaleString()}</p>
               </div>
             </div>
@@ -269,10 +269,10 @@ export default function EditProductPage() {
           {/* Form Card */}
           <div className="glass-card rounded-2xl p-8 shadow-sm max-w-2xl">
             <div className="flex items-center gap-3 mb-7">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
                 <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>edit</span>
               </div>
-              <h3 className="text-lg font-bold text-[#272a32]">Edit Product Details</h3>
+              <h3 className="text-lg font-bold text-[#253027]">Edit Product Details</h3>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
@@ -365,10 +365,10 @@ export default function EditProductPage() {
                       onChange={handleImageInput}
                       className="hidden"
                     />
-                    <div className="flex items-center justify-center gap-3 p-6 border-2 border-dashed border-slate-300 rounded-xl hover:border-[#806794] hover:bg-[#806794]/5 transition-colors">
+                    <div className="flex items-center justify-center gap-3 p-6 border-2 border-dashed border-slate-300 rounded-xl hover:border-[#31543d] hover:bg-[#31543d]/5 transition-colors">
                       <span className="material-symbols-outlined text-2xl text-slate-400">image</span>
                       <div className="text-left">
-                        <p className="text-sm font-semibold text-[#272a32]">Click to add more images</p>
+                        <p className="text-sm font-semibold text-[#253027]">Click to add more images</p>
                         <p className="text-xs text-slate-500">PNG, JPG, GIF up to 5MB each</p>
                       </div>
                     </div>
@@ -416,7 +416,7 @@ export default function EditProductPage() {
                 <button
                   type="submit"
                   disabled={updating}
-                  className="flex items-center gap-2 px-8 py-2.5 bg-gradient-to-r from-[#806794] to-[#bd8496] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50"
+                  className="flex items-center gap-2 px-8 py-2.5 bg-gradient-to-r from-[#31543d] to-[#a96b4e] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50"
                 >
                   {updating ? <Spinner /> : (
                     <>

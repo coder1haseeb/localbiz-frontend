@@ -68,7 +68,7 @@ export default function AdminLoginPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white shadow-sm">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white shadow-sm">
               <span
                 className="material-symbols-outlined text-4xl"
                 style={{ fontVariationSettings: "'FILL' 1" }}
@@ -77,12 +77,12 @@ export default function AdminLoginPage() {
               </span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#272a32] mb-2">SuperAdmin Login</h1>
+          <h1 className="text-3xl font-bold text-[#253027] mb-2">SuperAdmin Login</h1>
           <p className="text-slate-600">LocalBiz Administration Panel</p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl border border-[#e8e0dd] shadow-sm p-8 space-y-6">
+        <div className="bg-white rounded-2xl border border-[#d8ddd2] shadow-sm p-8 space-y-6">
           {/* Error Message */}
           {error && (
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -103,7 +103,7 @@ export default function AdminLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email Input */}
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-semibold text-[#272a32]">
+              <label htmlFor="email" className="block text-sm font-semibold text-[#253027]">
                 Email Address
               </label>
               <input
@@ -112,14 +112,14 @@ export default function AdminLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@example.com"
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#806794] focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#31543d] focus:border-transparent transition-all"
                 required
               />
             </div>
 
             {/* Password Input */}
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-semibold text-[#272a32]">
+              <label htmlFor="password" className="block text-sm font-semibold text-[#253027]">
                 Password
               </label>
               <input
@@ -128,7 +128,7 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#806794] focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#31543d] focus:border-transparent transition-all"
                 required
               />
             </div>
@@ -137,7 +137,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-[#806794] hover:bg-[#6b527d] disabled:bg-slate-400 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 bg-[#31543d] hover:bg-[#6b527d] disabled:bg-slate-400 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>

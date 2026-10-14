@@ -70,15 +70,15 @@ export default function NotificationsPage() {
     <>
       <style>{`.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; } .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }`}</style>
 
-      <div className="min-h-screen bg-[#f8f6f3] p-8">
+      <div className="min-h-screen bg-[#f7f5ef] p-8">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-[#272a32]">Notifications</h1>
+              <h1 className="text-3xl font-bold text-[#253027]">Notifications</h1>
               <p className="text-slate-500 text-sm mt-1">{unreadCount} unread</p>
             </div>
             {unreadCount > 0 && (
-              <button onClick={markAllRead} className="px-4 py-2 bg-[#806794]/10 text-[#806794] text-sm font-semibold rounded-xl hover:bg-[#806794]/20 transition-all">
+              <button onClick={markAllRead} className="px-4 py-2 bg-[#31543d]/10 text-[#31543d] text-sm font-semibold rounded-xl hover:bg-[#31543d]/20 transition-all">
                 Mark all as read
               </button>
             )}
@@ -86,12 +86,12 @@ export default function NotificationsPage() {
 
           {loading ? (
             <div className="glass-card rounded-2xl p-16 text-center">
-              <div className="animate-spin w-8 h-8 border-4 border-slate-200 border-t-[#806794] rounded-full mx-auto"></div>
+              <div className="animate-spin w-8 h-8 border-4 border-slate-200 border-t-[#31543d] rounded-full mx-auto"></div>
             </div>
           ) : notifications.length === 0 ? (
             <div className="glass-card rounded-2xl p-16 text-center">
               <span className="material-symbols-outlined text-5xl text-slate-300 block mb-4">notifications_off</span>
-              <p className="text-[#272a32] font-bold">No notifications yet</p>
+              <p className="text-[#253027] font-bold">No notifications yet</p>
             </div>
           ) : (
             <div className="space-y-3">
@@ -99,17 +99,17 @@ export default function NotificationsPage() {
                 <div
                   key={n._id}
                   onClick={() => !n.isRead && markRead(n._id)}
-                  className={`glass-card rounded-2xl p-5 flex items-start gap-4 cursor-pointer transition-all ${!n.isRead ? 'border-l-4 border-l-[#806794]' : 'opacity-70'}`}
+                  className={`glass-card rounded-2xl p-5 flex items-start gap-4 cursor-pointer transition-all ${!n.isRead ? 'border-l-4 border-l-[#31543d]' : 'opacity-70'}`}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-[#806794]/10 flex items-center justify-center text-[#806794] shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-[#31543d]/10 flex items-center justify-center text-[#31543d] shrink-0">
                     <span className="material-symbols-outlined text-lg">{TYPE_ICONS[n.type] || 'notifications'}</span>
                   </div>
                   <div className="flex-1">
-                    <p className={`text-sm ${!n.isRead ? 'font-bold text-[#272a32]' : 'font-medium text-slate-600'}`}>{n.title || n.message}</p>
+                    <p className={`text-sm ${!n.isRead ? 'font-bold text-[#253027]' : 'font-medium text-slate-600'}`}>{n.title || n.message}</p>
                     {n.title && n.message && <p className="text-xs text-slate-500 mt-1">{n.message}</p>}
                     <p className="text-[11px] text-slate-400 mt-2">{new Date(n.createdAt).toLocaleString()}</p>
                   </div>
-                  {!n.isRead && <span className="w-2.5 h-2.5 bg-[#806794] rounded-full mt-1 shrink-0"></span>}
+                  {!n.isRead && <span className="w-2.5 h-2.5 bg-[#31543d] rounded-full mt-1 shrink-0"></span>}
                 </div>
               ))}
             </div>

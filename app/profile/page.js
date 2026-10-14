@@ -113,32 +113,32 @@ export default function ProfilePage() {
     router.replace('/login');
   };
 
-  if (loading) return <div className="flex items-center justify-center min-h-screen bg-[#f8f6f3]"><div className="w-8 h-8 border-4 border-[#806794] border-t-transparent rounded-full animate-spin"></div></div>;
+  if (loading) return <div className="flex items-center justify-center min-h-screen bg-[#f7f5ef]"><div className="w-8 h-8 border-4 border-[#31543d] border-t-transparent rounded-full animate-spin"></div></div>;
 
   return (
     <>
-      <style>{`.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; } .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); } .p-input { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 0.75rem; background: #f8fafc; font-size: 0.875rem; outline: none; } .p-input:focus { border-color: #806794; background: #fff; }`}</style>
+      <style>{`.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; } .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); } .p-input { width: 100%; padding: 0.75rem 1rem; border: 1.5px solid #e2e8f0; border-radius: 0.75rem; background: #f8fafc; font-size: 0.875rem; outline: none; } .p-input:focus { border-color: #31543d; background: #fff; }`}</style>
 
-      <div className="flex min-h-screen bg-[#f8f6f3]">
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f1eeeb] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
+      <div className="flex min-h-screen bg-[#f7f5ef]">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
           <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
             </div>
-            <div><h1 className="text-lg font-bold text-[#272a32] leading-none">LocalBiz</h1><p className="text-[11px] text-slate-500 font-normal">Marketplace</p></div>
+            <div><h1 className="text-lg font-bold text-[#253027] leading-none">LocalBiz</h1><p className="text-[11px] text-slate-500 font-normal">Marketplace</p></div>
           </div>
           <nav className="flex-1 space-y-1">
             <Link href="/home" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">storefront</span><span>Browse</span></Link>
             <Link href="/orders" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">receipt_long</span><span>My Orders</span></Link>
             <Link href="/notifications" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">notifications</span><span>Notifications</span></Link>
-            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#806794] shadow-sm rounded-lg font-semibold"><span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>account_circle</span><span>Profile</span></div>
+            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold"><span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>account_circle</span><span>Profile</span></div>
           </nav>
           <button onClick={handleLogout} className="flex items-center gap-3 w-full py-3 px-4 text-red-500 font-bold text-sm hover:bg-red-50 rounded-lg"><span className="material-symbols-outlined">logout</span>Logout</button>
         </aside>
 
         <main className="ml-72 flex-1 p-8 max-w-3xl">
-          <h1 className="text-4xl font-bold text-[#272a32] mb-2">My Profile</h1>
+          <h1 className="text-4xl font-bold text-[#253027] mb-2">My Profile</h1>
           <p className="text-slate-500 mb-6">Manage your account, addresses and security</p>
 
           {msg && <div className="mb-6 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 font-semibold text-sm">{msg}</div>}
@@ -147,22 +147,22 @@ export default function ProfilePage() {
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="glass-card rounded-2xl p-5">
                 <p className="text-xs text-slate-500 uppercase font-semibold mb-1">Total Orders</p>
-                <p className="text-2xl font-bold text-[#272a32]">{insights.totalOrders}</p>
+                <p className="text-2xl font-bold text-[#253027]">{insights.totalOrders}</p>
               </div>
               <div className="glass-card rounded-2xl p-5">
                 <p className="text-xs text-slate-500 uppercase font-semibold mb-1">Total Spent</p>
-                <p className="text-2xl font-bold text-[#272a32]">Rs. {insights.totalSpending?.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-[#253027]">Rs. {insights.totalSpending?.toLocaleString()}</p>
               </div>
               <div className="glass-card rounded-2xl p-5">
                 <p className="text-xs text-slate-500 uppercase font-semibold mb-1">This Month</p>
-                <p className="text-2xl font-bold text-[#272a32]">Rs. {insights.thisMonth?.spending?.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-[#253027]">Rs. {insights.thisMonth?.spending?.toLocaleString()}</p>
               </div>
             </div>
           )}
 
           <div className="flex gap-2 mb-6 border-b border-slate-200">
             {['profile', 'addresses', 'security'].map(t => (
-              <button key={t} onClick={() => setTab(t)} className={`px-5 py-3 text-sm font-semibold border-b-2 transition-all ${tab === t ? 'border-[#806794] text-[#806794]' : 'border-transparent text-slate-500'}`}>
+              <button key={t} onClick={() => setTab(t)} className={`px-5 py-3 text-sm font-semibold border-b-2 transition-all ${tab === t ? 'border-[#31543d] text-[#31543d]' : 'border-transparent text-slate-500'}`}>
                 {t.charAt(0).toUpperCase() + t.slice(1)}
               </button>
             ))}
@@ -186,7 +186,7 @@ export default function ProfilePage() {
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">City</label>
                 <input className="p-input" value={form.city} onChange={e => setForm(f => ({ ...f, city: e.target.value }))} />
               </div>
-              <button disabled={saving} className="px-6 py-2.5 bg-[#806794] text-white font-semibold rounded-xl disabled:opacity-50">{saving ? 'Saving...' : 'Save Changes'}</button>
+              <button disabled={saving} className="px-6 py-2.5 bg-[#31543d] text-white font-semibold rounded-xl disabled:opacity-50">{saving ? 'Saving...' : 'Save Changes'}</button>
             </form>
           )}
 
@@ -195,18 +195,18 @@ export default function ProfilePage() {
               {profile?.addresses?.map(addr => (
                 <div key={addr._id} className="glass-card rounded-2xl p-5 flex items-start justify-between">
                   <div>
-                    <p className="font-bold text-[#272a32] text-sm">{addr.label}{addr.isDefault && <span className="ml-2 text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Default</span>}</p>
+                    <p className="font-bold text-[#253027] text-sm">{addr.label}{addr.isDefault && <span className="ml-2 text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full font-bold">Default</span>}</p>
                     <p className="text-sm text-slate-500 mt-1">{addr.street}, {addr.city}</p>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={() => startEditAddress(addr)} className="text-xs font-semibold text-[#806794] hover:underline">Edit</button>
+                    <button onClick={() => startEditAddress(addr)} className="text-xs font-semibold text-[#31543d] hover:underline">Edit</button>
                     <button onClick={() => handleDeleteAddress(addr._id)} className="text-xs font-semibold text-red-500 hover:underline">Delete</button>
                   </div>
                 </div>
               ))}
 
               {!showAddrForm ? (
-                <button onClick={() => { setShowAddrForm(true); setEditingAddrId(null); setAddrForm({ label: '', street: '', city: '', isDefault: false }); }} className="px-5 py-2.5 bg-[#806794]/10 text-[#806794] font-semibold rounded-xl text-sm">+ Add Address</button>
+                <button onClick={() => { setShowAddrForm(true); setEditingAddrId(null); setAddrForm({ label: '', street: '', city: '', isDefault: false }); }} className="px-5 py-2.5 bg-[#31543d]/10 text-[#31543d] font-semibold rounded-xl text-sm">+ Add Address</button>
               ) : (
                 <form onSubmit={handleAddAddress} className="glass-card rounded-2xl p-6 space-y-3">
                   <input required placeholder="Label (e.g. Home)" className="p-input" value={addrForm.label} onChange={e => setAddrForm(f => ({ ...f, label: e.target.value }))} />
@@ -218,7 +218,7 @@ export default function ProfilePage() {
                   </label>
                   <div className="flex gap-3">
                     <button type="button" onClick={() => { setShowAddrForm(false); setEditingAddrId(null); }} className="px-5 py-2.5 border border-slate-300 rounded-xl text-sm font-semibold">Cancel</button>
-                    <button disabled={saving} className="px-5 py-2.5 bg-[#806794] text-white font-semibold rounded-xl text-sm disabled:opacity-50">{saving ? 'Saving...' : 'Save Address'}</button>
+                    <button disabled={saving} className="px-5 py-2.5 bg-[#31543d] text-white font-semibold rounded-xl text-sm disabled:opacity-50">{saving ? 'Saving...' : 'Save Address'}</button>
                   </div>
                 </form>
               )}
@@ -235,7 +235,7 @@ export default function ProfilePage() {
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">New Password</label>
                 <input type="password" required minLength={6} className="p-input" value={pwForm.newPassword} onChange={e => setPwForm(f => ({ ...f, newPassword: e.target.value }))} />
               </div>
-              <button disabled={saving} className="px-6 py-2.5 bg-[#806794] text-white font-semibold rounded-xl disabled:opacity-50">{saving ? 'Saving...' : 'Change Password'}</button>
+              <button disabled={saving} className="px-6 py-2.5 bg-[#31543d] text-white font-semibold rounded-xl disabled:opacity-50">{saving ? 'Saving...' : 'Change Password'}</button>
             </form>
           )}
         </main>

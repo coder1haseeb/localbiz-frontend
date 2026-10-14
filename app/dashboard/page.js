@@ -57,7 +57,7 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8f6f3]">
+      <div className="min-h-screen flex items-center justify-center bg-[#f7f5ef]">
         <Spinner />
       </div>
     );
@@ -79,12 +79,12 @@ export default function DashboardPage() {
           border-radius: 0.75rem;
           background: #f8fafc;
           font-size: 0.875rem;
-          color: #272a32;
+          color: #253027;
           outline: none;
           transition: border-color 0.2s, box-shadow 0.2s;
         }
         .dash-input:focus {
-          border-color: #806794;
+          border-color: #31543d;
           box-shadow: 0 0 0 3px rgba(70, 72, 212, 0.1);
           background: #fff;
         }
@@ -99,22 +99,22 @@ export default function DashboardPage() {
         }
       `}</style>
 
-      <div className="flex min-h-screen bg-[#f8f6f3]">
+      <div className="flex min-h-screen bg-[#f7f5ef]">
         {/* Sidebar */}
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f1eeeb] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
           <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white">
-              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
+              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>storefront</span>
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#272a32] leading-none">LocalBiz</h1>
+              <h1 className="text-lg font-bold text-[#253027] leading-none">LocalBiz</h1>
               <p className="text-[11px] text-slate-500 font-normal">Business Admin</p>
             </div>
           </div>
 
           <nav className="flex-1 space-y-1">
-            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#806794] shadow-sm rounded-lg font-semibold">
+            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
               <span>Products</span>
             </div>
@@ -155,12 +155,12 @@ export default function DashboardPage() {
                 {business.logo ? (
                   <img src={business.logo} alt={business.storeName} className="w-10 h-10 rounded-xl object-cover" />
                 ) : (
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
                     <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>store</span>
                   </div>
                 )}
                 <div className="overflow-hidden">
-                  <p className="text-[13px] font-bold text-[#272a32] truncate">{business.storeName}</p>
+                  <p className="text-[13px] font-bold text-[#253027] truncate">{business.storeName}</p>
                   <p className="text-[11px] text-slate-500">{business.city}</p>
                 </div>
               </div>
@@ -181,7 +181,7 @@ export default function DashboardPage() {
 
           {/* Page Header */}
           <section>
-            <h2 className="text-3xl font-bold tracking-tight text-[#272a32]">Products</h2>
+            <h2 className="text-3xl font-bold tracking-tight text-[#253027]">Products</h2>
             <p className="text-sm text-slate-500 mt-1">Manage your store&apos;s product catalogue</p>
           </section>
 
@@ -192,12 +192,12 @@ export default function DashboardPage() {
                 {business?.logo ? (
                   <img src={business.logo} alt={business.storeName} className="w-16 h-16 rounded-2xl object-cover shadow-md" />
                 ) : (
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white shadow-md">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white shadow-md">
                     <span className="material-symbols-outlined text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>store</span>
                   </div>
                 )}
                 <div>
-                  <h3 className="text-xl font-bold text-[#272a32]">{business?.storeName}</h3>
+                  <h3 className="text-xl font-bold text-[#253027]">{business?.storeName}</h3>
                   {business?.description && <p className="text-sm text-slate-500 mt-0.5 max-w-md">{business.description}</p>}
                   <div className="flex flex-wrap gap-4 mt-2">
                     {business?.city && (
@@ -215,9 +215,9 @@ export default function DashboardPage() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2 bg-[#806794]/10 px-3 py-1.5 rounded-full">
-                <span className="material-symbols-outlined text-sm text-[#806794]" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
-                <span className="text-xs font-bold text-[#806794]">{products.length} Products</span>
+              <div className="flex items-center gap-2 bg-[#31543d]/10 px-3 py-1.5 rounded-full">
+                <span className="material-symbols-outlined text-sm text-[#31543d]" style={{ fontVariationSettings: "'FILL' 1" }}>inventory_2</span>
+                <span className="text-xs font-bold text-[#31543d]">{products.length} Products</span>
               </div>
             </div>
           </section>
@@ -225,10 +225,10 @@ export default function DashboardPage() {
           {/* Products Section */}
           <section className="space-y-6">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-bold text-[#272a32]">All Products</h3>
+              <h3 className="text-lg font-bold text-[#253027]">All Products</h3>
               <button
                 onClick={() => setShowAddProduct(!showAddProduct)}
-                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#806794] to-[#bd8496] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
+                className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#31543d] to-[#a96b4e] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
               >
                 <span className="material-symbols-outlined text-base">{showAddProduct ? 'close' : 'add'}</span>
                 {showAddProduct ? 'Cancel' : 'Add Product'}
@@ -250,14 +250,14 @@ export default function DashboardPage() {
             {/* Products Grid */}
             {products.length === 0 ? (
               <div className="glass-card rounded-2xl p-16 text-center shadow-sm">
-                <div className="w-16 h-16 bg-[#806794]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <span className="material-symbols-outlined text-3xl text-[#806794]">inventory_2</span>
+                <div className="w-16 h-16 bg-[#31543d]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <span className="material-symbols-outlined text-3xl text-[#31543d]">inventory_2</span>
                 </div>
-                <p className="text-[#272a32] font-bold text-lg mb-1">No products yet</p>
+                <p className="text-[#253027] font-bold text-lg mb-1">No products yet</p>
                 <p className="text-sm text-slate-500 mb-6">Start building your catalogue by adding your first product.</p>
                 <button
                   onClick={() => setShowAddProduct(true)}
-                  className="px-6 py-2.5 bg-gradient-to-r from-[#806794] to-[#bd8496] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
+                  className="px-6 py-2.5 bg-gradient-to-r from-[#31543d] to-[#a96b4e] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
                 >
                   Add Your First Product
                 </button>
@@ -383,12 +383,12 @@ function AddProductForm({ businessId, token, onSuccess }) {
   };
 
   return (
-    <div className="glass-card rounded-2xl p-8 shadow-sm border border-[#806794]/10">
+    <div className="glass-card rounded-2xl p-8 shadow-sm border border-[#31543d]/10">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
           <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>add_box</span>
         </div>
-        <h4 className="text-lg font-bold text-[#272a32]">Add New Product</h4>
+        <h4 className="text-lg font-bold text-[#253027]">Add New Product</h4>
       </div>
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div>
@@ -479,10 +479,10 @@ function AddProductForm({ businessId, token, onSuccess }) {
                 onChange={handleImageInput}
                 className="hidden"
               />
-              <div className="flex items-center justify-center gap-3 p-6 border-2 border-dashed border-slate-300 rounded-xl hover:border-[#806794] hover:bg-[#806794]/5 transition-colors">
+              <div className="flex items-center justify-center gap-3 p-6 border-2 border-dashed border-slate-300 rounded-xl hover:border-[#31543d] hover:bg-[#31543d]/5 transition-colors">
                 <span className="material-symbols-outlined text-2xl text-slate-400">image</span>
                 <div className="text-left">
-                  <p className="text-sm font-semibold text-[#272a32]">Click to upload images</p>
+                  <p className="text-sm font-semibold text-[#253027]">Click to upload images</p>
                   <p className="text-xs text-slate-500">PNG, JPG, GIF up to 5MB each</p>
                 </div>
               </div>
@@ -519,7 +519,7 @@ function AddProductForm({ businessId, token, onSuccess }) {
           <button
             type="submit"
             disabled={loading}
-            className="flex items-center gap-2 px-8 py-2.5 bg-gradient-to-r from-[#806794] to-[#bd8496] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50"
+            className="flex items-center gap-2 px-8 py-2.5 bg-gradient-to-r from-[#31543d] to-[#a96b4e] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50"
           >
             {loading ? <Spinner /> : (
               <>
@@ -582,7 +582,7 @@ function ProductCard({ product, token, onDelete }) {
           </div>
         )}
         {/* Category Badge */}
-        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[10px] font-bold text-[#272a32]">
+        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[10px] font-bold text-[#253027]">
           {product.category || 'Product'}
         </div>
         {/* Status Badge */}
@@ -597,13 +597,13 @@ function ProductCard({ product, token, onDelete }) {
 
       {/* Product Info */}
       <div className="p-5">
-        <h4 className="font-bold text-[#272a32] truncate mb-1">{product.name}</h4>
+        <h4 className="font-bold text-[#253027] truncate mb-1">{product.name}</h4>
         {product.description && (
           <p className="text-xs text-slate-500 line-clamp-2 mb-3">{product.description}</p>
         )}
 
         <div className="flex items-center justify-between mb-4">
-          <span className="text-[#806794] font-bold text-lg">PKR {product.price?.toLocaleString()}</span>
+          <span className="text-[#31543d] font-bold text-lg">PKR {product.price?.toLocaleString()}</span>
           <span className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
             product.stockQty > 0
               ? 'bg-emerald-100 text-emerald-700'
@@ -617,7 +617,7 @@ function ProductCard({ product, token, onDelete }) {
         <div className="flex gap-2">
           <Link
             href={`/dashboard/products/${product._id}/edit`}
-            className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#806794] text-white text-xs font-bold rounded-xl hover:bg-[#3a3bb8] transition-colors"
+            className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 bg-[#31543d] text-white text-xs font-bold rounded-xl hover:bg-[#3a3bb8] transition-colors"
           >
             <span className="material-symbols-outlined text-sm">edit</span>
             Edit

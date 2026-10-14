@@ -131,23 +131,23 @@ export default function StoreDetailsPage() {
           font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
         .gradient-text {
-          background: linear-gradient(135deg, #806794 0%, #bd8496 100%);
+          background: linear-gradient(135deg, #31543d 0%, #a96b4e 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
         }
         .gradient-bg {
-          background: linear-gradient(135deg, #806794 0%, #bd8496 100%);
+          background: linear-gradient(135deg, #31543d 0%, #a96b4e 100%);
         }
       `}</style>
 
       <div className="bg-background font-body text-on-surface min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed">
         {/* Navigation */}
-        <nav className="bg-[#f8f6f3]/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_4px_24px_rgba(70,72,212,0.07)] px-8 py-4 flex justify-between items-center w-full">
-          <div className="text-xl font-bold bg-gradient-to-br from-[#806794] to-[#bd8496] bg-clip-text text-transparent font-headline">
+        <nav className="bg-[#f7f5ef]/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_4px_24px_rgba(70,72,212,0.07)] px-8 py-4 flex justify-between items-center w-full">
+          <div className="text-xl font-bold bg-gradient-to-br from-[#31543d] to-[#a96b4e] bg-clip-text text-transparent font-headline">
             LocalBiz
           </div>
           <div className="hidden md:flex items-center space-x-8 font-headline text-sm font-semibold tracking-tight">
-            <span className="text-slate-500 hover:text-[#bd8496] transition-colors duration-200 cursor-pointer">Support Center</span>
+            <span className="text-slate-500 hover:text-[#a96b4e] transition-colors duration-200 cursor-pointer">Support Center</span>
             <div className="flex items-center space-x-3">
               <span className="material-symbols-outlined text-slate-500">help_outline</span>
               <span className="material-symbols-outlined text-slate-500">language</span>

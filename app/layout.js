@@ -17,8 +17,8 @@ const displayFont = Fraunces({
 });
 
 export const metadata = {
-  title: "LocalBiz - Digital Atelier",
-  description: "Scale your local commerce with our Digital Atelier dashboard",
+  title: "LocalBiz | Shop local",
+  description: "Discover local stores and shop from nearby businesses.",
 };
 
 export default function RootLayout({ children }) {

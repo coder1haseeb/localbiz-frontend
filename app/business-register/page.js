@@ -58,14 +58,14 @@ export default function BusinessOwnerRegisterPage() {
       `}</style>
 
       <div className="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
-        <header className="bg-[#f8f6f3]/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_4px_24px_rgba(70,72,212,0.07)]">
+        <header className="bg-[#f7f5ef]/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_4px_24px_rgba(70,72,212,0.07)]">
           <div className="flex justify-between items-center w-full px-8 py-4">
             <div className="flex items-center gap-4">
-              <span className="text-xl font-bold bg-gradient-to-br from-[#806794] to-[#bd8496] bg-clip-text text-transparent font-headline">LocalBiz</span>
+              <span className="text-xl font-bold bg-gradient-to-br from-[#31543d] to-[#a96b4e] bg-clip-text text-transparent font-headline">LocalBiz</span>
             </div>
             <div className="hidden md:flex items-center gap-8 font-headline text-sm font-semibold tracking-tight text-slate-500">
-              <a className="hover:text-[#bd8496] transition-colors duration-200" href="/business-register">Registration Portal</a>
-              <a className="hover:text-[#bd8496] transition-colors duration-200" href="/login">Sign In</a>
+              <a className="hover:text-[#a96b4e] transition-colors duration-200" href="/business-register">Registration Portal</a>
+              <a className="hover:text-[#a96b4e] transition-colors duration-200" href="/login">Sign In</a>
             </div>
           </div>
         </header>

@@ -80,3 +80,17 @@
 @media(max-width:1050px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.desktopNav{gap:20px}.productImage{height:210px}}
 @media(max-width:760px){.page{padding-bottom:75px}.headerInner{padding:0 18px;min-height:64px}.desktopNav,.logout,.cartLabel{display:none}.main{padding:18px 16px 60px}.heroVisual{height:210px}.heroBody{padding:0 21px 24px}.logo{width:79px;height:79px;border-width:4px;font-size:40px}.storeIdentity{gap:14px;margin-top:-28px}.identityText{padding-top:35px}.identityText h1{font-size:34px}.description{font-size:13px}.heroFacts{gap:18px}.productsSection{padding:52px 0 60px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.productImage{height:190px}.productDetails{padding:13px}.productDetails>div{align-items:flex-start;flex-direction:column}.storyBanner{padding:26px;align-items:flex-start;flex-direction:column}.mobileNav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:40;justify-content:space-around;background:#fff;border-top:1px solid #e2e9df;padding:10px 10px max(10px,env(safe-area-inset-bottom));box-shadow:0 -4px 22px #1a3c2d12}.mobileNav a{display:flex;align-items:center;flex-direction:column;gap:2px;color:#607263;text-decoration:none;font-size:10px;font-weight:700}.mobileNav :global(.material-symbols-outlined){font-size:21px}}
 @media(max-width:480px){.brand{font-size:21px}.brandMark{width:31px;height:31px;font-size:21px}.breadcrumb{margin-bottom:17px}.heroVisual{height:170px}.heroPattern{font-size:34px;letter-spacing:-2px}.verified{top:12px;left:12px;padding:7px 10px;font-size:10px}.storeIdentity{display:block}.logo{margin-top:-18px}.identityText{padding-top:12px}.identityText h1{font-size:30px}.heroFacts{gap:12px}.heroFacts>div{font-size:10px}.heroFacts strong{font-size:11px}.sectionHeading{align-items:start}.resultCount{padding:7px 9px;font-size:10px}.toolbar{align-items:stretch;flex-direction:column}.searchBox{max-width:none}.sortBox{margin-left:0;justify-content:space-between}.sortBox select{flex:1;max-width:none}.productImage{height:145px}.productDetails h3{font-size:13px}.productDetails strong{font-size:13px}.productDetails>div>span{font-size:10px}}
+
+/* Keep the store page aligned with the rest of the marketplace. */
+.page{background:#f7f5ef;color:#253027;font-family:var(--font-body-face),Arial,sans-serif}
+.siteHeader{background:#fffefa;backdrop-filter:none;border-bottom-color:#d8ddd2}
+.hero,.productCard,.storyBanner,.statePanel,.emptyProducts{border-radius:6px;box-shadow:none}
+.heroVisual{background:#31543d}
+.heroPattern{background:#31543d}
+.logo{border-radius:5px;box-shadow:none}
+.productCard:hover{transform:none;box-shadow:none;border-color:#9caf9f}
+.productCard:hover .productImage>img{transform:none}
+.viewProduct{box-shadow:none;border-radius:4px}
+.storyBanner{background:#e9e6d9}
+.storyBanner a,.primaryLink,.cartButton,.logout{border-radius:4px}
+.mobileNav{box-shadow:none}

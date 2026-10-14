@@ -72,10 +72,10 @@ export default function RegisterPage() {
     <div className="bg-surface font-body text-on-surface antialiased min-h-screen flex items-center justify-center p-4 md:p-8">
       <main className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch min-h-[870px]">
         {/* Left Column: Brand Visual */}
-        <section className="md:col-span-5 relative hidden md:flex flex-col justify-between overflow-hidden rounded-[2rem] bg-on-primary-container p-12">
-          {/* Decorative Elements */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-secondary-container/20 rounded-full blur-3xl -mr-32 -mt-32"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary-container/20 rounded-full blur-3xl -ml-48 -mb-48"></div>
+        <section className="md:col-span-5 relative hidden md:flex flex-col justify-between overflow-hidden rounded-md bg-surface-container-low p-12">
+          {/* Brand image */}
+
+
 
           <div className="relative z-10">
             <div className="flex items-center space-x-3 mb-12">
@@ -88,7 +88,7 @@ export default function RegisterPage() {
 
           <div className="absolute inset-0 z-0 opacity-90">
             <img
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover saturate-75"
               src={signupImage.src}
               alt="Background"
             />
@@ -127,7 +127,7 @@ export default function RegisterPage() {
                   Create your account
                 </h2>
                 <p className="text-on-surface-variant text-base">
-                  Enter your details to begin your journey with LocalBiz.
+                  Add your details to create an account and start shopping.
                 </p>
               </div>
 

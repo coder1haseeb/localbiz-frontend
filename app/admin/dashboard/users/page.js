@@ -68,14 +68,14 @@ export default function AdminUsersPage() {
     <>
       <style>{`.glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); } .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }`}</style>
 
-      <div className="flex min-h-screen bg-[#f8f6f3]">
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f1eeeb] flex flex-col p-4 space-y-2 font-['Inter'] z-40">
+      <div className="flex min-h-screen bg-[#f7f5ef]">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] z-40">
           <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>admin_panel_settings</span>
             </div>
-            <div><h1 className="text-lg font-bold text-[#272a32] leading-none">LocalBiz</h1><p className="text-[11px] text-slate-500 font-normal">Super Admin</p></div>
+            <div><h1 className="text-lg font-bold text-[#253027] leading-none">LocalBiz</h1><p className="text-[11px] text-slate-500 font-normal">Super Admin</p></div>
           </div>
           <nav className="flex-1 space-y-1 mt-2 text-sm">
             <Link href="/admin/dashboard" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg font-semibold"><span className="material-symbols-outlined">domain_verification</span><span>Store Approvals</span></Link>
@@ -88,7 +88,7 @@ export default function AdminUsersPage() {
         </aside>
 
         <main className="ml-72 flex-1 p-8">
-          <h1 className="text-3xl font-bold text-[#272a32] mb-2">User Management</h1>
+          <h1 className="text-3xl font-bold text-[#253027] mb-2">User Management</h1>
           <p className="text-slate-500 mb-6">Manage customer and business admin accounts</p>
 
           <div className="flex gap-3 mb-6 flex-wrap">
@@ -122,7 +122,7 @@ export default function AdminUsersPage() {
                 <tbody>
                   {users.map(u => (
                     <tr key={u._id} className="border-t border-slate-100">
-                      <td className="p-4 font-semibold text-[#272a32]">{u.fullName}</td>
+                      <td className="p-4 font-semibold text-[#253027]">{u.fullName}</td>
                       <td className="p-4 text-slate-500">{u.email}</td>
                       <td className="p-4">
                         <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">{u.role?.replace('_', ' ')}</span>

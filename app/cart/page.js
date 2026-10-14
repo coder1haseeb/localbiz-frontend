@@ -83,8 +83,8 @@ export default function CartPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#f8f6f3]">
-        <div className="w-8 h-8 border-4 border-[#806794] border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex items-center justify-center min-h-screen bg-[#f7f5ef]">
+        <div className="w-8 h-8 border-4 border-[#31543d] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -102,16 +102,16 @@ export default function CartPage() {
         }
       `}</style>
 
-      <div className="flex min-h-screen bg-[#f8f6f3]">
+      <div className="flex min-h-screen bg-[#f7f5ef]">
         {/* Sidebar Navigation */}
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f1eeeb] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
           <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#272a32] leading-none">LocalBiz</h1>
+              <h1 className="text-lg font-bold text-[#253027] leading-none">LocalBiz</h1>
               <p className="text-[11px] text-slate-500 font-normal">Marketplace</p>
             </div>
           </div>
@@ -121,11 +121,11 @@ export default function CartPage() {
               <span className="material-symbols-outlined">storefront</span>
               <span>Browse</span>
             </Link>
-            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#806794] shadow-sm rounded-lg font-semibold">
+            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
               <span>My Cart</span>
               {cart?.items?.length > 0 && (
-                <span className="ml-auto bg-[#806794] text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                <span className="ml-auto bg-[#31543d] text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {cart.items.length}
                 </span>
               )}
@@ -147,7 +147,7 @@ export default function CartPage() {
           {/* User Info Card */}
           <div className="p-4 bg-white/60 rounded-2xl border border-white/40">
             <p className="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-1">Welcome</p>
-            <p className="text-sm font-bold text-[#272a32]">{userName || 'Customer'}</p>
+            <p className="text-sm font-bold text-[#253027]">{userName || 'Customer'}</p>
             <p className="text-xs text-slate-500 mt-2">Explore local atelier and artisan shops.</p>
           </div>
 
@@ -163,7 +163,7 @@ export default function CartPage() {
         {/* Main Content Area */}
         <main className="ml-72 flex-1 p-8 space-y-8">
           <header className="mb-6">
-            <h1 className="text-4xl font-bold text-[#272a32]">My Cart</h1>
+            <h1 className="text-4xl font-bold text-[#253027]">My Cart</h1>
             <p className="text-slate-500 text-sm mt-1">Review your selections from Pakistani artisans and local creators.</p>
           </header>
 
@@ -176,7 +176,7 @@ export default function CartPage() {
                   <span className="material-symbols-outlined text-6xl text-slate-300 block mb-4">shopping_cart</span>
                   <h3 className="font-headline font-bold text-xl text-on-surface mb-2">Your basket is empty</h3>
                   <p className="text-on-surface-variant mb-6">Browse products and add them to your cart.</p>
-                  <Link href="/home" className="px-6 py-3 bg-gradient-to-br from-[#806794] to-[#bd8496] text-white font-bold rounded-xl inline-block">
+                  <Link href="/home" className="px-6 py-3 bg-gradient-to-br from-[#31543d] to-[#a96b4e] text-white font-bold rounded-xl inline-block">
                     Browse Products
                   </Link>
                 </div>
@@ -255,7 +255,7 @@ export default function CartPage() {
                 {/* CTA Button */}
                 <Link
                   href="/checkout"
-                  className={`w-full py-4 bg-gradient-to-br from-[#806794] to-[#bd8496] text-white font-bold rounded-2xl shadow-[0_8px_20px_rgba(70,72,212,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group mb-6 ${!cart?.items || cart.items.length === 0 ? 'pointer-events-none opacity-50' : ''}`}
+                  className={`w-full py-4 bg-gradient-to-br from-[#31543d] to-[#a96b4e] text-white font-bold rounded-2xl shadow-[0_8px_20px_rgba(70,72,212,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group mb-6 ${!cart?.items || cart.items.length === 0 ? 'pointer-events-none opacity-50' : ''}`}
                 >
                   <span>Proceed to Checkout</span>
                   <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -279,7 +279,7 @@ export default function CartPage() {
           <span className="material-symbols-outlined mb-1">home</span>
           Home
         </Link>
-        <Link className="flex flex-col items-center justify-center bg-[#806794]/10 text-[#806794] rounded-2xl px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="/home">
+        <Link className="flex flex-col items-center justify-center bg-[#31543d]/10 text-[#31543d] rounded-2xl px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="/home">
           <span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: "'FILL' 1" }}>search_insights</span>
           Explore
         </Link>

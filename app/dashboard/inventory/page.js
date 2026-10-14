@@ -94,19 +94,19 @@ export default function InventoryPage() {
     <>
       <style>{`.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; } .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }`}</style>
 
-      <div className="flex min-h-screen bg-[#f8f6f3]">
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f1eeeb] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
+      <div className="flex min-h-screen bg-[#f7f5ef]">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
           <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
             </div>
-            <div><h1 className="text-lg font-bold text-[#272a32] leading-none">LocalBiz</h1><p className="text-[11px] text-slate-500 font-normal">Business Admin</p></div>
+            <div><h1 className="text-lg font-bold text-[#253027] leading-none">LocalBiz</h1><p className="text-[11px] text-slate-500 font-normal">Business Admin</p></div>
           </div>
           <nav className="flex-1 space-y-1">
             <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">inventory_2</span><span>Products</span></Link>
             <Link href="/dashboard/orders" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">shopping_bag</span><span>Orders</span></Link>
-            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#806794] shadow-sm rounded-lg font-semibold"><span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>warehouse</span><span>Inventory</span></div>
+            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold"><span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>warehouse</span><span>Inventory</span></div>
             <Link href="/dashboard/returns" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">assignment_return</span><span>Returns</span></Link>
             <Link href="/dashboard/analytics" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">bar_chart</span><span>Analytics</span></Link>
             <Link href="/dashboard/profile" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">storefront</span><span>Store Profile</span></Link>
@@ -119,23 +119,23 @@ export default function InventoryPage() {
         <main className="ml-72 flex-1 p-8">
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-3xl font-bold text-[#272a32] mb-1">Inventory</h1>
+              <h1 className="text-3xl font-bold text-[#253027] mb-1">Inventory</h1>
               <p className="text-slate-500">Track stock levels across your catalogue</p>
             </div>
-            <button onClick={handleExport} className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-[#272a32] text-sm font-semibold rounded-xl hover:bg-slate-50">
+            <button onClick={handleExport} className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-[#253027] text-sm font-semibold rounded-xl hover:bg-slate-50">
               <span className="material-symbols-outlined text-base">download</span>Export CSV
             </button>
           </div>
 
           <div className="grid grid-cols-4 gap-4 mb-6">
-            <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Total</p><p className="text-2xl font-bold text-[#272a32]">{counts.total}</p></div>
+            <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Total</p><p className="text-2xl font-bold text-[#253027]">{counts.total}</p></div>
             <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">In Stock</p><p className="text-2xl font-bold text-emerald-600">{counts.inStock}</p></div>
             <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Low Stock</p><p className="text-2xl font-bold text-amber-600">{counts.lowStock}</p></div>
             <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Out of Stock</p><p className="text-2xl font-bold text-red-600">{counts.outOfStock}</p></div>
           </div>
 
           {loading ? (
-            <div className="glass-card rounded-2xl p-16 text-center"><div className="animate-spin w-10 h-10 border-4 border-slate-200 border-t-[#806794] rounded-full mx-auto"></div></div>
+            <div className="glass-card rounded-2xl p-16 text-center"><div className="animate-spin w-10 h-10 border-4 border-slate-200 border-t-[#31543d] rounded-full mx-auto"></div></div>
           ) : (
             <div className="glass-card rounded-2xl overflow-hidden">
               <table className="w-full text-sm">
@@ -150,7 +150,7 @@ export default function InventoryPage() {
                 <tbody>
                   {inventory.map(item => (
                     <tr key={item._id} className="border-t border-slate-100">
-                      <td className="p-4 font-semibold text-[#272a32]">{item.name}</td>
+                      <td className="p-4 font-semibold text-[#253027]">{item.name}</td>
                       <td className="p-4">{item.stockQty}</td>
                       <td className="p-4">
                         <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${statusBadge(item.stockStatus)}`}>
@@ -169,7 +169,7 @@ export default function InventoryPage() {
                           />
                           <button disabled={updating === item._id} onClick={() => updateStock(item._id, 'increment')} className="px-2 py-1.5 bg-emerald-50 text-emerald-600 rounded-lg text-xs font-bold hover:bg-emerald-100 disabled:opacity-50">+ Add</button>
                           <button disabled={updating === item._id} onClick={() => updateStock(item._id, 'decrement')} className="px-2 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-bold hover:bg-red-100 disabled:opacity-50">- Remove</button>
-                          <button disabled={updating === item._id} onClick={() => updateStock(item._id, 'set')} className="px-2 py-1.5 bg-[#806794]/10 text-[#806794] rounded-lg text-xs font-bold hover:bg-[#806794]/20 disabled:opacity-50">Set</button>
+                          <button disabled={updating === item._id} onClick={() => updateStock(item._id, 'set')} className="px-2 py-1.5 bg-[#31543d]/10 text-[#31543d] rounded-lg text-xs font-bold hover:bg-[#31543d]/20 disabled:opacity-50">Set</button>
                         </div>
                       </td>
                     </tr>
