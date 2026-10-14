@@ -1,351 +1,132 @@
 'use client';
+import { clearSession } from '../../../lib/session.js';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
+import styles from './store.module.css';
+
+const API = process.env.NEXT_PUBLIC_BACKEND_URL;
+const money = value => `Rs. ${Number(value || 0).toLocaleString('en-PK')}`;
 
 export default function StoreDetailPage() {
+  const { id: storeId } = useParams();
   const router = useRouter();
-  const params = useParams();
-  const storeId = params.id;
-
   const [store, setStore] = useState(null);
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [cartCount, setCartCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('All products');
+  const [sort, setSort] = useState('featured');
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    // Fetch store details
-    const fetchStore = fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/stores/${storeId}`
-    )
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) {
-          setStore(data.data);
+    if (!token) { router.replace('/login'); return; }
+    let active = true;
+    const load = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        const [storeResponse, productsResponse, cartResponse] = await Promise.all([
+          fetch(`${API}/api/v1/stores/${storeId}`),
+          fetch(`${API}/api/v1/stores/${storeId}/products?limit=50`),
+          fetch(`${API}/api/v1/cart`, { headers: { Authorization: `Bearer ${token}` } }),
+        ]);
+        const [storeData, productsData, cartData] = await Promise.all([
+          storeResponse.json(), productsResponse.json(), cartResponse.json(),
+        ]);
+        if (!active) return;
+        if (!storeResponse.ok || !storeData.success) {
+          setError(storeResponse.status === 404 ? 'This store is no longer available.' : 'We could not load this store. Please try again.');
+          return;
         }
-      })
-      .catch(err => console.error('Failed to fetch store:', err));
-
-    // Fetch store products
-    const fetchProducts = fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/stores/${storeId}/products?limit=50`
-    )
-      .then(r => r.json())
-      .then(data => {
-        if (data.success && data.data?.products) {
-          setProducts(data.data.products);
-        }
-      })
-      .catch(err => console.error('Failed to fetch products:', err));
-
-    // Fetch cart data for stats
-    const fetchCart = fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/cart`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
+        setStore(storeData.data);
+        if (!productsResponse.ok || !productsData.success) setError('The products could not be loaded. Please refresh this page.');
+        else setProducts(productsData.data?.products || []);
+        if (cartResponse.ok && cartData.success) setCartCount(cartData.data?.items?.length || 0);
+      } catch {
+        if (active) setError('We could not connect to the store. Please try again.');
+      } finally {
+        if (active) setLoading(false);
       }
-    )
-      .then(r => r.json())
-      .then(data => {
-        if (data.success && data.data?.items) {
-          setCartCount(data.data.items.length);
-        }
-      })
-      .catch(err => console.error('Failed to fetch cart:', err));
+    };
+    load();
+    return () => { active = false; };
+  }, [storeId, router]);
 
-    Promise.all([fetchStore, fetchProducts, fetchCart]).finally(() => {
-      setLoading(false);
-    });
-  }, [storeId]);
+  const categories = useMemo(() => ['All products', ...new Set(products.map(product => product.category).filter(Boolean))], [products]);
+  const visibleProducts = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    const list = products.filter(product =>
+      (category === 'All products' || product.category === category) &&
+      (!query || `${product.name} ${product.description || ''}`.toLowerCase().includes(query))
+    );
+    if (sort === 'price-low') return [...list].sort((a, b) => a.price - b.price);
+    if (sort === 'price-high') return [...list].sort((a, b) => b.price - a.price);
+    if (sort === 'name') return [...list].sort((a, b) => a.name.localeCompare(b.name));
+    return list;
+  }, [products, category, search, sort]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    router.push('/login');
+  const logout = () => {
+    clearSession();
+    router.replace('/login');
   };
 
   return (
-    <>
-      <style>{`
-        .glass-card {
-          background: rgba(255, 255, 255, 0.8);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-        .material-symbols-outlined {
-          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-        }
-      `}</style>
-
-      <div className="flex min-h-screen bg-[#f7f9fb]">
-        {/* Sidebar Navigation */}
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f2f4f6] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
-          <div className="flex items-center gap-3 px-3 py-6 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4648d4] to-[#6b38d4] flex items-center justify-center text-white">
-              <span
-                className="material-symbols-outlined"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                diamond
-              </span>
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-[#191c1e] leading-none">
-                LocalBiz
-              </h1>
-              <p className="text-[11px] text-slate-500 font-normal">Marketplace</p>
-            </div>
+    <div className={styles.page}>
+      <header className={styles.siteHeader}>
+        <div className={styles.headerInner}>
+          <Link href="/home" className={styles.brand} aria-label="LocalBiz home"><span className={styles.brandMark}>L<span>.</span></span><span>localbiz<span className={styles.brandDot}>.</span></span></Link>
+          <nav className={styles.desktopNav} aria-label="Main navigation"><Link href="/home">Discover</Link><Link href="/orders">My orders</Link><Link href="/profile">Profile</Link></nav>
+          <div className={styles.headerActions}>
+            <Link href="/cart" className={styles.cartButton} aria-label={`Cart with ${cartCount} items`}><span className="material-symbols-outlined">shopping_bag</span><span className={styles.cartLabel}>Cart</span>{cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}</Link>
+            <button className={styles.logout} onClick={logout} type="button">Sign out</button>
           </div>
-
-          <nav className="flex-1 space-y-1">
-            <Link
-              href="/home"
-              className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] hover:translate-x-1 transition-all rounded-lg cursor-pointer"
-            >
-              <span className="material-symbols-outlined">home</span>
-              <span>Browse</span>
-            </Link>
-            <Link
-              href="/cart"
-              className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] hover:translate-x-1 transition-all rounded-lg cursor-pointer relative"
-            >
-              <span className="material-symbols-outlined">shopping_cart</span>
-              <span>My Cart</span>
-              {cartCount > 0 && (
-                <span className="ml-auto bg-[#4648d4] text-white text-xs font-bold px-2 py-0.5 rounded-full">
-                  {cartCount}
-                </span>
-              )}
-            </Link>
-          </nav>
-
-          {/* User Info Card */}
-          <div className="p-4 bg-white/60 rounded-2xl border border-white/40">
-            <p className="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-1">
-              Store
-            </p>
-            <p className="text-sm font-bold text-[#191c1e] truncate">
-              {store?.storeName || 'Loading...'}
-            </p>
-            <p className="text-xs text-slate-500 mt-2">Explore products</p>
-          </div>
-
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-3 w-full py-3 px-4 text-red-500 font-bold text-sm hover:bg-red-50 rounded-lg transition-all"
-          >
-            <span className="material-symbols-outlined">logout</span>
-            Logout
-          </button>
-        </aside>
-
-        {/* Main Content */}
-        <main className="ml-72 flex-1 p-8 space-y-8">
-          {/* Back Button */}
-          <button
-            onClick={() => router.back()}
-            className="flex items-center gap-2 text-[#4648d4] hover:text-[#6b38d4] font-semibold text-sm transition-all"
-          >
-            <span className="material-symbols-outlined">arrow_back</span>
-            Back to Stores
-          </button>
-
-          {loading ? (
-            <div className="glass-card rounded-2xl p-16 text-center">
-              <div className="animate-spin w-12 h-12 border-4 border-slate-200 border-t-[#4648d4] rounded-full mx-auto"></div>
-              <p className="text-slate-500 mt-4">Loading store details...</p>
+        </div>
+      </header>
+      <main className={styles.main}>
+        <div className={styles.breadcrumb}><Link href="/home">Marketplace</Link><span>/</span><span>Stores</span><span>/</span><strong>{store?.storeName || 'Store'}</strong></div>
+        {loading ? <div className={styles.statePanel} role="status"><span className={styles.loader} /><h1>Opening the store</h1><p>Finding the latest from this local business.</p></div>
+        : !store ? <div className={styles.statePanel}><span className="material-symbols-outlined">storefront</span><h1>Store unavailable</h1><p>{error || 'We could not find this store.'}</p><Link href="/home" className={styles.primaryLink}>Explore other stores <span aria-hidden="true">↗</span></Link></div>
+        : <>
+          <section className={styles.hero} aria-labelledby="store-title">
+            <div className={styles.heroVisual}>
+              {store.coverImage ? <img src={store.coverImage} alt="" /> : <div className={styles.heroPattern}><span>LOCAL GOODS<br />GOOD STORIES</span></div>}
+              <div className={styles.heroShade} />
+              <span className={styles.verified}><span className="material-symbols-outlined">verified</span> Verified local store</span>
             </div>
-          ) : store ? (
-            <>
-              {/* Store Header */}
-              <section className="glass-card rounded-2xl p-8 space-y-6">
-                <div className="flex items-start justify-between gap-6">
-                  <div className="flex-1">
-                    <h1 className="text-4xl font-bold text-[#191c1e] mb-2">
-                      {store.storeName}
-                    </h1>
-                    <p className="text-slate-500 mb-4">{store.description}</p>
-                    <div className="flex items-center gap-6 flex-wrap">
-                      {store.city && (
-                        <div className="flex items-center gap-2 text-slate-600">
-                          <span className="material-symbols-outlined text-lg">
-                            location_on
-                          </span>
-                          <span className="font-semibold">{store.city}</span>
-                        </div>
-                      )}
-                      {store.rating && (
-                        <div className="flex items-center gap-2 text-slate-600">
-                          <span>⭐</span>
-                          <span className="font-semibold">{store.rating.toFixed(1)} / 5</span>
-                        </div>
-                      )}
-                      {store.category && (
-                        <div className="flex items-center gap-2 text-slate-600">
-                          <span className="material-symbols-outlined text-lg">
-                            category
-                          </span>
-                          <span className="font-semibold">
-                            {store.category.name}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="w-32 h-32 rounded-2xl bg-gradient-to-br from-[#4648d4]/10 to-[#6b38d4]/10 flex items-center justify-center">
-                    <span
-                      className="material-symbols-outlined text-5xl text-[#4648d4]"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
-                      store
-                    </span>
-                  </div>
-                </div>
-              </section>
-
-              {/* Products Section */}
-              <section className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-2xl font-bold text-[#191c1e] flex items-center gap-2">
-                      <span
-                        className="material-symbols-outlined text-[#4648d4]"
-                        style={{ fontVariationSettings: "'FILL' 1" }}
-                      >
-                        inventory_2
-                      </span>
-                      Products
-                    </h2>
-                    <p className="text-sm text-slate-500 mt-1">
-                      Browse {products.length} products from this store
-                    </p>
-                  </div>
-                  <Link
-                    href="/cart"
-                    className="flex items-center gap-2 px-4 py-2 bg-[#4648d4] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
-                  >
-                    <span className="material-symbols-outlined text-base">
-                      shopping_cart
-                    </span>
-                    Cart ({cartCount})
-                  </Link>
-                </div>
-
-                {products.length === 0 ? (
-                  <div className="glass-card rounded-2xl p-16 text-center">
-                    <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <span className="material-symbols-outlined text-3xl text-slate-400">
-                        inventory_2
-                      </span>
-                    </div>
-                    <p className="text-[#191c1e] font-bold text-lg">
-                      No products available yet
-                    </p>
-                    <p className="text-slate-500 text-sm mt-1">
-                      Check back soon for amazing products from this store!
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {products.map(product => (
-                      <Link
-                        key={product._id}
-                        href={`/product/${product._id}`}
-                        className="glass-card rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-indigo-500/10 transition-all group"
-                      >
-                        <div className="h-40 w-full bg-slate-100 relative overflow-hidden">
-                          {product.images && product.images.length > 0 ? (
-                            <img
-                              alt={product.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                              src={product.images[0]}
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-slate-400">
-                              <span className="material-symbols-outlined text-4xl">
-                                inventory_2
-                              </span>
-                            </div>
-                          )}
-                          <div className="absolute top-3 left-3 bg-white/90 backdrop-blur px-2.5 py-1 rounded-lg text-[10px] font-bold text-[#191c1e]">
-                            {product.category || 'Product'}
-                          </div>
-                          {product.stockQty === 0 && (
-                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                              <span className="text-white font-bold text-sm">
-                                Out of Stock
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="p-4 space-y-3">
-                          <div>
-                            <h6 className="font-bold text-[#191c1e] truncate text-sm">
-                              {product.name}
-                            </h6>
-                            <p className="text-xs text-slate-500 truncate">
-                              {store.storeName}
-                            </p>
-                          </div>
-                          <div className="flex items-center justify-between pt-1 border-t border-slate-200">
-                            <span className="text-[#4648d4] font-bold text-sm">
-                              PKR {product.price?.toLocaleString()}
-                            </span>
-                            <span
-                              className={`text-[10px] font-bold px-2 py-1 rounded-full ${
-                                product.stockQty > 0
-                                  ? 'bg-emerald-100 text-emerald-700'
-                                  : 'bg-red-100 text-red-600'
-                              }`}
-                            >
-                              {product.stockQty > 0 ? 'In Stock' : 'Out'}
-                            </span>
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </section>
-            </>
-          ) : (
-            <div className="glass-card rounded-2xl p-16 text-center">
-              <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <span className="material-symbols-outlined text-3xl text-slate-400">
-                  error
-                </span>
+            <div className={styles.heroBody}>
+              <div className={styles.storeIdentity}>
+                <div className={styles.logo}>{store.logo ? <img src={store.logo} alt={`${store.storeName} logo`} /> : <span>{store.storeName?.charAt(0)?.toUpperCase() || 'S'}</span>}</div>
+                <div className={styles.identityText}><p className={styles.eyebrow}>{store.category?.name || 'Local business'} <span>·</span> {store.city || 'Pakistan'}</p><h1 id="store-title">{store.storeName}</h1><p className={styles.description}>{store.description || `Explore thoughtfully selected products from ${store.storeName}.`}</p></div>
               </div>
-              <p className="text-[#191c1e] font-bold text-lg">
-                Store not found
-              </p>
-              <p className="text-slate-500 text-sm mt-1">
-                The store you're looking for doesn't exist.
-              </p>
-              <Link
-                href="/home"
-                className="mt-4 inline-block text-[#4648d4] font-semibold hover:underline"
-              >
-                Back to Stores
-              </Link>
+              <div className={styles.heroFacts}>
+                <div><span className="material-symbols-outlined">inventory_2</span><strong>{products.length}</strong><span>products</span></div>
+                <div><span className="material-symbols-outlined">location_on</span><strong>{store.city || 'Local'}</strong><span>based in</span></div>
+                {store.rating > 0 && <div><span className="material-symbols-outlined">star</span><strong>{Number(store.rating).toFixed(1)}</strong><span>{store.totalReviews || 0} reviews</span></div>}
+              </div>
             </div>
-          )}
-        </main>
-      </div>
-    </>
+          </section>
+          <section className={styles.productsSection} aria-labelledby="products-title">
+            <div className={styles.sectionHeading}><div><p className={styles.sectionKicker}>THE COLLECTION</p><h2 id="products-title">Explore the store</h2><p>Discover what {store.storeName} has to offer.</p></div><span className={styles.resultCount}>{visibleProducts.length} {visibleProducts.length === 1 ? 'item' : 'items'}</span></div>
+            <div className={styles.toolbar}>
+              <label className={styles.searchBox}><span className="material-symbols-outlined">search</span><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Search this store" aria-label="Search this store" />{search && <button type="button" onClick={() => setSearch('')} aria-label="Clear search">×</button>}</label>
+              <label className={styles.sortBox}><span>Sort by</span><select value={sort} onChange={event => setSort(event.target.value)} aria-label="Sort products"><option value="featured">Newest first</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="name">Name: A to Z</option></select></label>
+            </div>
+            {categories.length > 1 && <div className={styles.categories} role="group" aria-label="Product categories">{categories.map(item => <button key={item} type="button" className={category === item ? styles.categoryActive : styles.categoryButton} onClick={() => setCategory(item)}>{item}</button>)}</div>}
+            {error && <p className={styles.inlineError} role="alert">{error}</p>}
+            {visibleProducts.length === 0 ? <div className={styles.emptyProducts}><span className="material-symbols-outlined">shopping_bag</span><h3>{products.length === 0 ? 'Products are coming soon' : 'No matching products'}</h3><p>{products.length === 0 ? 'Check back soon for new arrivals from this store.' : 'Try another search or category to explore more.'}</p>{products.length > 0 && <button type="button" onClick={() => { setSearch(''); setCategory('All products'); }}>Clear filters</button>}</div>
+            : <div className={styles.grid}>{visibleProducts.map(product => <Link key={product._id} href={`/product/${product._id}`} className={styles.productCard}>
+              <div className={styles.productImage}>{product.images?.[0] ? <img src={product.images[0]} alt={product.name} loading="lazy" /> : <span className="material-symbols-outlined">inventory_2</span>}{product.stockQty <= 0 && <span className={styles.soldOut}>Sold out</span>}{product.stockQty > 0 && <span className={styles.viewProduct} aria-hidden="true"><span className="material-symbols-outlined">arrow_outward</span></span>}</div>
+              <div className={styles.productDetails}><p>{product.category || store.category?.name || 'Local find'}</p><h3>{product.name}</h3><div><strong>{money(product.price)}</strong><span>View details <span aria-hidden="true">→</span></span></div></div>
+            </Link>)}</div>}
+          </section>
+          <section className={styles.storyBanner}><div><p className={styles.sectionKicker}>SHOP CLOSE TO HOME</p><h2>Every order has a local story.</h2><p>Thanks for supporting independent businesses in your community.</p></div><Link href="/home">Explore more stores <span aria-hidden="true">↗</span></Link></section>
+        </>}
+      </main>
+      <nav className={styles.mobileNav} aria-label="Mobile navigation"><Link href="/home"><span className="material-symbols-outlined">explore</span>Discover</Link><Link href="/cart"><span className="material-symbols-outlined">shopping_bag</span>Cart</Link><Link href="/orders"><span className="material-symbols-outlined">receipt_long</span>Orders</Link><Link href="/profile"><span className="material-symbols-outlined">person</span>Profile</Link></nav>
+    </div>
   );
 }

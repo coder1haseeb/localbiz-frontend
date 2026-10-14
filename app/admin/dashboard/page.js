@@ -1,7 +1,10 @@
 'use client';
+import SidebarMenuButton from '../../../components/SidebarMenuButton.js';
+import { clearSession } from '../../../lib/session.js';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -11,6 +14,7 @@ export default function AdminDashboard() {
     approved: [],
     rejected: [],
   });
+  const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('');
@@ -29,7 +33,20 @@ export default function AdminDashboard() {
 
     setToken(authToken);
     fetchBusinesses(authToken);
+    fetchSummary(authToken);
   }, []);
+
+  const fetchSummary = async (authToken) => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/dashboard`, {
+        headers: { Authorization: `Bearer ${authToken}` },
+      });
+      const data = await res.json();
+      if (data.success) setSummary(data.data);
+    } catch (err) {
+      console.error('Failed to fetch dashboard summary:', err);
+    }
+  };
 
   const fetchBusinesses = async (authToken) => {
     try {
@@ -126,9 +143,8 @@ export default function AdminDashboard() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-    router.push('/login');
+    clearSession();
+    router.replace('/login');
   };
 
   return (
@@ -145,9 +161,10 @@ export default function AdminDashboard() {
         }
       `}</style>
 
-      <div className="flex min-h-screen bg-[#f7f9fb]">
+      <div className="flex min-h-screen bg-[#f8f6f3]">
         {/* Sidebar */}
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f2f4f6] flex flex-col p-4 space-y-2 font-['Inter'] z-40">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f1eeeb] flex flex-col p-4 space-y-2 font-['Inter'] z-40">
+          <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white">
               <span
@@ -158,7 +175,7 @@ export default function AdminDashboard() {
               </span>
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#191c1e] leading-none">
+              <h1 className="text-lg font-bold text-[#272a32] leading-none">
                 LocalBiz
               </h1>
               <p className="text-[11px] text-slate-500 font-normal">Super Admin</p>
@@ -172,15 +189,27 @@ export default function AdminDashboard() {
               </p>
               <button
                 onClick={() => setActiveTab('pending')}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm transition-all ${
-                  true
-                    ? 'bg-white text-red-600 shadow-sm'
-                    : 'text-slate-500 hover:bg-[#eceef0]'
-                }`}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm transition-all bg-white text-red-600 shadow-sm mb-1"
               >
                 <span className="material-symbols-outlined">domain_verification</span>
                 <span>Store Approvals</span>
               </button>
+              <Link href="/admin/dashboard/users" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm text-slate-500 hover:bg-[#eceef0] transition-all">
+                <span className="material-symbols-outlined">group</span>
+                <span>Users</span>
+              </Link>
+              <Link href="/admin/dashboard/categories" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm text-slate-500 hover:bg-[#eceef0] transition-all">
+                <span className="material-symbols-outlined">category</span>
+                <span>Categories</span>
+              </Link>
+              <Link href="/admin/dashboard/reports" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm text-slate-500 hover:bg-[#eceef0] transition-all">
+                <span className="material-symbols-outlined">insights</span>
+                <span>Reports</span>
+              </Link>
+              <Link href="/notifications" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm text-slate-500 hover:bg-[#eceef0] transition-all">
+                <span className="material-symbols-outlined">notifications</span>
+                <span>Notifications</span>
+              </Link>
             </div>
           </nav>
 
@@ -197,9 +226,19 @@ export default function AdminDashboard() {
         <main className="ml-72 flex-1 p-8 space-y-8">
           {/* Header */}
           <section className="space-y-2">
-            <h1 className="text-4xl font-bold text-[#191c1e]">Store Approvals</h1>
+            <h1 className="text-4xl font-bold text-[#272a32]">Store Approvals</h1>
             <p className="text-slate-500">Review and manage business store applications</p>
           </section>
+
+          {summary && (
+            <section className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+              <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Customers</p><p className="text-2xl font-bold text-[#272a32]">{summary.totalCustomers}</p></div>
+              <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Business Owners</p><p className="text-2xl font-bold text-[#272a32]">{summary.totalBusinessOwners}</p></div>
+              <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Active Stores</p><p className="text-2xl font-bold text-emerald-600">{summary.activeBusinesses}</p></div>
+              <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Total Orders</p><p className="text-2xl font-bold text-[#272a32]">{summary.totalOrders}</p></div>
+              <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Total Revenue</p><p className="text-2xl font-bold text-red-600">Rs. {summary.totalRevenue?.toLocaleString()}</p></div>
+            </section>
+          )}
 
           {/* Tabs */}
           <div className="flex gap-4 border-b border-slate-200">
@@ -267,7 +306,7 @@ export default function AdminDashboard() {
                     : 'block'}
                 </span>
               </div>
-              <p className="text-[#191c1e] font-bold text-lg">
+              <p className="text-[#272a32] font-bold text-lg">
                 No {activeTab} stores
               </p>
               <p className="text-slate-500 text-sm mt-1">
@@ -285,7 +324,7 @@ export default function AdminDashboard() {
                 >
                   <div className="flex items-start justify-between gap-6">
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-[#191c1e] mb-1">
+                      <h3 className="text-lg font-bold text-[#272a32] mb-1">
                         {business.storeName}
                       </h3>
                       <p className="text-sm text-slate-600 mb-3">
@@ -382,7 +421,7 @@ export default function AdminDashboard() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl p-8 max-w-md w-full space-y-6">
             <div>
-              <h3 className="text-xl font-bold text-[#191c1e] mb-2">
+              <h3 className="text-xl font-bold text-[#272a32] mb-2">
                 Reject Store Application
               </h3>
               <p className="text-sm text-slate-600">

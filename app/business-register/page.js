@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Spinner from '@/components/Spinner';
+import { useBusinessRegistration } from '@/components/BusinessRegistrationProvider';
 
 export default function BusinessOwnerRegisterPage() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const { ownerData, setOwnerData } = useBusinessRegistration();
+  const [formData, setFormData] = useState(ownerData || {
     fullName: '',
     email: '',
     password: '',
@@ -28,7 +30,9 @@ export default function BusinessOwnerRegisterPage() {
       alert('Please fill in all fields');
       return;
     }
-    localStorage.setItem('businessOwnerData', JSON.stringify(formData));
+    localStorage.removeItem('businessOwnerData');
+    localStorage.removeItem('businessRegistrationDraft');
+    setOwnerData(formData);
     router.push('/business-register/store-details');
   };
 
@@ -54,14 +58,14 @@ export default function BusinessOwnerRegisterPage() {
       `}</style>
 
       <div className="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
-        <header className="bg-[#f7f9fb]/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_4px_24px_rgba(70,72,212,0.07)]">
+        <header className="bg-[#f8f6f3]/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_4px_24px_rgba(70,72,212,0.07)]">
           <div className="flex justify-between items-center w-full px-8 py-4">
             <div className="flex items-center gap-4">
-              <span className="text-xl font-bold bg-gradient-to-br from-[#4648d4] to-[#6b38d4] bg-clip-text text-transparent font-headline">LocalBiz</span>
+              <span className="text-xl font-bold bg-gradient-to-br from-[#806794] to-[#bd8496] bg-clip-text text-transparent font-headline">LocalBiz</span>
             </div>
             <div className="hidden md:flex items-center gap-8 font-headline text-sm font-semibold tracking-tight text-slate-500">
-              <a className="hover:text-[#6b38d4] transition-colors duration-200" href="#">Registration Portal</a>
-              <a className="hover:text-[#6b38d4] transition-colors duration-200" href="#">Help Center</a>
+              <a className="hover:text-[#bd8496] transition-colors duration-200" href="/business-register">Registration Portal</a>
+              <a className="hover:text-[#bd8496] transition-colors duration-200" href="/login">Sign In</a>
             </div>
           </div>
         </header>
@@ -236,9 +240,7 @@ export default function BusinessOwnerRegisterPage() {
               <span className="text-outline text-sm">© 2024 Digital Atelier</span>
             </div>
             <div className="flex gap-8 text-sm font-medium text-on-surface-variant">
-              <a className="hover:text-primary transition-colors" href="#">Privacy</a>
-              <a className="hover:text-primary transition-colors" href="#">Terms</a>
-              <a className="hover:text-primary transition-colors" href="#">Support</a>
+              <a className="hover:text-primary transition-colors" href="/login">Sign In</a>
             </div>
             <div className="flex gap-4">
               <div className="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-outline hover:text-primary transition-colors cursor-pointer">
@@ -254,4 +256,3 @@ export default function BusinessOwnerRegisterPage() {
     </>
   );
 }
-        

@@ -1,4 +1,76 @@
 @import "tailwindcss";
+@config "../tailwind.config.js";
+
+@theme {
+  --color-background: #f8f6f3;
+  --color-surface: #f8f6f3;
+  --color-surface-bright: #f8f6f3;
+  --color-surface-container-low: #f1eeeb;
+  --color-surface-container-lowest: #fff;
+  --color-surface-container: #eeeae7;
+  --color-on-surface: #272a32;
+  --color-on-surface-variant: #656875;
+  --color-outline-variant: #ddd7d4;
+  --color-primary: #806794;
+  --color-secondary: #bd8496;
+  --color-error: #b85665;
+  --font-headline: var(--font-display), Georgia, serif;
+  --font-body: var(--font-body-face), Arial, sans-serif;
+}
+
+:root { --brand: #806794; --border-soft: #e8e0dd; --shadow-soft: 0 14px 40px -25px rgba(67,47,65,.28); }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body-face), Arial, sans-serif; }
+h1,h2,h3,h4,h5,h6 { font-family: var(--font-display), Georgia, serif; letter-spacing: -.025em; }
+p { line-height: 1.65; }
+::selection { background: #ddc9e5; color: #272a32; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+button { cursor: pointer; }
+a,button,input,textarea,select { transition: background-color .25s ease, border-color .25s ease, color .25s ease, box-shadow .25s ease, transform .25s ease; }
+input:focus,textarea:focus,select:focus { border-color: var(--brand) !important; }
+.glass-card,.glass-panel { background: rgba(255,255,255,.88); border: 1px solid var(--border-soft); box-shadow: var(--shadow-soft); backdrop-filter: blur(12px); }
+.hero-gradient { background: linear-gradient(135deg,#77618c,#9b7799 55%,#bb8794); }
+.btn-gradient { background: linear-gradient(115deg,#806794,#aa7896); }
+.btn-gradient:hover { filter: brightness(1.07); transform: translateY(-2px); }
+.text-gradient { color: #806794; }
+.bg-\[\#f8f6f3\] { background-color: #f8f6f3; }
+.bg-\[\#f1eeeb\] { background-color: #f1eeeb; }
+.bg-\[\#806794\] { background-color: #806794; }
+.text-\[\#806794\] { color: #806794; }
+.text-\[\#272a32\] { color: #272a32; }
+@media (max-width:767px) {
+  main[class*="ml-72"] { margin-left: 0; padding: 1.25rem; padding-top: 6rem; }
+  aside[class*="w-72"][class*="fixed"] { width: 100%; height: auto; max-height: 4.5rem; overflow: hidden; padding: .25rem 1rem; border-bottom: 1px solid var(--border-soft); }
+  aside[class*="w-72"][class*="fixed"]:focus-within,aside[class*="w-72"][class*="fixed"]:hover { max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-soft); }
+}
+.sidebar-menu-toggle { display:none; }
+@media (max-width:767px) {
+  aside[class*="w-72"][class*="fixed"].menu-open { max-height:90vh !important; overflow-y:auto !important; }
+  .sidebar-menu-toggle { display:grid; place-items:center; position:absolute; top:.85rem; right:1rem; width:2.6rem; height:2.6rem; border-radius:12px; background:#e8dce9; color:#644b76; }
+}
+@media (prefers-reduced-motion:reduce) { html { scroll-behavior:auto; } *,*::before,*::after { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
+
+.marketplace-shell { background: radial-gradient(circle at 95% 0%,#f0e4ed 0,transparent 32rem),#f8f6f3; }
+.marketplace-sidebar { background: #f3eeef; border-right: 1px solid #e5dade; box-shadow: 8px 0 30px -30px #4c3549; }
+.marketplace-sidebar > div:first-child { border-bottom: 1px solid #e4d9de; margin-bottom: 1rem; }
+.marketplace-sidebar nav a, .marketplace-sidebar nav > div { border-radius: 14px; }
+.marketplace-sidebar nav a:hover { background: #e9dfe8; color: #694e7a; transform: none; }
+.marketplace-main { max-width: 1600px; margin-right: auto; }
+.marketplace-main h1 { font-size: clamp(2.4rem,4vw,3.5rem); line-height: 1.1; }
+.marketplace-main h2 { font-size: clamp(1.7rem,2.5vw,2.3rem); }
+.marketplace-eyebrow { color: #806794; font-size: .7rem; letter-spacing: .19em; font-weight: 800; }
+.marketplace-main .glass-card { border-radius: 20px; overflow: hidden; box-shadow: 0 15px 40px -32px #503e52; }
+.marketplace-main .glass-card:hover { transform: translateY(-3px); box-shadow: 0 22px 44px -30px #503e52; }
+.marketplace-main .glass-card img { transition: transform .35s ease; }
+.marketplace-main .glass-card:hover img { transform: scale(1.025); }
+.marketplace-main section { scroll-margin-top: 2rem; }
+.marketplace-menu-toggle { display: none; }
+@media (max-width:767px) {
+  .marketplace-sidebar { max-height: 4.5rem !important; overflow: hidden !important; }
+  .marketplace-sidebar.menu-open { max-height: 90vh !important; overflow-y: auto !important; }
+  .marketplace-menu-toggle { display: flex; position: absolute; top: .9rem; right: 1rem; width: 2.5rem; height: 2.5rem; align-items: center; justify-content: center; border-radius: 12px; background: #e8dce9; color: #644b76; }
+  .marketplace-main { padding: 6rem 1.25rem 2rem; }
+}
 
 @layer base {
   .material-symbols-outlined {
@@ -6,29 +78,29 @@
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
   }
 
   .glass-panel {
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
 
   .hero-gradient {
-    background: linear-gradient(135deg, #4648d4 0%, #6b38d4 100%);
+    background: linear-gradient(135deg, #77618c 0%, #bb8794 100%);
   }
 
   .text-gradient {
-    background: linear-gradient(135deg, #4648d4 0%, #6b38d4 100%);
+    background: linear-gradient(135deg, #806794 0%, #bd8496 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   .btn-gradient {
-    background: linear-gradient(135deg, #4648d4 0%, #6b38d4 100%);
+    background: linear-gradient(135deg, #806794 0%, #bd8496 100%);
   }
 
   .floating-label-group {
@@ -40,7 +112,7 @@
     top: -0.5rem;
     left: 0.75rem;
     font-size: 0.75rem;
-    color: #4648d4;
+    color: #806794;
     background-color: #ffffff;
     padding: 0 0.25rem;
   }
@@ -56,15 +128,8 @@
 
 @layer utilities {
   :root {
-    --background: #f7f9fb;
-    --foreground: #191c1e;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: #0a0a0a;
-      --foreground: #ededed;
-    }
+    --background: #f8f6f3;
+    --foreground: #272a32;
   }
 
   body {

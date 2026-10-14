@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { getSession, routeForRole, saveSession } from '../../../lib/session';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -13,12 +14,8 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     // If already logged in as super_admin, redirect to dashboard
-    const token = localStorage.getItem('authToken');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    
-    if (token && user?.role === 'super_admin') {
-      router.push('/admin/dashboard');
-    }
+    const session = getSession();
+    if (session) router.replace(routeForRole(session.user.role));
   }, []);
 
   const handleSubmit = async (e) => {
@@ -50,14 +47,13 @@ export default function AdminLoginPage() {
       }
 
       // Store auth data
-      localStorage.setItem('authToken', data.data.token);
-      localStorage.setItem('user', JSON.stringify(data.data.user));
+      saveSession(data.data);
 
       setSuccess(true);
 
       // Redirect to admin dashboard
       setTimeout(() => {
-        router.push('/admin/dashboard');
+        router.replace('/admin/dashboard');
       }, 1000);
     } catch (err) {
       console.error('Login error:', err);
@@ -67,12 +63,12 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-red-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#f4eef3] via-[#faf8f6] to-[#f6eae9] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white shadow-lg">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white shadow-sm">
               <span
                 className="material-symbols-outlined text-4xl"
                 style={{ fontVariationSettings: "'FILL' 1" }}
@@ -81,12 +77,12 @@ export default function AdminLoginPage() {
               </span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-[#191c1e] mb-2">SuperAdmin Login</h1>
+          <h1 className="text-3xl font-bold text-[#272a32] mb-2">SuperAdmin Login</h1>
           <p className="text-slate-600">LocalBiz Administration Panel</p>
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-2xl shadow-lg p-8 space-y-6">
+        <div className="bg-white rounded-2xl border border-[#e8e0dd] shadow-sm p-8 space-y-6">
           {/* Error Message */}
           {error && (
             <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -107,7 +103,7 @@ export default function AdminLoginPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email Input */}
             <div className="space-y-2">
-              <label htmlFor="email" className="block text-sm font-semibold text-[#191c1e]">
+              <label htmlFor="email" className="block text-sm font-semibold text-[#272a32]">
                 Email Address
               </label>
               <input
@@ -116,14 +112,14 @@ export default function AdminLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@example.com"
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#806794] focus:border-transparent transition-all"
                 required
               />
             </div>
 
             {/* Password Input */}
             <div className="space-y-2">
-              <label htmlFor="password" className="block text-sm font-semibold text-[#191c1e]">
+              <label htmlFor="password" className="block text-sm font-semibold text-[#272a32]">
                 Password
               </label>
               <input
@@ -132,7 +128,7 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#806794] focus:border-transparent transition-all"
                 required
               />
             </div>
@@ -141,7 +137,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-red-500 hover:bg-red-600 disabled:bg-slate-400 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2"
+              className="w-full py-3 px-4 bg-[#806794] hover:bg-[#6b527d] disabled:bg-slate-400 text-white font-bold rounded-lg transition-all flex items-center justify-center gap-2"
             >
               {loading ? (
                 <>
@@ -159,16 +155,6 @@ export default function AdminLoginPage() {
             </button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 space-y-2">
-            <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">
-              Demo Credentials
-            </p>
-            <div className="text-xs text-slate-600 space-y-1">
-              <p><span className="font-semibold">Email:</span> coder.haseeb@gmail.com</p>
-              <p><span className="font-semibold">Password:</span> HaseeB012</p>
-            </div>
-          </div>
         </div>
 
         {/* Footer */}

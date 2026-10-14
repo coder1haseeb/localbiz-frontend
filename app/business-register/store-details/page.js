@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Spinner from '@/components/Spinner';
+import { useBusinessRegistration } from '@/components/BusinessRegistrationProvider';
 
 export default function StoreDetailsPage() {
   const router = useRouter();
-  const [ownerData, setOwnerData] = useState(null);
+  const { ownerData, setOwnerData } = useBusinessRegistration();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState({
@@ -20,10 +21,9 @@ export default function StoreDetailsPage() {
   });
 
   useEffect(() => {
-    const savedOwnerData = localStorage.getItem('businessOwnerData');
-    if (savedOwnerData) {
-      setOwnerData(JSON.parse(savedOwnerData));
-    }
+    localStorage.removeItem('businessOwnerData');
+    localStorage.removeItem('businessRegistrationDraft');
+    if (!ownerData) router.replace('/business-register');
 
     const fetchCategories = async () => {
       try {
@@ -59,16 +59,6 @@ export default function StoreDetailsPage() {
       };
       reader.readAsDataURL(file);
     }
-  };
-
-  const handleSaveDraft = () => {
-    const draftData = {
-      owner: ownerData,
-      storeDetails: formData,
-      timestamp: new Date().toISOString()
-    };
-    localStorage.setItem('businessRegistrationDraft', JSON.stringify(draftData));
-    alert('Draft saved successfully!');
   };
 
   const handleCompleteSetup = async (e) => {
@@ -112,8 +102,7 @@ export default function StoreDetailsPage() {
       const data = await response.json();
 
       if (response.ok || response.status === 201) {
-        localStorage.removeItem('businessOwnerData');
-        localStorage.removeItem('businessRegistrationDraft');
+        setOwnerData(null);
         alert('Business registered successfully! Awaiting admin approval.');
         router.push('/login');
       } else if (data.errors && data.errors.length > 0) {
@@ -142,23 +131,23 @@ export default function StoreDetailsPage() {
           font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
         .gradient-text {
-          background: linear-gradient(135deg, #4648d4 0%, #6b38d4 100%);
+          background: linear-gradient(135deg, #806794 0%, #bd8496 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
         }
         .gradient-bg {
-          background: linear-gradient(135deg, #4648d4 0%, #6b38d4 100%);
+          background: linear-gradient(135deg, #806794 0%, #bd8496 100%);
         }
       `}</style>
 
       <div className="bg-background font-body text-on-surface min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed">
         {/* Navigation */}
-        <nav className="bg-[#f7f9fb]/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_4px_24px_rgba(70,72,212,0.07)] px-8 py-4 flex justify-between items-center w-full">
-          <div className="text-xl font-bold bg-gradient-to-br from-[#4648d4] to-[#6b38d4] bg-clip-text text-transparent font-headline">
+        <nav className="bg-[#f8f6f3]/80 backdrop-blur-xl sticky top-0 z-50 shadow-[0_4px_24px_rgba(70,72,212,0.07)] px-8 py-4 flex justify-between items-center w-full">
+          <div className="text-xl font-bold bg-gradient-to-br from-[#806794] to-[#bd8496] bg-clip-text text-transparent font-headline">
             LocalBiz
           </div>
           <div className="hidden md:flex items-center space-x-8 font-headline text-sm font-semibold tracking-tight">
-            <span className="text-slate-500 hover:text-[#6b38d4] transition-colors duration-200 cursor-pointer">Support Center</span>
+            <span className="text-slate-500 hover:text-[#bd8496] transition-colors duration-200 cursor-pointer">Support Center</span>
             <div className="flex items-center space-x-3">
               <span className="material-symbols-outlined text-slate-500">help_outline</span>
               <span className="material-symbols-outlined text-slate-500">language</span>
@@ -340,15 +329,6 @@ export default function StoreDetailsPage() {
 
                   <div className="flex gap-4 w-full sm:w-auto">
                     <button
-                      className="px-8 py-4 bg-surface-container-lowest text-on-surface-variant rounded-xl border border-outline-variant/30 font-headline font-semibold hover:bg-surface-container-low transition-colors"
-                      type="button"
-                      onClick={handleSaveDraft}
-                      disabled={loading}
-                    >
-                      Save Draft
-                    </button>
-
-                    <button
                       className="flex-1 sm:flex-none gradient-bg text-on-primary font-bold px-10 py-4 rounded-xl shadow-[0_10px_25px_rgba(70,72,212,0.2)] hover:shadow-[0_15px_30px_rgba(70,72,212,0.3)] active:scale-95 transition-all disabled:opacity-50 text-white"
                       type="submit"
                       disabled={loading}
@@ -392,9 +372,7 @@ export default function StoreDetailsPage() {
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-outline">© 2024 LocalBiz. All rights reserved. Crafting Pakistani digital futures.</p>
             <div className="flex gap-6 text-sm font-semibold text-on-surface-variant">
-              <a className="hover:text-primary transition-colors" href="#">Privacy Policy</a>
-              <a className="hover:text-primary transition-colors" href="#">Terms of Service</a>
-              <a className="hover:text-primary transition-colors" href="#">Contact</a>
+              <a className="hover:text-primary transition-colors" href="/login">Sign In</a>
             </div>
           </div>
         </footer>

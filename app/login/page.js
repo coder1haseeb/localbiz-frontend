@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Spinner from '../../components/Spinner';
-import loginImge from './../../assets/login-image.png';
+import { saveSession, getSession, routeForRole } from '../../lib/session';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -17,6 +17,8 @@ export default function LoginPage() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
+    const session = getSession();
+    if (session) { router.replace(routeForRole(session.user.role)); return; }
     const savedEmail = localStorage.getItem('rememberEmail');
     if (savedEmail) {
       setEmail(savedEmail);
@@ -38,25 +40,8 @@ export default function LoginPage() {
         }
       );
 
-      console.log('=== LOGIN RESPONSE ===');
-      console.log('Full response:', response);
-      console.log('response.data:', response.data);
-      
       const { data } = response.data;
-      
-      console.log('Extracted data:', data);
-      console.log('data.user:', data.user);
-      console.log('data.user.role:', data.user?.role);
-      console.log('data.token:', data.token);
-
-      // Store auth data consistently for all users
-      localStorage.setItem('authToken', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      
-      // Store business owner data if available
-      if (data.business) {
-        localStorage.setItem('userBusiness', JSON.stringify(data.business));
-      }
+      saveSession(data);
 
       if (rememberMe) {
         localStorage.setItem('rememberEmail', email);
@@ -66,34 +51,8 @@ export default function LoginPage() {
 
       setSuccess(true);
 
-      console.log('Login successful, user data:', data.user);
-      console.log('User role:', data.user.role);
-
       setTimeout(() => {
-        console.log('Attempting redirect for role:', data.user.role);
-        
-        switch (data.user.role) {
-          case 'business_admin':
-            console.log('Redirecting to /dashboard');
-            router.push('/dashboard');
-            break;
-          case 'customer':
-            console.log('Redirecting to /home');
-            router.push('/home');
-            break;
-          case 'seller':
-            console.log('Redirecting to /seller/dashboard');
-            router.push('/seller/dashboard');
-            break;
-          case 'super_admin':
-          case 'admin':
-            console.log('Redirecting to /admin/dashboard');
-            router.push('/admin/dashboard');
-            break;
-          default:
-            console.log('Unknown role, redirecting to /home');
-            router.push('/home');
-        }
+        router.replace(routeForRole(data.user.role));
       }, 1500);
     } catch (err) {
       const errorMessage =
@@ -249,7 +208,7 @@ export default function LoginPage() {
           {/* Background Image */}
           <div className="absolute inset-0 z-0">
             <img
-              src={loginImge.src}
+              src="/login-image.avif"
               alt="Background"
               className="w-full h-full object-cover"
             />
@@ -265,15 +224,7 @@ export default function LoginPage() {
       {/* Footer */}
       <footer className="fixed bottom-6 left-0 w-full flex justify-center px-4">
         <nav className="flex flex-col sm:flex-row gap-4 sm:gap-6 text-on-surface-variant font-label text-xs font-semibold text-center">
-          <Link href="#" className="hover:text-primary transition-colors">
-            Privacy Policy
-          </Link>
-          <Link href="#" className="hover:text-primary transition-colors">
-            Terms of Service
-          </Link>
-          <Link href="#" className="hover:text-primary transition-colors">
-            Contact Support
-          </Link>
+          <Link href="/register" className="hover:text-primary transition-colors">Create an account</Link>
         </nav>
       </footer>
     </div>

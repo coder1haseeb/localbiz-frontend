@@ -1,4 +1,6 @@
 'use client';
+import SidebarMenuButton from '../../components/SidebarMenuButton.js';
+import { clearSession } from '../../lib/session.js';
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
@@ -28,15 +30,13 @@ export default function CartPage() {
   }, []);
 
   useEffect(() => {
-    const name = localStorage.getItem('userName');
-    setUserName(name || '');
+    try { setUserName(JSON.parse(localStorage.getItem('user') || '{}').fullName?.split(' ')[0] || ''); } catch { setUserName(''); }
     fetchCart();
   }, [fetchCart]);
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userName');
-    router.push('/login');
+    clearSession();
+    router.replace('/login');
   };
 
 
@@ -78,14 +78,13 @@ export default function CartPage() {
     const price = item.product?.price || 0;
     return sum + price * item.quantity;
   }, 0) || 0;
-  const delivery = subtotal > 0 ? 450 : 0;
-  const tax = Math.round(subtotal * 0.005);
-  const grandTotal = subtotal + delivery + tax;
+  // The order API charges product totals only; keep this estimate identical.
+  const grandTotal = subtotal;
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#f7f9fb]">
-        <div className="w-8 h-8 border-4 border-[#4648d4] border-t-transparent rounded-full animate-spin"></div>
+      <div className="flex items-center justify-center min-h-screen bg-[#f8f6f3]">
+        <div className="w-8 h-8 border-4 border-[#806794] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -103,15 +102,16 @@ export default function CartPage() {
         }
       `}</style>
 
-      <div className="flex min-h-screen bg-[#f7f9fb]">
+      <div className="flex min-h-screen bg-[#f8f6f3]">
         {/* Sidebar Navigation */}
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f2f4f6] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#f1eeeb] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
+          <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4648d4] to-[#6b38d4] flex items-center justify-center text-white">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#806794] to-[#bd8496] flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#191c1e] leading-none">LocalBiz</h1>
+              <h1 className="text-lg font-bold text-[#272a32] leading-none">LocalBiz</h1>
               <p className="text-[11px] text-slate-500 font-normal">Marketplace</p>
             </div>
           </div>
@@ -121,21 +121,33 @@ export default function CartPage() {
               <span className="material-symbols-outlined">storefront</span>
               <span>Browse</span>
             </Link>
-            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#4648d4] shadow-sm rounded-lg font-semibold">
+            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#806794] shadow-sm rounded-lg font-semibold">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>shopping_cart</span>
               <span>My Cart</span>
               {cart?.items?.length > 0 && (
-                <span className="ml-auto bg-[#4648d4] text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                <span className="ml-auto bg-[#806794] text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {cart.items.length}
                 </span>
               )}
             </div>
+            <Link href="/orders" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] hover:translate-x-1 transition-all rounded-lg cursor-pointer">
+              <span className="material-symbols-outlined">receipt_long</span>
+              <span>My Orders</span>
+            </Link>
+            <Link href="/notifications" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] hover:translate-x-1 transition-all rounded-lg cursor-pointer">
+              <span className="material-symbols-outlined">notifications</span>
+              <span>Notifications</span>
+            </Link>
+            <Link href="/profile" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] hover:translate-x-1 transition-all rounded-lg cursor-pointer">
+              <span className="material-symbols-outlined">account_circle</span>
+              <span>Profile</span>
+            </Link>
           </nav>
 
           {/* User Info Card */}
           <div className="p-4 bg-white/60 rounded-2xl border border-white/40">
             <p className="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-1">Welcome</p>
-            <p className="text-sm font-bold text-[#191c1e]">{userName || 'Customer'}</p>
+            <p className="text-sm font-bold text-[#272a32]">{userName || 'Customer'}</p>
             <p className="text-xs text-slate-500 mt-2">Explore local atelier and artisan shops.</p>
           </div>
 
@@ -151,7 +163,7 @@ export default function CartPage() {
         {/* Main Content Area */}
         <main className="ml-72 flex-1 p-8 space-y-8">
           <header className="mb-6">
-            <h1 className="text-4xl font-bold text-[#191c1e]">My Cart</h1>
+            <h1 className="text-4xl font-bold text-[#272a32]">My Cart</h1>
             <p className="text-slate-500 text-sm mt-1">Review your selections from Pakistani artisans and local creators.</p>
           </header>
 
@@ -164,7 +176,7 @@ export default function CartPage() {
                   <span className="material-symbols-outlined text-6xl text-slate-300 block mb-4">shopping_cart</span>
                   <h3 className="font-headline font-bold text-xl text-on-surface mb-2">Your basket is empty</h3>
                   <p className="text-on-surface-variant mb-6">Browse products and add them to your cart.</p>
-                  <Link href="/home" className="px-6 py-3 bg-gradient-to-br from-[#4648d4] to-[#6b38d4] text-white font-bold rounded-xl inline-block">
+                  <Link href="/home" className="px-6 py-3 bg-gradient-to-br from-[#806794] to-[#bd8496] text-white font-bold rounded-xl inline-block">
                     Browse Products
                   </Link>
                 </div>
@@ -228,14 +240,7 @@ export default function CartPage() {
                     <span className="text-sm font-medium">Subtotal</span>
                     <span className="font-bold text-on-surface">Rs. {subtotal.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between items-center text-on-surface-variant">
-                    <span className="text-sm font-medium">Delivery</span>
-                    <span className="font-bold text-on-surface">Rs. {delivery.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-on-surface-variant pb-4">
-                    <span className="text-sm font-medium">Tax Estimate</span>
-                    <span className="font-bold text-on-surface">Rs. {tax.toLocaleString()}</span>
-                  </div>
+                  <p className="text-xs text-on-surface-variant pb-4">No delivery or tax charge is added by the current checkout.</p>
                   <div className="pt-6 border-t border-outline-variant/30 flex justify-between items-end">
                     <div>
                       <span className="block text-[11px] uppercase tracking-widest text-outline font-bold mb-1">Grand Total</span>
@@ -248,10 +253,13 @@ export default function CartPage() {
                 </div>
 
                 {/* CTA Button */}
-                <button className="w-full py-4 bg-gradient-to-br from-[#4648d4] to-[#6b38d4] text-white font-bold rounded-2xl shadow-[0_8px_20px_rgba(70,72,212,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group mb-6">
+                <Link
+                  href="/checkout"
+                  className={`w-full py-4 bg-gradient-to-br from-[#806794] to-[#bd8496] text-white font-bold rounded-2xl shadow-[0_8px_20px_rgba(70,72,212,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group mb-6 ${!cart?.items || cart.items.length === 0 ? 'pointer-events-none opacity-50' : ''}`}
+                >
                   <span>Proceed to Checkout</span>
                   <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </button>
+                </Link>
 
                 <div className="bg-surface-container rounded-2xl p-4 flex items-start gap-3">
                   <span className="material-symbols-outlined text-secondary mt-0.5">verified_user</span>
@@ -267,22 +275,22 @@ export default function CartPage() {
 
       {/* BottomNavBar */}
       <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/95 backdrop-blur-lg dark:bg-slate-950/95 shadow-[0_-8px_30px_rgba(70,72,212,0.1)] rounded-t-3xl border-t-0">
-        <a className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="#">
+        <Link className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="/home">
           <span className="material-symbols-outlined mb-1">home</span>
           Home
-        </a>
-        <a className="flex flex-col items-center justify-center bg-[#4648d4]/10 text-[#4648d4] rounded-2xl px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="#">
+        </Link>
+        <Link className="flex flex-col items-center justify-center bg-[#806794]/10 text-[#806794] rounded-2xl px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="/home">
           <span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: "'FILL' 1" }}>search_insights</span>
           Explore
-        </a>
-        <a className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="#">
+        </Link>
+        <Link className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="/orders">
           <span className="material-symbols-outlined mb-1">task_alt</span>
-          Tasks
-        </a>
-        <a className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="#">
+          Orders
+        </Link>
+        <Link className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="/profile">
           <span className="material-symbols-outlined mb-1">account_circle</span>
           Profile
-        </a>
+        </Link>
       </nav>
     </>
   );
