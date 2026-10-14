@@ -29,7 +29,7 @@ export default function OrderDetailPage() {
     const token = localStorage.getItem('authToken');
     if (!token) { router.push('/login'); return; }
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/orders/${id}`, {
+      const res = await fetch(`/api/v1/orders/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -49,7 +49,7 @@ export default function OrderDetailPage() {
     setBusy(true);
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/orders/${id}/cancel`, {
+      const res = await fetch(`/api/v1/orders/${id}/cancel`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -70,7 +70,7 @@ export default function OrderDetailPage() {
   const handleDownloadInvoice = async () => {
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/invoices/${id}/download`, {
+      const res = await fetch(`/api/v1/invoices/${id}/download`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) { alert('Failed to download invoice'); return; }
@@ -94,7 +94,7 @@ export default function OrderDetailPage() {
     setBusy(true);
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/returns`, {
+      const res = await fetch(`/api/v1/returns`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({

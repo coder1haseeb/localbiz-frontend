@@ -12,7 +12,7 @@ export default function ReturnsPage() {
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (!token) { router.push('/login'); return; }
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/returns`, {
+    fetch(`/api/v1/returns`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then(response => response.json()).then(data => {
       if (data.success) setReturns(data.data.returns || []);

@@ -21,7 +21,7 @@ export default function NotificationsPage() {
     const token = localStorage.getItem('authToken');
     if (!token) { router.push('/login'); return; }
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/notifications?limit=50`, {
+      const res = await fetch(`/api/v1/notifications?limit=50`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -41,7 +41,7 @@ export default function NotificationsPage() {
   const markRead = async (notifId) => {
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/notifications/${notifId}/read`, {
+      const res = await fetch(`/api/v1/notifications/${notifId}/read`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -55,7 +55,7 @@ export default function NotificationsPage() {
   const markAllRead = async () => {
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/notifications/read-all`, {
+      const res = await fetch(`/api/v1/notifications/read-all`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` },
       });

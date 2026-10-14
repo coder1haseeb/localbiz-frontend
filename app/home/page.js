@@ -23,7 +23,7 @@ export default function CustomerDashboard() {
     } catch { /* Keep the welcome fallback if local data is malformed. */ }
 
     // Fetch verified stores
-    const apiUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/stores?limit=50`;
+    const apiUrl = `/api/v1/stores?limit=50`;
     fetch(apiUrl)
       .then(r => r.json())
       .then(data => {
@@ -37,13 +37,13 @@ export default function CustomerDashboard() {
       })
       .catch(err => console.error('Failed to fetch stores:', err));
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recommendations?limit=4`, {
+    fetch(`/api/v1/recommendations?limit=4`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then(r => r.json()).then(data => {
       if (data.success) setRecommendations(data.data.products || []);
     }).catch(err => console.error('Failed to fetch recommendations:', err));
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/cart`, {
+    fetch(`/api/v1/cart`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(r => r.json())

@@ -49,7 +49,7 @@ export default function ResetPasswordForm({ email }) {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/reset-password`,
+        `/api/v1/auth/reset-password`,
         {
           email: email,
           otp: formData.otp,

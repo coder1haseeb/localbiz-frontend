@@ -27,7 +27,7 @@ export default function StoreDetailsPage() {
 
     const fetchCategories = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/categories`);
+        const res = await fetch(`/api/v1/categories`);
         const data = await res.json();
         if (data.success) {
           setCategories(data.data.categories);
@@ -91,7 +91,7 @@ export default function StoreDetailsPage() {
         logo: formData.logo || null
       };
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/register/business`, {
+      const response = await fetch(`/api/v1/auth/register/business`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

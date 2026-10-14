@@ -28,7 +28,7 @@ export default function BusinessReturnsPage() {
     setLoading(true);
     try {
       const qs = status && status !== 'all' ? `?status=${status}` : '';
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/business/returns${qs}`, {
+      const res = await fetch(`/api/v1/business/returns${qs}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -52,7 +52,7 @@ export default function BusinessReturnsPage() {
     setBusy(noteModal._id);
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/business/returns/${noteModal._id}`, {
+      const res = await fetch(`/api/v1/business/returns/${noteModal._id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status: decision, adminNote: note }),

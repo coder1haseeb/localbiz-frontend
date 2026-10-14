@@ -19,7 +19,7 @@ export default function ProductDetail() {
   useEffect(() => {
     if (!id) return;
     setSimilarProducts([]);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/products/${id}`)
+    fetch(`/api/v1/products/${id}`)
       .then(r => r.json())
       .then(data => {
         if (data.success) {
@@ -27,11 +27,11 @@ export default function ProductDetail() {
           const token = localStorage.getItem('authToken');
           if (token) {
             const headers = { Authorization: `Bearer ${token}` };
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recommendations/interaction`, {
+            fetch(`/api/v1/recommendations/interaction`, {
               method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
               body: JSON.stringify({ productId: id, interactionType: 'view' }),
             }).catch(() => {});
-            fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/recommendations/similar/${id}?limit=4`, { headers })
+            fetch(`/api/v1/recommendations/similar/${id}?limit=4`, { headers })
               .then(response => response.json())
               .then(result => { if (result.success) setSimilarProducts(result.data.products || []); })
               .catch(() => {});
@@ -56,7 +56,7 @@ export default function ProductDetail() {
     console.log('Adding to cart:', { productId: id, quantity });
     
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/cart`, {
+      const res = await fetch(`/api/v1/cart`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ productId: id, quantity }),

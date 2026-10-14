@@ -21,7 +21,7 @@ export default function AnalyticsPage() {
     if (!token) { router.push('/login'); return; }
     setLoading(true);
     try {
-      const base = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/business/analytics`;
+      const base = `/api/v1/business/analytics`;
       const headers = { Authorization: `Bearer ${token}` };
       const [sumRes, salesRes, topRes, payRes, custRes] = await Promise.all([
         fetch(`${base}/summary`, { headers }),

@@ -18,7 +18,7 @@ export default function InventoryPage() {
     const token = localStorage.getItem('authToken');
     if (!token) { router.push('/login'); return; }
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/business/inventory`, {
+      const res = await fetch(`/api/v1/business/inventory`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -41,7 +41,7 @@ export default function InventoryPage() {
     setUpdating(productId);
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/business/inventory/${productId}/stock`, {
+      const res = await fetch(`/api/v1/business/inventory/${productId}/stock`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ operation, quantity: qty }),
@@ -61,7 +61,7 @@ export default function InventoryPage() {
   const handleExport = async () => {
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/business/inventory/export`, {
+      const res = await fetch(`/api/v1/business/inventory/export`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) { alert('Export failed'); return; }

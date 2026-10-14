@@ -28,7 +28,7 @@ export default function OrdersPage() {
     setLoading(true);
     try {
       const qs = status && status !== 'all' ? `?status=${status}` : '';
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/orders${qs}`, {
+      const res = await fetch(`/api/v1/orders${qs}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

@@ -16,7 +16,7 @@ export default function AdminReportsPage() {
     const token = localStorage.getItem('authToken');
     if (!token) { router.push('/admin/login'); return; }
     try {
-      const base = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/reports`;
+      const base = `/api/v1/admin/reports`;
       const headers = { Authorization: `Bearer ${token}` };
       const [growthRes, topRes] = await Promise.all([
         fetch(`${base}/growth`, { headers }),
@@ -38,7 +38,7 @@ export default function AdminReportsPage() {
   const handleExport = async () => {
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/reports/export`, {
+      const res = await fetch(`/api/v1/admin/reports/export`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) { alert('Export failed'); return; }

@@ -32,7 +32,7 @@ export default function DashboardPage() {
   const fetchProducts = async (authToken, businessId) => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/products/business/${businessId}/products`,
+        `/api/v1/products/business/${businessId}/products`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -353,7 +353,7 @@ function AddProductForm({ businessId, token, onSuccess }) {
       };
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/products/business/${businessId}/products`,
+        `/api/v1/products/business/${businessId}/products`,
         {
           method: 'POST',
           headers: {
@@ -543,7 +543,7 @@ function ProductCard({ product, token, onDelete }) {
     setIsDeleting(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/products/${product._id}`,
+        `/api/v1/products/${product._id}`,
         {
           method: 'DELETE',
           headers: {

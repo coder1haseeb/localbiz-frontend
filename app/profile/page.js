@@ -23,7 +23,7 @@ export default function ProfilePage() {
 
   const token = typeof window !== 'undefined' ? localStorage.getItem('authToken') : null;
 
-  const authFetch = (path, opts = {}) => fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1${path}`, {
+  const authFetch = (path, opts = {}) => fetch(`/api/v1${path}`, {
     ...opts,
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...(opts.headers || {}) },
   });
@@ -33,8 +33,8 @@ export default function ProfilePage() {
     if (!t) { router.push('/login'); return; }
     try {
       const [profRes, insRes] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/profile`, { headers: { Authorization: `Bearer ${t}` } }),
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/insights`, { headers: { Authorization: `Bearer ${t}` } }),
+        fetch(`/api/v1/customer/profile`, { headers: { Authorization: `Bearer ${t}` } }),
+        fetch(`/api/v1/customer/insights`, { headers: { Authorization: `Bearer ${t}` } }),
       ]);
       const profData = await profRes.json();
       const insData = await insRes.json();

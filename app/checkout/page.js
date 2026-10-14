@@ -30,10 +30,10 @@ export default function CheckoutPage() {
     if (!token) { router.push('/login'); return; }
     try {
       const [cartRes, profileRes] = await Promise.all([
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/cart`, {
+        fetch(`/api/v1/cart`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/customer/profile`, {
+        fetch(`/api/v1/customer/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
@@ -111,7 +111,7 @@ export default function CheckoutPage() {
 
     let orderPlaced = false;
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/orders`, {
+      const res = await fetch(`/api/v1/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ deliveryAddress, paymentMethod }),
@@ -131,7 +131,7 @@ export default function CheckoutPage() {
 
       if (needsMobile && firstOrder) {
         const endpoint = paymentMethod === 'jazzcash' ? 'jazzcash' : 'easypaisa';
-        const payRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/payments/${endpoint}/initiate`, {
+        const payRes = await fetch(`/api/v1/payments/${endpoint}/initiate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
           body: JSON.stringify({ orderId: firstOrder.id, mobileNumber }),

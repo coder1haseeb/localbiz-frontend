@@ -25,7 +25,7 @@ export default function AdminUsersPage() {
       if (statusFilter) params.set('status', statusFilter);
       if (search) params.set('search', search);
       params.set('limit', '50');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/users?${params.toString()}`, {
+      const res = await fetch(`/api/v1/admin/users?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -45,7 +45,7 @@ export default function AdminUsersPage() {
     const token = localStorage.getItem('authToken');
     try {
       const method = action === 'delete' ? 'DELETE' : 'PUT';
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/users/${userId}${action === 'delete' ? '' : `/${action}`}`, {
+      const res = await fetch(`/api/v1/admin/users/${userId}${action === 'delete' ? '' : `/${action}`}`, {
         method,
         headers: { Authorization: `Bearer ${token}` },
       });

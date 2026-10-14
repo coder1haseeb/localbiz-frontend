@@ -32,7 +32,7 @@ export default function BusinessOrdersPage() {
     setLoading(true);
     try {
       const qs = status && status !== 'all' ? `?status=${status}` : '';
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/business/orders${qs}`, {
+      const res = await fetch(`/api/v1/business/orders${qs}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -50,7 +50,7 @@ export default function BusinessOrdersPage() {
     setUpdating(orderId);
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/business/orders/${orderId}/status`, {
+      const res = await fetch(`/api/v1/business/orders/${orderId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ status }),

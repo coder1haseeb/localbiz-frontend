@@ -42,7 +42,7 @@ export default function RegisterPage() {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/register/customer`,
+        `/api/v1/auth/register/customer`,
         {
           fullName: formData.fullName,
           email: formData.email,

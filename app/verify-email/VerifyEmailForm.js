@@ -41,7 +41,7 @@ export default function VerifyEmailForm({ email }) {
 
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/verify-email`,
+        `/api/v1/auth/verify-email`,
         {
           email: email,
           otp: otp,
@@ -69,7 +69,7 @@ export default function VerifyEmailForm({ email }) {
     setError('');
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/resend-verification`, {
+      await axios.post(`/api/v1/auth/resend-verification`, {
         email,
       });
 

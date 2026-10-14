@@ -16,7 +16,7 @@ export default function AdminCategoriesPage() {
   const [newArea, setNewArea] = useState('');
   const [editingCat, setEditingCat] = useState(null);
 
-  const base = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/categories`;
+  const base = `/api/v1/categories`;
 
   const fetchAll = useCallback(async () => {
     const token = localStorage.getItem('authToken');

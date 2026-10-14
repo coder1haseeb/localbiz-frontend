@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import styles from './store.module.css';
 
-const API = process.env.NEXT_PUBLIC_BACKEND_URL;
+const API = "";
 const money = value => `Rs. ${Number(value || 0).toLocaleString('en-PK')}`;
 
 export default function StoreDetailPage() {

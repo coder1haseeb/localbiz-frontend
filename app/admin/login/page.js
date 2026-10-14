@@ -25,7 +25,7 @@ export default function AdminLoginPage() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/admin/login`,
+        `/api/v1/auth/admin/login`,
         {
           method: 'POST',
           headers: {

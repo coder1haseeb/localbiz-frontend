@@ -19,7 +19,7 @@ export default function BusinessProfilePage() {
     const token = localStorage.getItem('authToken');
     if (!token) { router.push('/login'); return; }
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/business/profile`, {
+      const res = await fetch(`/api/v1/business/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -67,7 +67,7 @@ export default function BusinessProfilePage() {
     setSaving(true);
     const token = localStorage.getItem('authToken');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/business/profile`, {
+      const res = await fetch(`/api/v1/business/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(form),

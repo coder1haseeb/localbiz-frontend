@@ -40,7 +40,7 @@ export default function EditProductPage() {
   const fetchProduct = async (authToken) => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/products/${productId}/edit`,
+        `/api/v1/products/${productId}/edit`,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
@@ -144,7 +144,7 @@ export default function EditProductPage() {
       };
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/products/${productId}`,
+        `/api/v1/products/${productId}`,
         {
           method: 'PUT',
           headers: {

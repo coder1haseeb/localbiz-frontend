@@ -38,7 +38,7 @@ export default function AdminDashboard() {
 
   const fetchSummary = async (authToken) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/dashboard`, {
+      const res = await fetch(`/api/v1/admin/dashboard`, {
         headers: { Authorization: `Bearer ${authToken}` },
       });
       const data = await res.json();
@@ -56,7 +56,7 @@ export default function AdminDashboard() {
 
       for (const status of statuses) {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/businesses?approvalStatus=${status}&limit=50`,
+          `/api/v1/admin/businesses?approvalStatus=${status}&limit=50`,
           {
             headers: { Authorization: `Bearer ${authToken}` },
           }
@@ -78,7 +78,7 @@ export default function AdminDashboard() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/businesses/${businessId}/decision`,
+        `/api/v1/admin/businesses/${businessId}/decision`,
         {
           method: 'PUT',
           headers: {
@@ -113,7 +113,7 @@ export default function AdminDashboard() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/admin/businesses/${selectedBusiness._id}/decision`,
+        `/api/v1/admin/businesses/${selectedBusiness._id}/decision`,
         {
           method: 'PUT',
           headers: {

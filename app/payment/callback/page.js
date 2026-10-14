@@ -10,7 +10,7 @@ export default function PaymentCallbackPage() {
     const token = localStorage.getItem('authToken');
     const paymentId = sessionStorage.getItem('pendingPaymentId');
     if (!token || !paymentId) { setMessage('Open your orders to check the payment status.'); return; }
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/payments/${paymentId}/status`, {
+    fetch(`/api/v1/payments/${paymentId}/status`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then(response => response.json()).then(data => {
       if (!data.success) throw new Error(data.message);
