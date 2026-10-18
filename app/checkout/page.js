@@ -10,6 +10,7 @@ const PAYMENT_METHODS = [
   { value: 'pay_at_store', label: 'Pay at Store', icon: 'storefront', desc: 'Pay when you pick up in-store' },
   { value: 'jazzcash', label: 'JazzCash', icon: 'account_balance_wallet', desc: 'Pay via JazzCash mobile wallet' },
   { value: 'rapidgateway', label: 'Rapid Gateway (Test)', icon: 'credit_card', desc: 'Use the sandbox checkout' },
+  { value: 'safepay', label: 'Safepay (Test)', icon: 'credit_card', desc: 'Pay through Safepay sandbox checkout' },
 ];
 
 async function readApiResponse(response) {
@@ -81,6 +82,7 @@ export default function CheckoutPage() {
   const grandTotal = subtotal;
 
   const needsMobile = ['jazzcash', 'easypaisa', 'rapidgateway'].includes(paymentMethod);
+  const onlinePayment = needsMobile || paymentMethod === 'safepay';
   const storeCount = new Set(cart?.items?.map(item => String(item.product?.business?._id || item.product?.business))).size;
 
   const submitPaymentForm = (apiUrl, params) => {
@@ -121,8 +123,8 @@ export default function CheckoutPage() {
       setError('Please enter a valid mobile number (10+ digits) for wallet payment.');
       return;
     }
-    if (needsMobile && storeCount > 1) {
-      setError('Wallet checkout supports one store at a time. Please order from each store separately.');
+    if (onlinePayment && storeCount > 1) {
+      setError('Online checkout supports one store at a time. Please order from each store separately.');
       return;
     }
 
@@ -149,7 +151,7 @@ export default function CheckoutPage() {
       const orders = data.data.orders || [];
       const firstOrder = orders[0];
 
-      if (needsMobile && firstOrder) {
+      if (onlinePayment && firstOrder) {
         const endpoint = paymentMethod;
         const payRes = await fetch(`/api/v1/payments/${endpoint}/initiate`, {
           method: 'POST',
@@ -159,7 +161,7 @@ export default function CheckoutPage() {
         const payData = await readApiResponse(payRes);
         if (payRes.ok && payData.success) {
           sessionStorage.setItem('pendingPaymentId', payData.data.paymentId);
-          if (paymentMethod === 'rapidgateway') {
+          if (paymentMethod === 'rapidgateway' || paymentMethod === 'safepay') {
             window.location.assign(payData.data.redirectUrl);
             return;
           }
