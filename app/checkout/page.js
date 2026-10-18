@@ -9,6 +9,7 @@ const PAYMENT_METHODS = [
   { value: 'cod', label: 'Cash on Delivery', icon: 'local_shipping', desc: 'Pay when your order arrives' },
   { value: 'pay_at_store', label: 'Pay at Store', icon: 'storefront', desc: 'Pay when you pick up in-store' },
   { value: 'jazzcash', label: 'JazzCash', icon: 'account_balance_wallet', desc: 'Pay via JazzCash mobile wallet' },
+  { value: 'rapidgateway', label: 'Rapid Gateway (Test)', icon: 'credit_card', desc: 'Use the sandbox checkout' },
 ];
 
 export default function CheckoutPage() {
@@ -60,7 +61,7 @@ export default function CheckoutPage() {
   // The order API currently charges item totals only.
   const grandTotal = subtotal;
 
-  const needsMobile = paymentMethod === 'jazzcash' || paymentMethod === 'easypaisa';
+  const needsMobile = ['jazzcash', 'easypaisa', 'rapidgateway'].includes(paymentMethod);
   const storeCount = new Set(cart?.items?.map(item => String(item.product?.business?._id || item.product?.business))).size;
 
   const submitPaymentForm = (apiUrl, params) => {
@@ -130,7 +131,7 @@ export default function CheckoutPage() {
       const firstOrder = orders[0];
 
       if (needsMobile && firstOrder) {
-        const endpoint = paymentMethod === 'jazzcash' ? 'jazzcash' : 'easypaisa';
+        const endpoint = paymentMethod;
         const payRes = await fetch(`/api/v1/payments/${endpoint}/initiate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
@@ -139,6 +140,10 @@ export default function CheckoutPage() {
         const payData = await payRes.json();
         if (payRes.ok && payData.success) {
           sessionStorage.setItem('pendingPaymentId', payData.data.paymentId);
+          if (paymentMethod === 'rapidgateway') {
+            window.location.assign(payData.data.redirectUrl);
+            return;
+          }
           submitPaymentForm(payData.data.apiUrl, payData.data.params);
           return;
         } else {
