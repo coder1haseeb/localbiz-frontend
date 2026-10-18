@@ -12,6 +12,18 @@ const PAYMENT_METHODS = [
   { value: 'rapidgateway', label: 'Rapid Gateway (Test)', icon: 'credit_card', desc: 'Use the sandbox checkout' },
 ];
 
+async function readApiResponse(response) {
+  const contentType = response.headers.get('content-type') || '';
+  if (!contentType.includes('application/json')) {
+    throw new Error(`Server temporarily unavailable (${response.status}). Please try again.`);
+  }
+  try {
+    return await response.json();
+  } catch {
+    throw new Error(`Server returned an invalid response (${response.status}). Please try again.`);
+  }
+}
+
 export default function CheckoutPage() {
   const router = useRouter();
   const [cart, setCart] = useState(null);
@@ -29,6 +41,8 @@ export default function CheckoutPage() {
   const fetchData = useCallback(async () => {
     const token = localStorage.getItem('authToken');
     if (!token) { router.push('/login'); return; }
+    setLoading(true);
+    setError('');
     try {
       const [cartRes, profileRes] = await Promise.all([
         fetch(`/api/v1/cart`, {
@@ -38,9 +52,13 @@ export default function CheckoutPage() {
           headers: { Authorization: `Bearer ${token}` },
         }),
       ]);
-      const cartData = await cartRes.json();
-      const profileData = await profileRes.json();
-      if (cartData.success) setCart(cartData.data);
+      const [cartData, profileData] = await Promise.all([
+        readApiResponse(cartRes),
+        readApiResponse(profileRes),
+      ]);
+      if (!cartRes.ok || !cartData.success) throw new Error(cartData.message || 'Could not load your cart.');
+      if (!profileRes.ok || !profileData.success) throw new Error(profileData.message || 'Could not load your profile.');
+      setCart(cartData.data);
       if (profileData.success) {
         const addrs = profileData.data.addresses || [];
         setAddresses(addrs);
@@ -50,6 +68,7 @@ export default function CheckoutPage() {
       }
     } catch (err) {
       console.error('Failed to load checkout:', err);
+      setError(err.message || 'Could not load checkout. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -117,7 +136,7 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ deliveryAddress, paymentMethod }),
       });
-      const data = await res.json();
+      const data = await readApiResponse(res);
 
       if (!res.ok || !data.success) {
         setError(data.message || 'Failed to place order.');
@@ -137,7 +156,7 @@ export default function CheckoutPage() {
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
           body: JSON.stringify({ orderId: firstOrder.id, mobileNumber }),
         });
-        const payData = await payRes.json();
+        const payData = await readApiResponse(payRes);
         if (payRes.ok && payData.success) {
           sessionStorage.setItem('pendingPaymentId', payData.data.paymentId);
           if (paymentMethod === 'rapidgateway') {
@@ -207,7 +226,12 @@ export default function CheckoutPage() {
         <main className="ml-72 flex-1 p-8">
           <h1 className="text-4xl font-bold text-[#253027] mb-8">Checkout</h1>
 
-          {!cart?.items || cart.items.length === 0 ? (
+          {error && !cart ? (
+            <div className="glass-card rounded-2xl p-16 text-center">
+              <p role="alert" className="text-red-600 font-semibold mb-4">{error}</p>
+              <button onClick={fetchData} className="px-6 py-2.5 bg-[#31543d] text-white text-sm font-semibold rounded-xl">Retry checkout</button>
+            </div>
+          ) : !cart?.items || cart.items.length === 0 ? (
             <div className="glass-card rounded-2xl p-16 text-center">
               <p className="text-[#253027] font-bold text-lg mb-2">Your cart is empty</p>
               <Link href="/home" className="px-6 py-2.5 bg-[#31543d] text-white text-sm font-semibold rounded-xl inline-block mt-2">Browse Products</Link>
