@@ -9,28 +9,39 @@ export default function PaymentCallbackPage() {
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     const paymentId = sessionStorage.getItem('pendingPaymentId');
-    if (!token || !paymentId) { setMessage('Open your orders to check the payment status.'); return; }
+    const tracker = new URLSearchParams(window.location.search).get('tracker');
+    const statusPath = tracker && /^track_[a-zA-Z0-9-]+$/.test(tracker)
+      ? `/api/v1/payments/safepay/tracker/${encodeURIComponent(tracker)}/status`
+      : paymentId ? `/api/v1/payments/${paymentId}/status` : null;
+    if (!token || !statusPath) { setMessage('Open your orders to check the payment status.'); return; }
     let stopped = false;
     let timer;
-    const started = Date.now();
+    const deadline = Date.now() + 35000;
     const checkStatus = async () => {
       try {
-        const response = await fetch(`/api/v1/payments/${paymentId}/status`, {
+        const response = await fetch(statusPath, {
           headers: { Authorization: `Bearer ${token}` },
           cache: 'no-store',
+          signal: AbortSignal.timeout(12000),
         });
         const data = await response.json();
         if (!response.ok || !data.success) throw new Error(data.message);
         if (stopped) return;
-        if (data.data.status === 'paid') { setMessage('Payment confirmed.'); return; }
+        if (data.data.status === 'paid') {
+          sessionStorage.removeItem('pendingPaymentId');
+          setMessage('Payment confirmed.');
+          return;
+        }
         if (data.data.status === 'failed') { setMessage('Payment failed. Please check your order.'); return; }
-        if (Date.now() - started < 30000) {
+        if (Date.now() < deadline) {
           timer = setTimeout(checkStatus, 2000);
         } else {
           setMessage('Payment is pending confirmation. Check your order again shortly.');
         }
       } catch {
-        if (!stopped) setMessage('Could not confirm payment yet. Check your order history.');
+        if (stopped) return;
+        if (Date.now() < deadline) timer = setTimeout(checkStatus, 2000);
+        else setMessage('Could not confirm payment yet. Check your order history.');
       }
     };
     checkStatus();
