@@ -124,7 +124,7 @@ export default function ProductDetail() {
         }
       `}</style>
 
-      {isGuest && <div className="landing-page"><PublicHeader /></div>}
+      {isGuest && <PublicHeader />}
       <div className="flex min-h-screen bg-[#f7f5ef]">
         {/* Sidebar */}
         {!isGuest && <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">

@@ -25,7 +25,7 @@ export default function PublicHeader() {
   }, []);
   return <header className="landing-header">
     <Link href="/" className="landing-logo">LocalBiz<span>Local shopping, made simple.</span></Link>
-    <nav className="landing-nav" aria-label="Main navigation"><Link href="/browse">Browse</Link><Link href="/business-register">Sell on LocalBiz</Link></nav>
+    <nav className="landing-nav" aria-label="Main navigation"><Link href="/browse" onClick={() => window.dispatchEvent(new Event('localbiz:clearBrowse'))}>Browse</Link><Link href="/business-register">Sell on LocalBiz</Link></nav>
     <div className="landing-header-actions"><Link href="/cart" className="landing-cart" aria-label={`Cart with ${count} items`}><span className="material-symbols-outlined">shopping_cart</span>{count > 0 && <b>{count}</b>}</Link><LandingActions /></div>
   </header>;
 }

@@ -131,7 +131,7 @@ export default function CustomerDashboard() {
             <p className="marketplace-eyebrow">LOCAL SHOPS</p>
             <h1 className="text-4xl font-bold text-[#253027]">Hi, {userName}</h1>
             <p className="text-slate-500">Browse stores and products from local businesses.</p>
-            <form role="search" className="flex gap-2 max-w-xl pt-3" onSubmit={event => { event.preventDefault(); router.push(`/browse?search=${encodeURIComponent(search.trim())}`); }}>
+            <form role="search" className="flex gap-2 max-w-xl pt-3" onSubmit={event => { event.preventDefault(); const term = search.trim(); if (term) sessionStorage.setItem('localbiz:pendingSearch', term); router.push('/browse'); }}>
               <input aria-label="Search products and stores" placeholder="Search products or stores" value={search} onChange={event => setSearch(event.target.value)} className="flex-1 min-w-0 rounded-lg border border-slate-300 bg-white px-4 py-3" />
               <button type="submit" className="rounded-lg bg-[#31543d] px-5 py-3 text-white font-semibold">Search</button>
             </form>

@@ -2,28 +2,52 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { addGuestItem } from '../lib/guestCart';
 import { getSession } from '../lib/session';
 
 export default function PublicCatalogue({ full = false }) {
+  const router = useRouter();
   const [query, setQuery] = useState('');
   const [search, setSearch] = useState('');
   const [products, setProducts] = useState([]);
   const [stores, setStores] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!full);
   const [message, setMessage] = useState('');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
-    const initial = new URLSearchParams(window.location.search).get('search')?.trim() || '';
-    if (initial) { setQuery(initial); setSearch(initial); }
-  }, []);
+    if (!full) return;
+    if (window.location.search) window.history.replaceState(window.history.state, '', '/browse');
+    const pending = sessionStorage.getItem('localbiz:pendingSearch')?.trim() || '';
+    sessionStorage.removeItem('localbiz:pendingSearch');
+    if (pending) { setQuery(pending); setSearch(pending); }
+  }, [full]);
+
+  useEffect(() => {
+    if (!full) return;
+    const clear = () => {
+      setQuery('');
+      setSearch('');
+      setPage(1);
+      setMessage('');
+    };
+    window.addEventListener('localbiz:clearBrowse', clear);
+    return () => window.removeEventListener('localbiz:clearBrowse', clear);
+  }, [full]);
 
   useEffect(() => {
     let active = true;
+    if (full && !search) {
+      setProducts([]);
+      setStores([]);
+      setHasMore(false);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
-    const pageSize = full ? 24 : 8;
+    const pageSize = full ? 24 : 4;
     const params = new URLSearchParams({ limit: String(pageSize), page: String(page) });
     if (search) params.set('search', search);
     Promise.all([
@@ -66,14 +90,27 @@ export default function PublicCatalogue({ full = false }) {
     } catch { setMessage('Could not add this product to your cart.'); }
   }
 
-  return <section id="catalogue" className="catalogue-section">
-    <div className="catalogue-heading"><div><p className="landing-kicker">Browse LocalBiz</p><h2>Products and verified stores</h2></div>{!full && <Link href="/browse">View all →</Link>}</div>
-    <form className="catalogue-search" onSubmit={event => { event.preventDefault(); setPage(1); setSearch(query.trim()); }} role="search">
+  const submitSearch = event => {
+    event.preventDefault();
+    const term = query.trim();
+    if (!full) {
+      if (term) sessionStorage.setItem('localbiz:pendingSearch', term);
+      router.push('/browse');
+      return;
+    }
+    setPage(1);
+    setSearch(term);
+  };
+
+  return <section id="catalogue" className={`catalogue-section ${full ? 'catalogue-search-page' : 'catalogue-preview'}`}>
+    <div className="catalogue-heading"><div><p className="landing-kicker">Browse LocalBiz</p><h2>Products and verified stores</h2></div>{!full && <Link href="/browse">Search catalogue →</Link>}</div>
+    <form className="catalogue-search" onSubmit={submitSearch} role="search">
       <input value={query} onChange={event => setQuery(event.target.value)} placeholder="Search products or stores" aria-label="Search products or stores" />
       <button type="submit">Search</button>
     </form>
     {message && <p role="status" className="catalogue-message">{message}</p>}
-    {loading ? <p>Loading products and stores…</p> : <>
+    {full && !search ? <p className="catalogue-prompt">Search for a product or store to see results.</p>
+      : loading ? <p>Loading products and stores…</p> : <>
       <h3>Products</h3>
       {products.length ? <div className="catalogue-grid">{products.map(product => <article key={product._id} className="catalogue-card">
         <Link href={`/product/${product._id}`}><div className="catalogue-image">{product.images?.[0] ? <img src={product.images[0]} alt={product.name} loading="lazy" /> : <span className="material-symbols-outlined">inventory_2</span>}</div><h4>{product.name}</h4><p>{product.business?.storeName}</p></Link>
