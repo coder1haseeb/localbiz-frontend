@@ -15,7 +15,7 @@ export default function PublicHeader() {
       if (!session || session.user.role !== 'customer') { setCount(guestCartCount()); return; }
       fetch('/api/v1/cart', { headers: { Authorization: `Bearer ${session.token}` } })
         .then(response => response.json()).then(data => {
-          if (active && data.success) setCount(data.data?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0);
+          if (active && data.success) setCount(data.data?.items?.length || 0);
         }).catch(() => {});
     };
     update();

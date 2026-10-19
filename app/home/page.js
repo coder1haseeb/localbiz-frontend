@@ -50,7 +50,7 @@ export default function CustomerDashboard() {
       .then(r => r.json())
       .then(data => {
         if (data.success && data.data?.items) {
-          setStats(prev => ({ ...prev, cartCount: data.data.items.reduce((sum, item) => sum + item.quantity, 0) }));
+          setStats(prev => ({ ...prev, cartCount: data.data.items.length }));
         }
       })
       .catch(err => console.error('Failed to fetch cart:', err));
