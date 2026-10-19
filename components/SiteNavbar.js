@@ -39,10 +39,10 @@ export default function SiteNavbar() {
     };
   }, [pathname]);
 
-  const sidebarRoute = pathname === '/home' || pathname === '/checkout' || pathname === '/notifications'
+  const sidebarRoute = pathname === '/home' || pathname === '/cart' || pathname === '/checkout' || pathname === '/notifications'
     || pathname === '/orders' || pathname.startsWith('/orders/')
     || pathname === '/profile' || pathname.startsWith('/dashboard') || pathname.startsWith('/admin/dashboard');
-  const conditionalSidebar = pathname === '/cart' || pathname.startsWith('/product/');
+  const conditionalSidebar = pathname.startsWith('/product/');
   if (sidebarRoute || (conditionalSidebar && (role === undefined || role === 'customer'))) return null;
 
   return <header className="site-navbar">
