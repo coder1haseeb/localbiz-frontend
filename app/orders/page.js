@@ -30,6 +30,7 @@ export default function OrdersPage() {
       const qs = status && status !== 'all' ? `?status=${status}` : '';
       const res = await fetch(`/api/v1/orders${qs}`, {
         headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store',
       });
       const data = await res.json();
       if (data.success) setOrders(data.data.orders || []);
@@ -108,6 +109,9 @@ export default function OrdersPage() {
                     <div>
                       <p className="font-bold text-[#253027]">{order.orderId}</p>
                       <p className="text-xs text-slate-500">{order.business?.storeName || 'Store'} · {new Date(order.createdAt).toLocaleDateString()}</p>
+                      {order.paymentMethod === 'safepay' && order.paymentStatus === 'pending' && order.status !== 'cancelled' && (
+                        <p className="text-xs font-semibold text-amber-700 mt-1">Payment pending · Open to pay now</p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-6">

@@ -161,6 +161,10 @@ export default function CheckoutPage() {
         const payData = await readApiResponse(payRes);
         if (payRes.ok && payData.success) {
           sessionStorage.setItem('pendingPaymentId', payData.data.paymentId);
+          if (payData.data.status === 'paid') {
+            router.push(`/orders/${firstOrder.id}`);
+            return;
+          }
           if (paymentMethod === 'rapidgateway' || paymentMethod === 'safepay') {
             window.location.assign(payData.data.redirectUrl);
             return;

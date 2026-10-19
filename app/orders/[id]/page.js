@@ -21,6 +21,7 @@ export default function OrderDetailPage() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
+  const [payError, setPayError] = useState('');
   const [returnModal, setReturnModal] = useState(null); // product being returned
   const [returnReason, setReturnReason] = useState('');
   const [returnDesc, setReturnDesc] = useState('');
@@ -31,6 +32,7 @@ export default function OrderDetailPage() {
     try {
       const res = await fetch(`/api/v1/orders/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store',
       });
       const data = await res.json();
       if (data.success) setOrder(data.data);
@@ -43,6 +45,34 @@ export default function OrderDetailPage() {
   }, [id, router]);
 
   useEffect(() => { if (id) fetchOrder(); }, [id, fetchOrder]);
+
+  const handlePayNow = async () => {
+    setBusy(true);
+    setMsg('');
+    setPayError('');
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('/api/v1/payments/safepay/initiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ orderId: id }),
+      });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || 'Could not start payment.');
+      if (data.data.status === 'paid') {
+        setMsg('Payment already confirmed.');
+        await fetchOrder();
+        return;
+      }
+      if (!data.data.paymentId || !data.data.redirectUrl) throw new Error('Safepay did not return a checkout link.');
+      sessionStorage.setItem('pendingPaymentId', data.data.paymentId);
+      window.location.assign(data.data.redirectUrl);
+    } catch (err) {
+      setPayError(err.message || 'Could not start payment. Please try again.');
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const handleCancel = async () => {
     if (!confirm('Cancel this order?')) return;
@@ -154,6 +184,7 @@ export default function OrderDetailPage() {
           <p className="text-slate-500 mb-6">Placed on {new Date(order.createdAt).toLocaleString()}</p>
 
           {msg && <div className="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 font-semibold text-sm">{msg}</div>}
+          {payError && <div role="alert" className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 font-semibold text-sm">{payError}</div>}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div className="glass-card rounded-2xl p-6">
@@ -213,6 +244,12 @@ export default function OrderDetailPage() {
           </div>
 
           <div className="flex gap-3">
+            {order.paymentMethod === 'safepay' && order.paymentStatus === 'pending' && order.status !== 'cancelled' && (
+              <button onClick={handlePayNow} disabled={busy} className="flex items-center gap-2 px-6 py-3 bg-[#31543d] text-white font-semibold rounded-xl hover:bg-[#3d694b] disabled:opacity-50">
+                <span className="material-symbols-outlined text-base">credit_card</span>
+                {busy ? 'Opening payment…' : 'Pay now with Safepay'}
+              </button>
+            )}
             <button onClick={handleDownloadInvoice} className="flex items-center gap-2 px-6 py-3 bg-white border border-slate-200 text-[#253027] font-semibold rounded-xl hover:bg-slate-50 transition-all">
               <span className="material-symbols-outlined text-base">download</span>
               Download Invoice

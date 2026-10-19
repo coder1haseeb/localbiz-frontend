@@ -17,6 +17,7 @@ export default function PaymentCallbackPage() {
       try {
         const response = await fetch(`/api/v1/payments/${paymentId}/status`, {
           headers: { Authorization: `Bearer ${token}` },
+          cache: 'no-store',
         });
         const data = await response.json();
         if (!response.ok || !data.success) throw new Error(data.message);
