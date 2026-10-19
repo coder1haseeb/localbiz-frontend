@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import Spinner from '../../components/Spinner';
 import { saveSession, getSession, routeForRole } from '../../lib/session';
+import { mergeGuestCart } from '../../lib/guestCart';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -42,6 +43,7 @@ export default function LoginPage() {
 
       const { data } = response.data;
       saveSession(data);
+      if (data.user.role === 'customer') await mergeGuestCart(data.token);
 
       if (rememberMe) {
         localStorage.setItem('rememberEmail', email);

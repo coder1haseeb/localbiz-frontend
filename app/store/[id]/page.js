@@ -5,6 +5,8 @@ import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import styles from './store.module.css';
+import { guestCartCount } from '../../../lib/guestCart';
+import { getSession } from '../../../lib/session';
 
 const API = "";
 const money = value => `Rs. ${Number(value || 0).toLocaleString('en-PK')}`;
@@ -20,10 +22,11 @@ export default function StoreDetailPage() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All products');
   const [sort, setSort] = useState('featured');
+  const [isGuest, setIsGuest] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (!token) { router.replace('/login'); return; }
+    const token = getSession()?.user?.role === 'customer' ? getSession().token : null;
+    setIsGuest(!token);
     let active = true;
     const load = async () => {
       setLoading(true);
@@ -32,10 +35,10 @@ export default function StoreDetailPage() {
         const [storeResponse, productsResponse, cartResponse] = await Promise.all([
           fetch(`${API}/api/v1/stores/${storeId}`),
           fetch(`${API}/api/v1/stores/${storeId}/products?limit=50`),
-          fetch(`${API}/api/v1/cart`, { headers: { Authorization: `Bearer ${token}` } }),
+          token ? fetch(`${API}/api/v1/cart`, { headers: { Authorization: `Bearer ${token}` } }) : Promise.resolve(null),
         ]);
         const [storeData, productsData, cartData] = await Promise.all([
-          storeResponse.json(), productsResponse.json(), cartResponse.json(),
+          storeResponse.json(), productsResponse.json(), cartResponse?.json() || Promise.resolve(null),
         ]);
         if (!active) return;
         if (!storeResponse.ok || !storeData.success) {
@@ -45,7 +48,8 @@ export default function StoreDetailPage() {
         setStore(storeData.data);
         if (!productsResponse.ok || !productsData.success) setError('The products could not be loaded. Please refresh this page.');
         else setProducts(productsData.data?.products || []);
-        if (cartResponse.ok && cartData.success) setCartCount(cartData.data?.items?.length || 0);
+        if (cartResponse?.ok && cartData?.success) setCartCount(cartData.data?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0);
+        else if (!token) setCartCount(guestCartCount());
       } catch {
         if (active) setError('We could not connect to the store. Please try again.');
       } finally {
@@ -55,6 +59,13 @@ export default function StoreDetailPage() {
     load();
     return () => { active = false; };
   }, [storeId, router]);
+
+  useEffect(() => {
+    if (!isGuest) return;
+    const updateCount = () => setCartCount(guestCartCount());
+    window.addEventListener('localbiz:cart', updateCount);
+    return () => window.removeEventListener('localbiz:cart', updateCount);
+  }, [isGuest]);
 
   const categories = useMemo(() => ['All products', ...new Set(products.map(product => product.category).filter(Boolean))], [products]);
   const visibleProducts = useMemo(() => {
@@ -79,15 +90,15 @@ export default function StoreDetailPage() {
       <header className={styles.siteHeader}>
         <div className={styles.headerInner}>
           <Link href="/home" className={styles.brand} aria-label="LocalBiz home"><span className={styles.brandMark}>L<span>.</span></span><span>localbiz<span className={styles.brandDot}>.</span></span></Link>
-          <nav className={styles.desktopNav} aria-label="Main navigation"><Link href="/home">Discover</Link><Link href="/orders">My orders</Link><Link href="/profile">Profile</Link></nav>
+          <nav className={styles.desktopNav} aria-label="Main navigation"><Link href="/browse">Discover</Link>{isGuest ? <Link href="/login">Sign in</Link> : <><Link href="/orders">My orders</Link><Link href="/profile">Profile</Link></>}</nav>
           <div className={styles.headerActions}>
             <Link href="/cart" className={styles.cartButton} aria-label={`Cart with ${cartCount} items`}><span className="material-symbols-outlined">shopping_bag</span><span className={styles.cartLabel}>Cart</span>{cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}</Link>
-            <button className={styles.logout} onClick={logout} type="button">Sign out</button>
+            {!isGuest && <button className={styles.logout} onClick={logout} type="button">Sign out</button>}
           </div>
         </div>
       </header>
       <main className={styles.main}>
-        <div className={styles.breadcrumb}><Link href="/home">Marketplace</Link><span>/</span><span>Stores</span><span>/</span><strong>{store?.storeName || 'Store'}</strong></div>
+        <div className={styles.breadcrumb}><Link href="/browse">Marketplace</Link><span>/</span><span>Stores</span><span>/</span><strong>{store?.storeName || 'Store'}</strong></div>
         {loading ? <div className={styles.statePanel} role="status"><span className={styles.loader} /><h1>Opening the store</h1><p>Finding the latest from this local business.</p></div>
         : !store ? <div className={styles.statePanel}><span className="material-symbols-outlined">storefront</span><h1>Store unavailable</h1><p>{error || 'We could not find this store.'}</p><Link href="/home" className={styles.primaryLink}>Explore other stores <span aria-hidden="true">↗</span></Link></div>
         : <>
@@ -126,7 +137,7 @@ export default function StoreDetailPage() {
           <section className={styles.storyBanner}><div><p className={styles.sectionKicker}>SHOP CLOSE TO HOME</p><h2>Every order has a local story.</h2><p>Thanks for supporting independent businesses in your community.</p></div><Link href="/home">Explore more stores <span aria-hidden="true">↗</span></Link></section>
         </>}
       </main>
-      <nav className={styles.mobileNav} aria-label="Mobile navigation"><Link href="/home"><span className="material-symbols-outlined">explore</span>Discover</Link><Link href="/cart"><span className="material-symbols-outlined">shopping_bag</span>Cart</Link><Link href="/orders"><span className="material-symbols-outlined">receipt_long</span>Orders</Link><Link href="/profile"><span className="material-symbols-outlined">person</span>Profile</Link></nav>
+      <nav className={styles.mobileNav} aria-label="Mobile navigation"><Link href="/browse"><span className="material-symbols-outlined">explore</span>Discover</Link><Link href="/cart"><span className="material-symbols-outlined">shopping_bag</span>Cart</Link>{isGuest ? <Link href="/login"><span className="material-symbols-outlined">person</span>Sign in</Link> : <><Link href="/orders"><span className="material-symbols-outlined">receipt_long</span>Orders</Link><Link href="/profile"><span className="material-symbols-outlined">person</span>Profile</Link></>}</nav>
     </div>
   );
 }

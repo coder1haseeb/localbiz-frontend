@@ -5,6 +5,9 @@ import { clearSession } from '../../lib/session.js';
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import GuestCart from '../../components/GuestCart';
+import { getSession } from '../../lib/session';
+import { mergeGuestCart, readGuestCart } from '../../lib/guestCart';
 
 export default function CartPage() {
   const router = useRouter();
@@ -12,10 +15,13 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(null); // itemId being updated
   const [userName, setUserName] = useState('');
+  const [isGuest, setIsGuest] = useState(false);
+  const [unmergedItems, setUnmergedItems] = useState([]);
 
   const fetchCart = useCallback(async () => {
-    const token = localStorage.getItem('authToken');
-    if (!token) { router.push('/login'); return; }
+    const session = getSession();
+    if (!session || session.user.role !== 'customer') { setIsGuest(true); setLoading(false); return; }
+    const token = session.token;
     try {
       const res = await fetch(`/api/v1/cart`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -31,8 +37,17 @@ export default function CartPage() {
 
   useEffect(() => {
     try { setUserName(JSON.parse(localStorage.getItem('user') || '{}').fullName?.split(' ')[0] || ''); } catch { setUserName(''); }
+    setUnmergedItems(readGuestCart());
     fetchCart();
   }, [fetchCart]);
+
+  const retryGuestCart = async () => {
+    const session = getSession();
+    if (!session || session.user.role !== 'customer') return;
+    await mergeGuestCart(session.token);
+    setUnmergedItems(readGuestCart());
+    await fetchCart();
+  };
 
   const handleLogout = () => {
     clearSession();
@@ -88,6 +103,8 @@ export default function CartPage() {
       </div>
     );
   }
+
+  if (isGuest) return <GuestCart />;
 
   return (
     <>
@@ -166,6 +183,10 @@ export default function CartPage() {
             <h1 className="text-4xl font-bold text-[#253027]">My Cart</h1>
             <p className="text-slate-500 text-sm mt-1">Review your selections from Pakistani artisans and local creators.</p>
           </header>
+          {unmergedItems.length > 0 && <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
+            {unmergedItems.length} saved {unmergedItems.length === 1 ? 'product could' : 'products could'} not be added to your account cart. Check stock or try again.
+            <button type="button" onClick={retryGuestCart} className="ml-3 font-bold underline">Retry</button>
+          </div>}
 
           {/* Two-Column Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

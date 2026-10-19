@@ -11,6 +11,7 @@ export default function CustomerDashboard() {
   const [recommendations, setRecommendations] = useState([]);
   const [userName, setUserName] = useState('there');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [search, setSearch] = useState('');
   const [stats, setStats] = useState({ totalOrders: 0, totalSpent: 0, cartCount: 0 });
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export default function CustomerDashboard() {
       .then(r => r.json())
       .then(data => {
         if (data.success && data.data?.items) {
-          setStats(prev => ({ ...prev, cartCount: data.data.items.length }));
+          setStats(prev => ({ ...prev, cartCount: data.data.items.reduce((sum, item) => sum + item.quantity, 0) }));
         }
       })
       .catch(err => console.error('Failed to fetch cart:', err));
@@ -130,6 +131,10 @@ export default function CustomerDashboard() {
             <p className="marketplace-eyebrow">LOCAL SHOPS</p>
             <h1 className="text-4xl font-bold text-[#253027]">Hi, {userName}</h1>
             <p className="text-slate-500">Browse stores and products from local businesses.</p>
+            <form role="search" className="flex gap-2 max-w-xl pt-3" onSubmit={event => { event.preventDefault(); router.push(`/browse?search=${encodeURIComponent(search.trim())}`); }}>
+              <input aria-label="Search products and stores" placeholder="Search products or stores" value={search} onChange={event => setSearch(event.target.value)} className="flex-1 min-w-0 rounded-lg border border-slate-300 bg-white px-4 py-3" />
+              <button type="submit" className="rounded-lg bg-[#31543d] px-5 py-3 text-white font-semibold">Search</button>
+            </form>
           </section>
 
           {/* Quick Stats */}
@@ -173,10 +178,10 @@ export default function CustomerDashboard() {
 
           {recommendations.length > 0 && <section className="mb-10">
             <h2 className="text-2xl font-bold text-[#253027] mb-4">Recommended for you</h2>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
               {recommendations.map(product => <Link key={product._id} href={`/product/${product._id}`} className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-[#31543d] transition-colors">
-                {product.images?.[0] ? <img src={product.images[0]} alt="" className="w-full aspect-[4/3] object-cover" /> : <div className="w-full aspect-[4/3] bg-slate-100 flex items-center justify-center"><span className="material-symbols-outlined text-slate-400">inventory_2</span></div>}
-                <div className="p-4"><h3 className="font-semibold line-clamp-2">{product.name}</h3><p className="text-xs text-slate-500">{product.business?.storeName}</p><p className="text-[#31543d] mt-2">Rs. {product.price?.toLocaleString()}</p></div>
+                {product.images?.[0] ? <img src={product.images[0]} alt="" className="w-full h-28 object-cover" /> : <div className="w-full h-28 bg-slate-100 flex items-center justify-center"><span className="material-symbols-outlined text-slate-400">inventory_2</span></div>}
+                <div className="p-3"><h3 className="text-sm font-semibold line-clamp-2">{product.name}</h3><p className="text-xs text-slate-500">{product.business?.storeName}</p><p className="text-sm text-[#31543d] mt-1">Rs. {product.price?.toLocaleString()}</p></div>
               </Link>)}
             </div>
           </section>}

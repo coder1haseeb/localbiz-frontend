@@ -4,6 +4,10 @@ import SidebarMenuButton from '../../../components/SidebarMenuButton.js';
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { addGuestItem } from '../../../lib/guestCart';
+import { getSession } from '../../../lib/session';
+import PublicHeader from '../../../components/PublicHeader';
+import '../../landing.css';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -15,9 +19,11 @@ export default function ProductDetail() {
   const [cartLoading, setCartLoading] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [similarProducts, setSimilarProducts] = useState([]);
+  const [isGuest, setIsGuest] = useState(true);
 
   useEffect(() => {
     if (!id) return;
+    setIsGuest(getSession()?.user?.role !== 'customer');
     setSimilarProducts([]);
     fetch(`/api/v1/products/${id}`)
       .then(r => r.json())
@@ -44,12 +50,16 @@ export default function ProductDetail() {
   }, [id]);
 
   const handleAddToCart = async () => {
-    const token = localStorage.getItem('authToken');
-    if (!token) { 
-      console.log('No auth token, redirecting to login');
-      router.push('/login'); 
+    const session = getSession();
+    if (session && session.user.role !== 'customer') {
+      setCartMsg('Please sign in with a customer account to add products.');
+      return;
+    }
+    if (!session) {
+      if (addGuestItem(id, quantity)) setCartMsg('✅ Added to your cart!');
       return; 
     }
+    const token = session.token;
 
     setCartLoading(true);
     setCartMsg('');
@@ -65,6 +75,7 @@ export default function ProductDetail() {
       console.log('Cart response:', res.status, data);
       
       if (res.ok) {
+        window.dispatchEvent(new Event('localbiz:cart'));
         setCartMsg('✅ Added to cart!');
         setTimeout(() => setCartMsg(''), 3000);
       } else {
@@ -113,9 +124,10 @@ export default function ProductDetail() {
         }
       `}</style>
 
+      {isGuest && <div className="landing-page"><PublicHeader /></div>}
       <div className="flex min-h-screen bg-[#f7f5ef]">
         {/* Sidebar */}
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
+        {!isGuest && <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
           <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
@@ -128,7 +140,7 @@ export default function ProductDetail() {
           </div>
 
           <nav className="flex-1 space-y-1">
-            <Link href="/home" className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold">
+            <Link href="/browse" className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>storefront</span>
               <span>Browse</span>
             </Link>
@@ -136,14 +148,14 @@ export default function ProductDetail() {
               <span className="material-symbols-outlined">shopping_cart</span>
               <span>My Cart</span>
             </Link>
-            <Link href="/orders" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] hover:translate-x-1 transition-all rounded-lg">
+            {!isGuest && <Link href="/orders" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] hover:translate-x-1 transition-all rounded-lg">
               <span className="material-symbols-outlined">receipt_long</span>
               <span>My Orders</span>
-            </Link>
-            <Link href="/profile" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] hover:translate-x-1 transition-all rounded-lg">
+            </Link>}
+            {!isGuest && <Link href="/profile" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] hover:translate-x-1 transition-all rounded-lg">
               <span className="material-symbols-outlined">account_circle</span>
               <span>Profile</span>
-            </Link>
+            </Link>}
           </nav>
 
           <div className="p-4 bg-white/60 rounded-2xl border border-white/40">
@@ -152,13 +164,13 @@ export default function ProductDetail() {
             <p className="text-xs text-slate-500 mt-2">From {product.business?.storeName}</p>
           </div>
 
-        </aside>
+        </aside>}
 
         {/* Main Content */}
-        <main className="ml-72 flex-1 p-8">
+        <main className={`${isGuest ? '' : 'ml-72'} flex-1 p-8`}>
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 mb-8 text-sm text-slate-500">
-            <Link href="/home" className="hover:text-[#31543d] font-semibold">Browse</Link>
+            <Link href="/browse" className="hover:text-[#31543d] font-semibold">Browse</Link>
             <span className="material-symbols-outlined text-sm">chevron_right</span>
             <span className="text-[#31543d] font-semibold">{product.category || 'Product'}</span>
             <span className="material-symbols-outlined text-sm">chevron_right</span>

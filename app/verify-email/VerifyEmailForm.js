@@ -5,6 +5,8 @@ import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Spinner from '../../components/Spinner';
+import { saveSession, routeForRole } from '../../lib/session';
+import { mergeGuestCart } from '../../lib/guestCart';
 
 export default function VerifyEmailForm({ email }) {
   const router = useRouter();
@@ -48,11 +50,13 @@ export default function VerifyEmailForm({ email }) {
         }
       );
 
+      const session = response.data.data;
+      saveSession(session);
+      await mergeGuestCart(session.token);
       setSuccess(true);
 
-      // Redirect to login after 2 seconds
       setTimeout(() => {
-        router.push('/login');
+        router.replace(routeForRole(session.user.role));
       }, 2000);
     } catch (err) {
       const errorMessage =
@@ -127,7 +131,7 @@ export default function VerifyEmailForm({ email }) {
           {success && (
             <div className="mb-6 p-4 bg-green-500/10 border border-green-500 rounded-2xl">
               <p className="text-green-700 font-semibold text-sm">
-                Email verified successfully! Redirecting to login...
+                Email verified successfully! Opening your account...
               </p>
             </div>
           )}
