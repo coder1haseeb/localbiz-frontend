@@ -1,12 +1,10 @@
 import Link from 'next/link';
 import LandingActions from '../components/LandingActions';
-import PublicHeader from '../components/PublicHeader';
 import PublicCatalogue from '../components/PublicCatalogue';
 import './landing.css';
 
 export default function Home() {
   return <div className="landing-page">
-    <PublicHeader />
     <main>
       <section className="landing-hero">
         <div className="landing-hero-copy"><p className="landing-kicker">A place for local stores</p><h1>Find what you need, closer to home.</h1><p className="landing-intro">Browse products from independent shops in your area. See what is available, choose a store, and order in a few steps.</p><div className="landing-hero-actions"><LandingActions placement="hero" /><Link href="/business-register" className="landing-text-link">Have a shop? Join us <span aria-hidden="true">↗</span></Link></div></div>

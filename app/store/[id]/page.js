@@ -1,11 +1,9 @@
 'use client';
-import { clearSession } from '../../../lib/session.js';
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import styles from './store.module.css';
-import { guestCartCount } from '../../../lib/guestCart';
 import { getSession } from '../../../lib/session';
 
 const API = "";
@@ -13,10 +11,8 @@ const money = value => `Rs. ${Number(value || 0).toLocaleString('en-PK')}`;
 
 export default function StoreDetailPage() {
   const { id: storeId } = useParams();
-  const router = useRouter();
   const [store, setStore] = useState(null);
   const [products, setProducts] = useState([]);
-  const [cartCount, setCartCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
@@ -32,13 +28,12 @@ export default function StoreDetailPage() {
       setLoading(true);
       setError('');
       try {
-        const [storeResponse, productsResponse, cartResponse] = await Promise.all([
+        const [storeResponse, productsResponse] = await Promise.all([
           fetch(`${API}/api/v1/stores/${storeId}`),
           fetch(`${API}/api/v1/stores/${storeId}/products?limit=50`),
-          token ? fetch(`${API}/api/v1/cart`, { headers: { Authorization: `Bearer ${token}` } }) : Promise.resolve(null),
         ]);
-        const [storeData, productsData, cartData] = await Promise.all([
-          storeResponse.json(), productsResponse.json(), cartResponse?.json() || Promise.resolve(null),
+        const [storeData, productsData] = await Promise.all([
+          storeResponse.json(), productsResponse.json(),
         ]);
         if (!active) return;
         if (!storeResponse.ok || !storeData.success) {
@@ -48,8 +43,6 @@ export default function StoreDetailPage() {
         setStore(storeData.data);
         if (!productsResponse.ok || !productsData.success) setError('The products could not be loaded. Please refresh this page.');
         else setProducts(productsData.data?.products || []);
-        if (cartResponse?.ok && cartData?.success) setCartCount(cartData.data?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0);
-        else if (!token) setCartCount(guestCartCount());
       } catch {
         if (active) setError('We could not connect to the store. Please try again.');
       } finally {
@@ -58,14 +51,7 @@ export default function StoreDetailPage() {
     };
     load();
     return () => { active = false; };
-  }, [storeId, router]);
-
-  useEffect(() => {
-    if (!isGuest) return;
-    const updateCount = () => setCartCount(guestCartCount());
-    window.addEventListener('localbiz:cart', updateCount);
-    return () => window.removeEventListener('localbiz:cart', updateCount);
-  }, [isGuest]);
+  }, [storeId]);
 
   const categories = useMemo(() => ['All products', ...new Set(products.map(product => product.category).filter(Boolean))], [products]);
   const visibleProducts = useMemo(() => {
@@ -80,23 +66,8 @@ export default function StoreDetailPage() {
     return list;
   }, [products, category, search, sort]);
 
-  const logout = () => {
-    clearSession();
-    router.replace('/login');
-  };
-
   return (
     <div className={styles.page}>
-      <header className={styles.siteHeader}>
-        <div className={styles.headerInner}>
-          <Link href="/home" className={styles.brand} aria-label="LocalBiz home"><span className={styles.brandMark}>L<span>.</span></span><span>localbiz<span className={styles.brandDot}>.</span></span></Link>
-          <nav className={styles.desktopNav} aria-label="Main navigation"><Link href="/browse">Discover</Link>{isGuest ? <Link href="/login">Sign in</Link> : <><Link href="/orders">My orders</Link><Link href="/profile">Profile</Link></>}</nav>
-          <div className={styles.headerActions}>
-            <Link href="/cart" className={styles.cartButton} aria-label={`Cart with ${cartCount} items`}><span className="material-symbols-outlined">shopping_bag</span><span className={styles.cartLabel}>Cart</span>{cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}</Link>
-            {!isGuest && <button className={styles.logout} onClick={logout} type="button">Sign out</button>}
-          </div>
-        </div>
-      </header>
       <main className={styles.main}>
         <div className={styles.breadcrumb}><Link href="/browse">Marketplace</Link><span>/</span><span>Stores</span><span>/</span><strong>{store?.storeName || 'Store'}</strong></div>
         {loading ? <div className={styles.statePanel} role="status"><span className={styles.loader} /><h1>Opening the store</h1><p>Finding the latest from this local business.</p></div>

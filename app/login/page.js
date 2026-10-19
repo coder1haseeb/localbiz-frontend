@@ -54,7 +54,8 @@ export default function LoginPage() {
       setSuccess(true);
 
       setTimeout(() => {
-        router.replace(routeForRole(data.user.role));
+        const next = new URLSearchParams(window.location.search).get('next');
+        router.replace(data.user.role === 'customer' && next?.startsWith('/') && !next.startsWith('//') ? next : routeForRole(data.user.role));
       }, 1500);
     } catch (err) {
       const errorMessage =

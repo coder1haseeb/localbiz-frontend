@@ -27,7 +27,7 @@ export default function CartPage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (data.success) setCart(data.data);
+      if (data.success) { setCart(data.data); window.dispatchEvent(new Event('localbiz:cart')); }
     } catch (err) {
       console.error('Failed to fetch cart:', err);
     } finally {

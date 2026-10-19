@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { getSession, routeForRole } from '../lib/session';
 
 const authPages = ['/login', '/register', '/business-register', '/admin/login'];
-const customerPages = ['/home', '/cart', '/checkout', '/orders', '/profile', '/returns'];
+const customerPages = ['/home', '/checkout', '/orders', '/profile', '/returns', '/notifications'];
 
 export default function SessionGate({ children }) {
   const pathname = usePathname();
@@ -32,8 +32,11 @@ export default function SessionGate({ children }) {
     const isCustomer = customerPages.some(path => pathname === path || pathname.startsWith(`${path}/`));
 
     let destination = null;
-    if (session && isAuthPage) destination = routeForRole(role);
-    else if (!session && (isAdmin || isSeller || isCustomer)) destination = isAdmin ? '/admin/login' : '/login';
+    if (session && isAuthPage) {
+      const next = pathname === '/login' ? new URLSearchParams(window.location.search).get('next') : null;
+      destination = role === 'customer' && next?.startsWith('/') && !next.startsWith('//') ? next : routeForRole(role);
+    }
+    else if (!session && (isAdmin || isSeller || isCustomer)) destination = isAdmin ? '/admin/login' : `/login?next=${encodeURIComponent(pathname)}`;
     else if (session && isAdmin && role !== 'super_admin') destination = routeForRole(role);
     else if (session && isSeller && role !== 'business_admin') destination = routeForRole(role);
     else if (session && isCustomer && role !== 'customer') destination = routeForRole(role);

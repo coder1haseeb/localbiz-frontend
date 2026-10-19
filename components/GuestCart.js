@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import PublicHeader from './PublicHeader';
 import { readGuestCart, writeGuestCart } from '../lib/guestCart';
 import '../app/landing.css';
 
@@ -27,7 +26,7 @@ export default function GuestCart() {
   };
   const total = items.reduce((sum, item) => sum + (products[item.productId]?.price || 0) * item.quantity, 0);
 
-  return <div className="landing-page"><PublicHeader /><main className="catalogue-section guest-cart"><h1>Your cart</h1>
+  return <div className="landing-page"><main className="catalogue-section guest-cart"><h1>Your cart</h1>
     {items.length ? <><div className="guest-cart-items">{items.map(item => {
       const product = products[item.productId];
       return <div className="guest-cart-row" key={item.productId}>
@@ -36,7 +35,7 @@ export default function GuestCart() {
         <label>Qty <input type="number" min="1" max={Math.min(999, product?.stockQty || 999)} value={item.quantity} onChange={event => { const value = Number(event.target.value); if (Number.isInteger(value) && value > 0) update(item.productId, value); }} /></label>
         <button type="button" onClick={() => update(item.productId, 0)} aria-label={`Remove ${product?.name || 'product'}`}>Remove</button>
       </div>;
-    })}</div><p className="guest-cart-total">Estimated total: <strong>Rs. {total.toLocaleString()}</strong></p><p>Sign in to save your cart and check out.</p><Link href="/login" className="guest-cart-checkout">Sign in to checkout</Link></>
+    })}</div><p className="guest-cart-total">Estimated total: <strong>Rs. {total.toLocaleString()}</strong></p><p>Sign in to save your cart and check out.</p><Link href="/checkout" className="guest-cart-checkout">Proceed to checkout</Link></>
       : <><p>Your cart is empty.</p><Link href="/browse">Browse products →</Link></>}
   </main></div>;
 }

@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import SidebarMenuButton from '../../components/SidebarMenuButton';
 
 const TYPE_ICONS = {
   order_update: 'local_shipping',
@@ -70,7 +72,19 @@ export default function NotificationsPage() {
     <>
       <style>{`.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; } .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }`}</style>
 
-      <div className="min-h-screen bg-[#f7f5ef] p-8">
+      <div className="flex min-h-screen bg-[#f7f5ef]">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 text-[13px] font-medium z-40">
+          <SidebarMenuButton />
+          <Link href="/home" className="flex items-center gap-3 px-3 py-6 mb-4 text-lg font-bold text-[#253027]">LocalBiz <span className="text-xs font-normal text-slate-500">Marketplace</span></Link>
+          <nav className="flex-1 space-y-1">
+            <Link href="/home" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-white rounded-lg"><span className="material-symbols-outlined">storefront</span>Browse</Link>
+            <Link href="/cart" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-white rounded-lg"><span className="material-symbols-outlined">shopping_cart</span>My Cart</Link>
+            <Link href="/orders" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-white rounded-lg"><span className="material-symbols-outlined">receipt_long</span>My Orders</Link>
+            <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold"><span className="material-symbols-outlined">notifications</span>Notifications</div>
+            <Link href="/profile" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-white rounded-lg"><span className="material-symbols-outlined">account_circle</span>Profile</Link>
+          </nav>
+        </aside>
+        <main className="ml-72 flex-1 p-8">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div>
@@ -115,6 +129,7 @@ export default function NotificationsPage() {
             </div>
           )}
         </div>
+        </main>
       </div>
     </>
   );
