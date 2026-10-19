@@ -178,7 +178,7 @@ export default function OrderDetailPage() {
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-3xl font-bold text-[#253027]">{order.orderId}</h1>
             <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${STATUS_STYLES[order.status] || 'bg-slate-100 text-slate-600'}`}>
-              {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
+              Order: {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
             </span>
           </div>
           <p className="text-slate-500 mb-6">Placed on {new Date(order.createdAt).toLocaleString()}</p>
@@ -236,7 +236,7 @@ export default function OrderDetailPage() {
 
           <div className="glass-card rounded-2xl p-6 mb-6 space-y-2">
             <div className="flex justify-between text-sm text-slate-500"><span>Payment Method</span><span className="font-semibold text-[#253027] uppercase">{order.paymentMethod?.replace('_', ' ')}</span></div>
-            <div className="flex justify-between text-sm text-slate-500"><span>Payment Status</span><span className="font-semibold text-[#253027] capitalize">{order.paymentStatus}</span></div>
+            <div className="flex justify-between text-sm text-slate-500"><span>Payment Status</span><span className={`font-semibold capitalize ${order.paymentStatus === 'paid' ? 'text-emerald-700' : 'text-amber-700'}`}>{order.paymentStatus}</span></div>
             <div className="flex justify-between pt-3 mt-2 border-t border-slate-200">
               <span className="font-bold text-[#253027]">Total</span>
               <span className="text-2xl font-extrabold text-[#31543d]">Rs. {order.totalAmount?.toLocaleString()}</span>

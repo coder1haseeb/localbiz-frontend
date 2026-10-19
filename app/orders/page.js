@@ -70,7 +70,7 @@ export default function OrdersPage() {
 
         <main className="ml-72 flex-1 p-8">
           <h1 className="text-4xl font-bold text-[#253027] mb-2">My Orders</h1>
-          <p className="text-slate-500 mb-6">Track and manage your order history · <Link href="/returns" className="text-[#31543d] underline">View returns</Link></p>
+          <p className="text-slate-500 mb-6">Track order progress and payment separately · <Link href="/returns" className="text-[#31543d] underline">View returns</Link></p>
 
           <div className="flex gap-2 overflow-x-auto mb-6 pb-1">
             {STATUS_TABS.map(tab => (
@@ -109,15 +109,18 @@ export default function OrdersPage() {
                     <div>
                       <p className="font-bold text-[#253027]">{order.orderId}</p>
                       <p className="text-xs text-slate-500">{order.business?.storeName || 'Store'} · {new Date(order.createdAt).toLocaleDateString()}</p>
+                      <p className={`text-xs font-semibold mt-1 ${order.paymentStatus === 'paid' ? 'text-emerald-700' : 'text-amber-700'}`}>
+                        Payment: {order.paymentStatus === 'paid' ? 'Paid' : order.paymentStatus === 'failed' ? 'Failed' : 'Pending'}
+                      </p>
                       {order.paymentMethod === 'safepay' && order.paymentStatus === 'pending' && order.status !== 'cancelled' && (
-                        <p className="text-xs font-semibold text-amber-700 mt-1">Payment pending · Open to pay now</p>
+                        <p className="text-xs font-semibold text-[#31543d] mt-1">Open this order to pay now →</p>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center gap-6">
                     <span className="font-bold text-[#31543d]">Rs. {order.totalAmount?.toLocaleString()}</span>
                     <span className={`text-xs font-bold px-3 py-1.5 rounded-full ${STATUS_STYLES[order.status] || 'bg-slate-100 text-slate-600'}`}>
-                      {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
+                      Order: {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
                     </span>
                     <span className="material-symbols-outlined text-slate-400">chevron_right</span>
                   </div>
