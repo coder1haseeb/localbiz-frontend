@@ -14,7 +14,7 @@
   --color-primary: #31543d;
   --color-secondary: #a96b4e;
   --color-error: #b85665;
-  --font-headline: var(--font-display), Georgia, serif;
+  --font-headline: var(--font-body-face), Arial, sans-serif;
   --font-body: var(--font-body-face), Arial, sans-serif;
 }
 
@@ -26,7 +26,7 @@
 }
 html { scroll-behavior: smooth; }
 body { background: var(--background); color: var(--foreground); font-family: var(--font-body-face), Arial, sans-serif; }
-h1,h2,h3,h4,h5,h6 { font-family: var(--font-display), Georgia, serif; letter-spacing: -.025em; line-height: 1.15; }
+h1,h2,h3,h4,h5,h6 { font-family: var(--font-body-face), Arial, sans-serif; letter-spacing: -.025em; line-height: 1.15; }
 p { line-height: 1.65; }
 ::selection { background: #cbdacb; color: #253027; }
 :focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }

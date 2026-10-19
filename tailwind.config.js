@@ -63,7 +63,7 @@ export default {
         full: '9999px',
       },
       fontFamily: {
-        headline: ['var(--font-display)', 'Georgia', 'serif'],
+        headline: ['var(--font-body-face)', 'Arial', 'sans-serif'],
         body: ['var(--font-body-face)', 'Arial', 'sans-serif'],
         label: ['var(--font-body-face)', 'Arial', 'sans-serif'],
       },

@@ -121,7 +121,7 @@ export default function CartPage() {
 
       <div className="flex min-h-screen bg-[#f7f5ef]">
         {/* Sidebar Navigation */}
-        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-['Inter'] text-[13px] font-medium z-40">
+        <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-[var(--font-body-face)] text-[13px] font-medium z-40">
           <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
@@ -296,19 +296,19 @@ export default function CartPage() {
 
       {/* BottomNavBar */}
       <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3 bg-white/95 backdrop-blur-lg dark:bg-slate-950/95 shadow-[0_-8px_30px_rgba(70,72,212,0.1)] rounded-t-3xl border-t-0">
-        <Link className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="/home">
+        <Link className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-[var(--font-body-face)] text-[10px] font-semibold uppercase tracking-wider" href="/home">
           <span className="material-symbols-outlined mb-1">home</span>
           Home
         </Link>
-        <Link className="flex flex-col items-center justify-center bg-[#31543d]/10 text-[#31543d] rounded-2xl px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="/home">
+        <Link className="flex flex-col items-center justify-center bg-[#31543d]/10 text-[#31543d] rounded-2xl px-5 py-2 font-[var(--font-body-face)] text-[10px] font-semibold uppercase tracking-wider" href="/home">
           <span className="material-symbols-outlined mb-1" style={{ fontVariationSettings: "'FILL' 1" }}>search_insights</span>
           Explore
         </Link>
-        <Link className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="/orders">
+        <Link className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-[var(--font-body-face)] text-[10px] font-semibold uppercase tracking-wider" href="/orders">
           <span className="material-symbols-outlined mb-1">task_alt</span>
           Orders
         </Link>
-        <Link className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-['Inter'] text-[10px] font-semibold uppercase tracking-wider" href="/profile">
+        <Link className="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 px-5 py-2 font-[var(--font-body-face)] text-[10px] font-semibold uppercase tracking-wider" href="/profile">
           <span className="material-symbols-outlined mb-1">account_circle</span>
           Profile
         </Link>

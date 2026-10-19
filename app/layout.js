@@ -1,17 +1,11 @@
-import { DM_Sans, Fraunces } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import BackButton from "../components/BackButton";
 import SessionGate from "../components/SessionGate";
 import BusinessRegistrationProvider from "../components/BusinessRegistrationProvider";
 
-const bodyFont = DM_Sans({
+const bodyFont = Roboto({
   variable: "--font-body-face",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const displayFont = Fraunces({
-  variable: "--font-display",
   subsets: ["latin"],
   display: "swap",
 });
@@ -25,7 +19,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${bodyFont.variable} ${displayFont.variable} h-full antialiased`}
+      className={`${bodyFont.variable} h-full antialiased`}
     >
       <head>
         <meta charSet="utf-8" />
