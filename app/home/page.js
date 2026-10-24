@@ -135,6 +135,7 @@ export default function CustomerDashboard() {
               <input aria-label="Search products and stores" placeholder="Search products or stores" value={search} onChange={event => setSearch(event.target.value)} className="flex-1 min-w-0 rounded-lg border border-slate-300 bg-white px-4 py-3" />
               <button type="submit" className="rounded-lg bg-[#31543d] px-5 py-3 text-white font-semibold">Search</button>
             </form>
+            <Link href="/nearby" className="inline-flex items-center gap-2 rounded-lg border border-[#31543d] px-4 py-2 text-sm font-semibold text-[#31543d]"><span className="material-symbols-outlined text-lg">near_me</span>Stores near me</Link>
           </section>
 
           {/* Quick Stats */}

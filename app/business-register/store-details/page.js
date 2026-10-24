@@ -5,12 +5,14 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Spinner from '@/components/Spinner';
 import { useBusinessRegistration } from '@/components/BusinessRegistrationProvider';
+import StoreLocationPicker from '@/components/StoreLocationPicker';
 
 export default function StoreDetailsPage() {
   const router = useRouter();
   const { ownerData, setOwnerData } = useBusinessRegistration();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [location, setLocation] = useState(null);
   const [formData, setFormData] = useState({
     storeName: '',
     category: '',
@@ -68,6 +70,10 @@ export default function StoreDetailsPage() {
       alert('Please fill in all fields');
       return;
     }
+    if (location?.latitude === '' || location?.longitude === '' || !Number.isFinite(Number(location?.latitude)) || !Number.isFinite(Number(location?.longitude)) || location?.latitude == null || location?.longitude == null) {
+      alert('Confirm your store location on the map before continuing.');
+      return;
+    }
 
     if (!ownerData) {
       alert('Owner data not found. Please start from the beginning.');
@@ -86,6 +92,7 @@ export default function StoreDetailsPage() {
         categoryId: formData.category,
         city: formData.storeCity,
         address: formData.storeAddress,
+        location,
         description: formData.description,
         storePhone: ownerData.phone,
         logo: formData.logo || null
@@ -281,6 +288,9 @@ export default function StoreDetailsPage() {
                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary">location_on</span>
                   </div>
                 </div>
+
+                {/* Description */}
+                <div className="space-y-2"><h2 className="text-sm font-semibold text-on-surface-variant">Store location</h2><StoreLocationPicker value={location} onChange={setLocation} /></div>
 
                 {/* Description */}
                 <div className="space-y-2">

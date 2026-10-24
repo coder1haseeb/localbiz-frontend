@@ -1,5 +1,9 @@
 @import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
 @config "../tailwind.config.js";
+
+.store-location-pin { color: #b33d26; filter: drop-shadow(0 2px 2px #3338); }
+.store-location-pin .material-symbols-outlined { font-size: 36px; }
 
 @theme {
   --color-background: #f7f5ef;

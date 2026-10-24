@@ -49,6 +49,7 @@ export default function SiteNavbar() {
     <Link href={role ? routeForRole(role) : '/'} className="site-navbar-logo">LocalBiz</Link>
     <nav aria-label="Site navigation">
       <Link href="/browse" onClick={() => window.dispatchEvent(new Event('localbiz:clearBrowse'))}>Browse</Link>
+      <Link href="/nearby">Nearby stores</Link>
       <Link href="/cart" aria-label={`Cart with ${count} items`}><span className="material-symbols-outlined">shopping_cart</span><span>Cart</span>{count > 0 && <b>{count}</b>}</Link>
       {role === 'customer' && <Link href="/orders">Orders</Link>}
       {role ? <Link href={routeForRole(role)}>My account</Link> : <Link href="/login">Log in</Link>}

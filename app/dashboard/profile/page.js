@@ -5,6 +5,7 @@ import { clearSession } from '../../../lib/session.js';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import StoreLocationPicker from '../../../components/StoreLocationPicker';
 
 export default function BusinessProfilePage() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function BusinessProfilePage() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
   const [imageError, setImageError] = useState('');
-  const [form, setForm] = useState({ storeName: '', description: '', address: '', city: '', phone: '', logo: '', coverImage: '', operatingHours: {} });
+  const [form, setForm] = useState({ storeName: '', description: '', address: '', city: '', phone: '', logo: '', coverImage: '', operatingHours: {}, location: null });
 
   const fetchProfile = useCallback(async () => {
     const token = localStorage.getItem('authToken');
@@ -30,6 +31,7 @@ export default function BusinessProfilePage() {
           description: data.data.description || '',
           address: data.data.address || '',
           city: data.data.city || '',
+          location: data.data.location?.coordinates ? { latitude: data.data.location.coordinates[1], longitude: data.data.location.coordinates[0] } : null,
           phone: data.data.phone || '',
           logo: data.data.logo || '',
           coverImage: data.data.coverImage || '',
@@ -70,7 +72,7 @@ export default function BusinessProfilePage() {
       const res = await fetch(`/api/v1/business/profile`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, location: form.location || undefined }),
       });
       const data = await res.json();
       if (data.success) {
@@ -159,6 +161,7 @@ export default function BusinessProfilePage() {
               <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Address</label>
               <input className="p-input" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} />
             </div>
+            <div><label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Store location</label><StoreLocationPicker value={form.location} onChange={location => setForm(current => ({ ...current, location }))} /></div>
             <div>
               <label htmlFor="store-logo" className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Store logo</label>
               <input id="store-logo" type="file" accept="image/jpeg,image/png,image/webp" className="p-input" onChange={e => { selectImage('logo', e.target.files?.[0]); e.target.value = ''; }} />

@@ -105,6 +105,7 @@ export default function StoreDetailPage() {
               <div className={styles.productDetails}><p>{product.category || store.category?.name || 'Local find'}</p><h3>{product.name}</h3><div><strong>{money(product.price)}</strong><span>View details <span aria-hidden="true">→</span></span></div></div>
             </Link>)}</div>}
           </section>
+          {store.location?.coordinates?.length === 2 && <section className="mb-8 rounded-lg border border-[#d8ddd2] bg-white p-5"><h2 className="text-xl font-bold text-[#253027]">Find this store</h2><p className="mt-2 text-sm text-slate-600">{store.address}, {store.city}</p><a className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[#31543d] underline" href={`https://www.openstreetmap.org/?mlat=${store.location.coordinates[1]}&mlon=${store.location.coordinates[0]}#map=16/${store.location.coordinates[1]}/${store.location.coordinates[0]}`} target="_blank" rel="noopener noreferrer"><span className="material-symbols-outlined">map</span>Open location on map</a></section>}
           <section className={styles.storyBanner}><div><p className={styles.sectionKicker}>SHOP CLOSE TO HOME</p><h2>Every order has a local story.</h2><p>Thanks for supporting independent businesses in your community.</p></div><Link href="/home">Explore more stores <span aria-hidden="true">↗</span></Link></section>
         </>}
       </main>
