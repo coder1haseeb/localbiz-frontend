@@ -112,6 +112,7 @@ export default function OrdersPage() {
                       <p className={`text-xs font-semibold mt-1 ${order.paymentStatus === 'paid' ? 'text-emerald-700' : 'text-amber-700'}`}>
                         Payment: {order.paymentStatus === 'paid' ? 'Paid' : order.paymentStatus === 'failed' ? 'Failed' : 'Pending'}
                       </p>
+                      {order.paymentMethod === 'bank_transfer' && <p className="text-xs font-semibold text-[#31543d] mt-1">Proof: {order.proofStatus === 'none' ? 'Upload in order details' : order.proofStatus}</p>}
                       {order.paymentMethod === 'safepay' && order.paymentStatus === 'pending' && order.status !== 'cancelled' && (
                         <p className="text-xs font-semibold text-[#31543d] mt-1">Open this order to pay now →</p>
                       )}

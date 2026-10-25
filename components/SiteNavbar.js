@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { getSession, routeForRole } from '../lib/session';
 import { guestCartCount } from '../lib/guestCart';
+import SidebarMenuButton from './SidebarMenuButton';
 
 export default function SiteNavbar() {
   const pathname = usePathname();
@@ -43,6 +44,36 @@ export default function SiteNavbar() {
     || pathname === '/orders' || pathname.startsWith('/orders/')
     || pathname === '/profile' || pathname.startsWith('/dashboard') || pathname.startsWith('/admin/dashboard');
   const conditionalSidebar = pathname.startsWith('/product/');
+  const customerArea = pathname === '/home' || pathname === '/cart' || pathname === '/checkout' || pathname === '/notifications'
+    || pathname === '/orders' || pathname.startsWith('/orders/') || pathname === '/returns' || pathname === '/profile'
+    || pathname === '/browse' || pathname === '/nearby' || pathname.startsWith('/product/') || pathname.startsWith('/store/');
+
+  useEffect(() => {
+    document.body.classList.toggle('customer-sidebar-layout', role === 'customer' && customerArea);
+    return () => document.body.classList.remove('customer-sidebar-layout');
+  }, [role, customerArea]);
+
+  if (role === 'customer' && customerArea) {
+    const links = [
+      ['/home', 'storefront', 'Home'], ['/browse', 'search', 'Search products'], ['/nearby', 'near_me', 'Nearby stores'],
+      ['/cart', 'shopping_cart', 'My Cart'], ['/orders', 'receipt_long', 'My Orders'], ['/returns', 'assignment_return', 'Returns'],
+      ['/notifications', 'notifications', 'Notifications'], ['/profile', 'account_circle', 'Account settings'],
+    ];
+    return <aside className="customer-global-sidebar h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-[var(--font-body-face)] text-[13px] font-medium z-50">
+      <SidebarMenuButton />
+      <Link href="/home" className="flex items-center gap-3 px-3 py-6 mb-4 text-lg font-bold text-[#253027]">LocalBiz <span className="text-xs font-normal text-slate-500">Marketplace</span></Link>
+      <nav aria-label="Customer navigation" className="flex-1 space-y-1">
+        {links.map(([href, icon, label]) => {
+          const active = pathname === href || (href === '/orders' && pathname.startsWith('/orders/')) || (href === '/browse' && (pathname.startsWith('/product/') || pathname.startsWith('/store/')));
+          return <Link key={href} href={href} onClick={href === '/browse' ? () => window.dispatchEvent(new Event('localbiz:clearBrowse')) : undefined}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg ${active ? 'bg-white text-[#31543d] font-semibold' : 'text-slate-500 hover:bg-white'}`}>
+            <span className="material-symbols-outlined" aria-hidden="true">{icon}</span><span>{label}</span>
+            {href === '/cart' && count > 0 && <span className="ml-auto bg-[#31543d] text-white rounded-full px-2 text-xs">{count}</span>}
+          </Link>;
+        })}
+      </nav>
+    </aside>;
+  }
   if (sidebarRoute || (conditionalSidebar && (role === undefined || role === 'customer'))) return null;
 
   return <header className="site-navbar">

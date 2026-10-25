@@ -169,6 +169,7 @@ export default function BusinessOrdersPage() {
                   {expanded === order._id && (
                     <div className="mt-4 pt-4 border-t border-slate-100 space-y-3">
                       <p className="text-xs text-slate-500">{order.customer?.email} · {order.customer?.phone}</p>
+                      {order.contact?.fullName && <p className="text-xs text-slate-600">Delivery contact: {order.contact.fullName} · {order.contact.phone} · {order.contact.email}</p>}
                       <p className="text-xs text-slate-500">Delivery: {order.deliveryAddress?.street}, {order.deliveryAddress?.city}</p>
                       <p className="text-xs text-slate-500">Payment: {order.paymentMethod?.replace('_', ' ')} · {order.paymentStatus}</p>
                       {order.paymentMethod === 'bank_transfer' && <div className="space-y-3 rounded-xl bg-white border border-slate-200 p-4">

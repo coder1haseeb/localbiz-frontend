@@ -23,6 +23,9 @@ export default function OrderDetailPage() {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
   const [payError, setPayError] = useState('');
+  const [uploadedProof, setUploadedProof] = useState('');
+  const [proofLoadError, setProofLoadError] = useState('');
+  const [proofLoading, setProofLoading] = useState(false);
   const [returnModal, setReturnModal] = useState(null); // product being returned
   const [returnReason, setReturnReason] = useState('');
   const [returnDesc, setReturnDesc] = useState('');
@@ -46,6 +49,26 @@ export default function OrderDetailPage() {
   }, [id, router]);
 
   useEffect(() => { if (id) fetchOrder(); }, [id, fetchOrder]);
+
+  useEffect(() => {
+    if (!order || order.paymentMethod !== 'bank_transfer' || !['submitted', 'accepted', 'rejected'].includes(order.proofStatus)) {
+      setUploadedProof('');
+      setProofLoading(false);
+      return;
+    }
+    let active = true;
+    setProofLoading(true);
+    setProofLoadError('');
+    fetch(`/api/v1/orders/${id}/payment-proof`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }, cache: 'no-store',
+    }).then(res => res.json()).then(data => {
+      if (!active) return;
+      if (data.success) setUploadedProof(data.data.proofImage || '');
+      else setProofLoadError(data.message || 'Could not load payment proof.');
+    }).catch(() => { if (active) setProofLoadError('Could not load payment proof.'); })
+      .finally(() => { if (active) setProofLoading(false); });
+    return () => { active = false; };
+  }, [id, order?.proofStatus, order?.paymentMethod]);
 
   const handlePayNow = async () => {
     setBusy(true);
@@ -171,7 +194,10 @@ export default function OrderDetailPage() {
           </div>
           <nav className="flex-1 space-y-1">
             <Link href="/home" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">storefront</span><span>Browse</span></Link>
+            <Link href="/cart" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">shopping_cart</span><span>My Cart</span></Link>
             <Link href="/orders" className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold"><span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>receipt_long</span><span>My Orders</span></Link>
+            <Link href="/notifications" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">notifications</span><span>Notifications</span></Link>
+            <Link href="/profile" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">account_circle</span><span>Profile</span></Link>
           </nav>
         </aside>
 
@@ -196,6 +222,9 @@ export default function OrderDetailPage() {
             </div>
             <div className="glass-card rounded-2xl p-6">
               <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3">Delivery Address</h3>
+              {order.contact?.fullName && <p className="font-semibold text-[#253027]">{order.contact.fullName}</p>}
+              {order.contact?.phone && <p className="text-sm text-slate-500">{order.contact.phone}</p>}
+              {order.contact?.email && <p className="text-sm text-slate-500">{order.contact.email}</p>}
               <p className="text-sm text-[#253027]">{order.deliveryAddress?.street}</p>
               <p className="text-sm text-slate-500">{order.deliveryAddress?.city}</p>
             </div>
@@ -243,6 +272,14 @@ export default function OrderDetailPage() {
               <span className="text-2xl font-extrabold text-[#31543d]">Rs. {order.totalAmount?.toLocaleString()}</span>
             </div>
           </div>
+
+          {order.paymentMethod === 'bank_transfer' && order.proofStatus !== 'none' && (
+            <div className="glass-card rounded-2xl p-6 mb-6">
+              <h2 className="font-bold text-xl text-[#253027] mb-2">Uploaded payment proof</h2>
+              <p className="text-sm text-slate-600 mb-3">Review status: {order.proofStatus}</p>
+              {uploadedProof ? <img src={uploadedProof} alt={`Uploaded payment proof for ${order.orderId}`} className="max-h-96 max-w-full rounded-xl border border-slate-200 object-contain" /> : <p className="text-sm text-slate-500">{proofLoading ? 'Loading proof image…' : proofLoadError || 'No proof image is available.'}</p>}
+            </div>
+          )}
 
           {order.paymentMethod === 'bank_transfer' && order.paymentStatus !== 'paid' && order.status !== 'cancelled' && (
             <div className="glass-card rounded-2xl p-6 mb-6">

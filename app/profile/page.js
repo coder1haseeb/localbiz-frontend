@@ -51,6 +51,7 @@ export default function ProfilePage() {
   }, [router]);
 
   useEffect(() => { fetchAll(); }, [fetchAll]);
+  useEffect(() => { if (window.location.hash === '#addresses') setTab('addresses'); }, []);
 
   const showMsg = (text) => { setMsg(text); setTimeout(() => setMsg(''), 3000); };
 
@@ -138,7 +139,7 @@ export default function ProfilePage() {
         </aside>
 
         <main className="ml-72 flex-1 p-8 max-w-3xl">
-          <h1 className="text-4xl font-bold text-[#253027] mb-2">My Profile</h1>
+          <h1 className="text-4xl font-bold text-[#253027] mb-2">Account settings</h1>
           <p className="text-slate-500 mb-6">Manage your account, addresses and security</p>
 
           {msg && <div className="mb-6 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 font-semibold text-sm">{msg}</div>}

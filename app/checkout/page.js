@@ -33,6 +33,9 @@ export default function CheckoutPage() {
   const [manualStreet, setManualStreet] = useState('');
   const [manualCity, setManualCity] = useState('');
   const [useManual, setUseManual] = useState(false);
+  const [contact, setContact] = useState({ fullName: '', email: '', phone: '' });
+  const [addressLabel, setAddressLabel] = useState('Home');
+  const [savingAddress, setSavingAddress] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [mobileNumber, setMobileNumber] = useState('');
   const [loading, setLoading] = useState(true);
@@ -62,6 +65,7 @@ export default function CheckoutPage() {
       if (!profileRes.ok || !profileData.success) throw new Error(profileData.message || 'Could not load your profile.');
       setCart(cartData.data);
       if (profileData.success) {
+        setContact({ fullName: profileData.data.fullName || '', email: profileData.data.email || '', phone: profileData.data.phone || '' });
         const addrs = profileData.data.addresses || [];
         setAddresses(addrs);
         const def = addrs.find(a => a.isDefault) || addrs[0];
@@ -101,8 +105,35 @@ export default function CheckoutPage() {
     form.submit();
   };
 
+  const saveAddress = async () => {
+    if (!addressLabel.trim() || !manualStreet.trim() || !manualCity.trim()) {
+      setError('Enter an address label, street, and city before saving.');
+      return;
+    }
+    setSavingAddress(true);
+    setError('');
+    try {
+      const res = await fetch('/api/v1/customer/addresses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+        body: JSON.stringify({ label: addressLabel.trim(), street: manualStreet.trim(), city: manualCity.trim(), isDefault: addresses.length === 0 }),
+      });
+      const data = await readApiResponse(res);
+      if (!res.ok || !data.success) throw new Error(data.message || 'Could not save address.');
+      setAddresses(data.data);
+      setSelectedAddressId(data.data[data.data.length - 1]._id);
+      setUseManual(false);
+    } catch (err) { setError(err.message || 'Could not save address.'); }
+    finally { setSavingAddress(false); }
+  };
+
   const handlePlaceOrder = async () => {
     setError('');
+
+    if (!contact.fullName.trim() || !/^\S+@\S+\.\S+$/.test(contact.email.trim()) || !/^[0-9]{10,}$/.test(contact.phone.trim())) {
+      setError('Enter your name, a valid email, and a phone number with at least 10 digits.');
+      return;
+    }
 
     let deliveryAddress;
     if (useManual || addresses.length === 0) {
@@ -137,7 +168,7 @@ export default function CheckoutPage() {
       const res = await fetch(`/api/v1/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ deliveryAddress, paymentMethod }),
+        body: JSON.stringify({ deliveryAddress, paymentMethod, contact }),
       });
       const data = await readApiResponse(res);
 
@@ -239,6 +270,9 @@ export default function CheckoutPage() {
             <Link href="/cart" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg">
               <span className="material-symbols-outlined">shopping_cart</span><span>My Cart</span>
             </Link>
+            <Link href="/orders" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">receipt_long</span><span>My Orders</span></Link>
+            <Link href="/notifications" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">notifications</span><span>Notifications</span></Link>
+            <Link href="/profile" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg"><span className="material-symbols-outlined">account_circle</span><span>Profile</span></Link>
             <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>payments</span>
               <span>Checkout</span>
@@ -262,6 +296,14 @@ export default function CheckoutPage() {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               <div className="lg:col-span-7 space-y-6">
+                <div className="glass-card rounded-2xl p-6">
+                  <h3 className="text-lg font-bold text-[#253027] mb-4">Contact details</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label className="text-sm font-semibold">Full name<input autoComplete="name" className="w-full mt-1 px-4 py-3 border border-slate-300 rounded-xl" value={contact.fullName} onChange={e => setContact(c => ({ ...c, fullName: e.target.value }))} /></label>
+                    <label className="text-sm font-semibold">Phone number<input autoComplete="tel" inputMode="tel" className="w-full mt-1 px-4 py-3 border border-slate-300 rounded-xl" value={contact.phone} onChange={e => setContact(c => ({ ...c, phone: e.target.value }))} /></label>
+                    <label className="text-sm font-semibold sm:col-span-2">Email<input autoComplete="email" type="email" className="w-full mt-1 px-4 py-3 border border-slate-300 rounded-xl" value={contact.email} onChange={e => setContact(c => ({ ...c, email: e.target.value }))} /></label>
+                  </div>
+                </div>
                 {/* Delivery Address */}
                 <div className="glass-card rounded-2xl p-6">
                   <h3 className="text-lg font-bold text-[#253027] mb-4 flex items-center gap-2">
@@ -288,11 +330,17 @@ export default function CheckoutPage() {
                     <div className="space-y-3">
                       <input value={manualStreet} onChange={e => setManualStreet(e.target.value)} placeholder="Street address" className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm outline-none focus:border-[#31543d]" />
                       <input value={manualCity} onChange={e => setManualCity(e.target.value)} placeholder="City" className="w-full px-4 py-3 border border-slate-300 rounded-xl text-sm outline-none focus:border-[#31543d]" />
+                      <div className="flex flex-wrap items-center gap-3">
+                        <input value={addressLabel} onChange={e => setAddressLabel(e.target.value)} placeholder="Address label (Home, Work)" className="px-4 py-2 border border-slate-300 rounded-xl text-sm" />
+                        <button type="button" onClick={saveAddress} disabled={savingAddress} className="px-4 py-2 bg-[#31543d] text-white text-sm font-semibold rounded-xl disabled:opacity-50">{savingAddress ? 'Saving…' : 'Save address to profile'}</button>
+                      </div>
+                      <p className="text-xs text-slate-500">You can also use this address once without saving it.</p>
                       {addresses.length > 0 && (
                         <button onClick={() => setUseManual(false)} className="text-xs font-semibold text-[#31543d] hover:underline">← Use a saved address</button>
                       )}
                     </div>
                   )}
+                  <Link href="/profile#addresses" className="inline-block mt-3 text-xs font-semibold text-[#31543d] underline">Manage saved addresses in settings</Link>
                 </div>
 
                 {/* Payment Method */}
