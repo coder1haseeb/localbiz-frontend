@@ -4,12 +4,12 @@ import SidebarMenuButton from '../../components/SidebarMenuButton.js';
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import PaymentProofPanel from '../../components/PaymentProofPanel.js';
 
 const PAYMENT_METHODS = [
   { value: 'cod', label: 'Cash on Delivery', icon: 'local_shipping', desc: 'Pay when your order arrives' },
   { value: 'pay_at_store', label: 'Pay at Store', icon: 'storefront', desc: 'Pay when you pick up in-store' },
-  { value: 'jazzcash', label: 'JazzCash', icon: 'account_balance_wallet', desc: 'Pay via JazzCash mobile wallet' },
-  { value: 'rapidgateway', label: 'Rapid Gateway (Test)', icon: 'credit_card', desc: 'Use the sandbox checkout' },
+  { value: 'bank_transfer', label: 'Upload payment proof', icon: 'upload_file', desc: 'Transfer to the store bank account and upload your receipt' },
   { value: 'safepay', label: 'Safepay (Test)', icon: 'credit_card', desc: 'Pay through Safepay sandbox checkout' },
 ];
 
@@ -38,6 +38,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(true);
   const [placing, setPlacing] = useState(false);
   const [error, setError] = useState('');
+  const [orderForProof, setOrderForProof] = useState(null);
 
   const fetchData = useCallback(async () => {
     const token = localStorage.getItem('authToken');
@@ -81,7 +82,7 @@ export default function CheckoutPage() {
   // The order API currently charges item totals only.
   const grandTotal = subtotal;
 
-  const needsMobile = ['jazzcash', 'easypaisa', 'rapidgateway'].includes(paymentMethod);
+  const needsMobile = ['easypaisa'].includes(paymentMethod);
   const onlinePayment = needsMobile || paymentMethod === 'safepay';
   const storeCount = new Set(cart?.items?.map(item => String(item.product?.business?._id || item.product?.business))).size;
 
@@ -123,8 +124,8 @@ export default function CheckoutPage() {
       setError('Please enter a valid mobile number (10+ digits) for wallet payment.');
       return;
     }
-    if (onlinePayment && storeCount > 1) {
-      setError('Online checkout supports one store at a time. Please order from each store separately.');
+    if ((onlinePayment || paymentMethod === 'bank_transfer') && storeCount > 1) {
+      setError('This payment method supports one store at a time. Please order from each store separately.');
       return;
     }
 
@@ -150,6 +151,15 @@ export default function CheckoutPage() {
 
       const orders = data.data.orders || [];
       const firstOrder = orders[0];
+
+      if (paymentMethod === 'bank_transfer' && firstOrder) {
+        const detailRes = await fetch(`/api/v1/orders/${firstOrder.id}`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' });
+        const detail = await readApiResponse(detailRes);
+        if (!detailRes.ok || !detail.success) throw new Error('Order placed. Open Order History to upload your payment proof.');
+        setOrderForProof(detail.data);
+        setPlacing(false);
+        return;
+      }
 
       if (onlinePayment && firstOrder) {
         const endpoint = paymentMethod;
@@ -204,6 +214,13 @@ export default function CheckoutPage() {
       `}</style>
 
       <div className="flex min-h-screen bg-[#f7f5ef]">
+        {orderForProof && <div role="dialog" aria-modal="true" aria-label="Bank transfer payment" className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-white rounded-2xl p-6 shadow-xl">
+            <h2 className="text-xl font-bold mb-4">Complete your bank transfer</h2>
+            <PaymentProofPanel order={orderForProof} onSubmitted={() => router.push(`/orders/${orderForProof._id}`)} />
+            <Link href={`/orders/${orderForProof._id}`} className="block mt-4 text-sm font-semibold text-[#31543d]">Finish later in Order Details →</Link>
+          </div>
+        </div>}
         <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-[var(--font-body-face)] text-[13px] font-medium z-40">
           <SidebarMenuButton />
           <div className="flex items-center gap-3 px-3 py-6 mb-4">

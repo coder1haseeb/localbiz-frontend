@@ -14,7 +14,7 @@ export default function BusinessProfilePage() {
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState('');
   const [imageError, setImageError] = useState('');
-  const [form, setForm] = useState({ storeName: '', description: '', address: '', city: '', phone: '', logo: '', coverImage: '', operatingHours: {}, location: null });
+  const [form, setForm] = useState({ storeName: '', description: '', address: '', city: '', phone: '', logo: '', coverImage: '', operatingHours: {}, location: null, bankDetails: { bankName: '', accountName: '', accountNumber: '', iban: '' } });
 
   const fetchProfile = useCallback(async () => {
     const token = localStorage.getItem('authToken');
@@ -36,6 +36,7 @@ export default function BusinessProfilePage() {
           logo: data.data.logo || '',
           coverImage: data.data.coverImage || '',
           operatingHours: data.data.operatingHours || {},
+          bankDetails: { bankName: data.data.bankDetails?.bankName || '', accountName: data.data.bankDetails?.accountName || '', accountNumber: data.data.bankDetails?.accountNumber || '', iban: data.data.bankDetails?.iban || '' },
         });
       }
     } catch (err) {
@@ -126,8 +127,8 @@ export default function BusinessProfilePage() {
         </aside>
 
         <main className="ml-72 flex-1 p-8 max-w-3xl">
-          <h1 className="text-3xl font-bold text-[#253027] mb-2">Store Profile</h1>
-          <p className="text-slate-500 mb-6">Update how customers see your store</p>
+          <h1 className="text-3xl font-bold text-[#253027] mb-2">Store settings</h1>
+          <p className="text-slate-500 mb-6">Update your store profile and bank transfer details</p>
 
           {business?.approvalStatus !== 'approved' && (
             <div className={`mb-6 p-4 rounded-xl text-sm font-semibold ${business?.approvalStatus === 'pending' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'bg-red-50 text-red-600 border border-red-200'}`}>
@@ -162,6 +163,17 @@ export default function BusinessProfilePage() {
               <input className="p-input" value={form.address} onChange={e => setForm(f => ({ ...f, address: e.target.value }))} />
             </div>
             <div><label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Store location</label><StoreLocationPicker value={form.location} onChange={location => setForm(current => ({ ...current, location }))} /></div>
+            <div id="bank-details" className="border-t border-slate-200 pt-5">
+              <h2 className="font-bold text-[#253027] mb-1">Bank transfer details</h2>
+              <p className="text-xs text-slate-500 mb-4">Customers will see these details after placing a bank transfer order.</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[['bankName', 'Bank name'], ['accountName', 'Account name'], ['accountNumber', 'Account number'], ['iban', 'IBAN']].map(([field, label]) => (
+                  <label key={field} className="text-xs font-bold text-slate-500 uppercase">{label}
+                    <input className="p-input mt-1.5" maxLength={100} value={form.bankDetails[field]} onChange={e => setForm(current => ({ ...current, bankDetails: { ...current.bankDetails, [field]: e.target.value } }))} />
+                  </label>
+                ))}
+              </div>
+            </div>
             <div>
               <label htmlFor="store-logo" className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Store logo</label>
               <input id="store-logo" type="file" accept="image/jpeg,image/png,image/webp" className="p-input" onChange={e => { selectImage('logo', e.target.files?.[0]); e.target.value = ''; }} />

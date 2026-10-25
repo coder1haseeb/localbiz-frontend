@@ -25,6 +25,8 @@ export default function BusinessOrdersPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [updating, setUpdating] = useState(null);
   const [expanded, setExpanded] = useState(null);
+  const [proofs, setProofs] = useState({});
+  const [proofError, setProofError] = useState('');
 
   const fetchOrders = useCallback(async (status) => {
     const token = localStorage.getItem('authToken');
@@ -65,6 +67,35 @@ export default function BusinessOrdersPage() {
     }
   };
 
+  const loadProof = async orderId => {
+    setProofError('');
+    try {
+      const res = await fetch(`/api/v1/business/orders/${orderId}/payment-proof`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` }, cache: 'no-store',
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || 'Could not load proof.');
+      setProofs(current => ({ ...current, [orderId]: data.data }));
+    } catch (err) { setProofError(err.message); }
+  };
+
+  const reviewProof = async (orderId, decision) => {
+    setUpdating(orderId);
+    setProofError('');
+    try {
+      const res = await fetch(`/api/v1/business/orders/${orderId}/payment-proof`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('authToken')}` },
+        body: JSON.stringify({ decision }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || 'Could not review proof.');
+      setProofs(current => { const next = { ...current }; delete next[orderId]; return next; });
+      fetchOrders(activeTab);
+    } catch (err) { setProofError(err.message); }
+    finally { setUpdating(null); }
+  };
+
   const handleLogout = () => {
     clearSession();
     router.replace('/login');
@@ -98,7 +129,8 @@ export default function BusinessOrdersPage() {
 
         <main className="ml-72 flex-1 p-8">
           <h1 className="text-3xl font-bold text-[#253027] mb-2">Orders</h1>
-          <p className="text-slate-500 mb-6">Manage incoming orders for your store</p>
+          <p className="text-slate-500 mb-6">Manage incoming orders for your store · <Link href="/dashboard/profile#bank-details" className="text-[#31543d] underline">Bank settings</Link></p>
+          {proofError && <p role="alert" className="mb-4 text-red-700 text-sm font-semibold">{proofError}</p>}
 
           <div className="flex gap-2 overflow-x-auto mb-6 pb-1">
             {STATUS_TABS.map(tab => (
@@ -139,6 +171,20 @@ export default function BusinessOrdersPage() {
                       <p className="text-xs text-slate-500">{order.customer?.email} · {order.customer?.phone}</p>
                       <p className="text-xs text-slate-500">Delivery: {order.deliveryAddress?.street}, {order.deliveryAddress?.city}</p>
                       <p className="text-xs text-slate-500">Payment: {order.paymentMethod?.replace('_', ' ')} · {order.paymentStatus}</p>
+                      {order.paymentMethod === 'bank_transfer' && <div className="space-y-3 rounded-xl bg-white border border-slate-200 p-4">
+                        <p className="text-sm font-semibold">Payment proof: {order.proofStatus || 'none'}</p>
+                        {order.proofStatus === 'submitted' && <>
+                          <button type="button" className="text-sm font-semibold text-[#31543d] underline" onClick={() => loadProof(order._id)}>View uploaded proof</button>
+                          {proofs[order._id]?.proofImage && <div className="space-y-3">
+                            <img src={proofs[order._id].proofImage} alt={`Payment proof for ${order.orderId}`} className="max-h-80 max-w-full object-contain rounded-lg border" />
+                            <p className="text-xs text-slate-500">Check the transfer in your bank account and match reference {order.orderId} before accepting.</p>
+                            <div className="flex gap-2">
+                              <button type="button" disabled={updating === order._id} onClick={() => reviewProof(order._id, 'accept')} className="px-4 py-2 bg-[#31543d] text-white rounded-lg text-sm disabled:opacity-50">Confirm payment</button>
+                              <button type="button" disabled={updating === order._id} onClick={() => reviewProof(order._id, 'reject')} className="px-4 py-2 bg-red-50 text-red-700 rounded-lg text-sm disabled:opacity-50">Reject proof</button>
+                            </div>
+                          </div>}
+                        </>}
+                      </div>}
 
                       {order.status !== 'delivered' && order.status !== 'cancelled' && (
                         <div className="flex items-center gap-2 pt-2">

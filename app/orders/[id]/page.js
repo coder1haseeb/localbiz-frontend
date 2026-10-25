@@ -4,6 +4,7 @@ import SidebarMenuButton from '../../../components/SidebarMenuButton.js';
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import PaymentProofPanel from '../../../components/PaymentProofPanel.js';
 
 const STATUS_STYLES = {
   pending: 'bg-amber-100 text-amber-700',
@@ -242,6 +243,16 @@ export default function OrderDetailPage() {
               <span className="text-2xl font-extrabold text-[#31543d]">Rs. {order.totalAmount?.toLocaleString()}</span>
             </div>
           </div>
+
+          {order.paymentMethod === 'bank_transfer' && order.paymentStatus !== 'paid' && order.status !== 'cancelled' && (
+            <div className="glass-card rounded-2xl p-6 mb-6">
+              <h2 className="font-bold text-xl text-[#253027] mb-4">Bank transfer payment</h2>
+              {order.proofStatus === 'submitted' ? <p className="text-amber-700 font-semibold">Your proof is awaiting store review.</p> : <>
+                {order.proofStatus === 'rejected' && <p className="text-red-700 mb-4">The store rejected the previous proof. Please upload a new one.</p>}
+                <PaymentProofPanel order={order} onSubmitted={fetchOrder} />
+              </>}
+            </div>
+          )}
 
           <div className="flex gap-3">
             {order.paymentMethod === 'safepay' && order.paymentStatus === 'pending' && order.status !== 'cancelled' && (
