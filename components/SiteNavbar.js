@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { getSession, routeForRole } from '../lib/session';
+import { usePathname, useRouter } from 'next/navigation';
+import { clearSession, getSession, routeForRole } from '../lib/session';
 import { guestCartCount } from '../lib/guestCart';
 import SidebarMenuButton from './SidebarMenuButton';
 
 export default function SiteNavbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [role, setRole] = useState(undefined);
   const [count, setCount] = useState(0);
 
@@ -72,6 +73,9 @@ export default function SiteNavbar() {
           </Link>;
         })}
       </nav>
+      <button type="button" onClick={() => { clearSession(); router.replace('/login'); }} className="flex items-center gap-3 w-full px-4 py-3 text-red-600 font-semibold rounded-lg hover:bg-red-50">
+        <span className="material-symbols-outlined" aria-hidden="true">logout</span><span>Logout</span>
+      </button>
     </aside>;
   }
   if (sidebarRoute || (conditionalSidebar && (role === undefined || role === 'customer'))) return null;
