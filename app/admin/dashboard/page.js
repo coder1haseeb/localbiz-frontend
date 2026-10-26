@@ -248,6 +248,10 @@ export default function AdminDashboard() {
                 <span className="material-symbols-outlined">insights</span>
                 <span>Reports</span>
               </Link>
+              <Link href="/admin/dashboard/recommendations" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm text-slate-500 hover:bg-[#eceef0] transition-all">
+                <span className="material-symbols-outlined">model_training</span>
+                <span>AI Recommendations</span>
+              </Link>
               <Link href="/notifications" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm text-slate-500 hover:bg-[#eceef0] transition-all">
                 <span className="material-symbols-outlined">notifications</span>
                 <span>Notifications</span>
@@ -286,12 +290,12 @@ export default function AdminDashboard() {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <h2 id="recommendation-training-title" className="text-xl font-bold text-[#253027]">Recommendation model</h2>
-                <p className="mt-1 text-sm text-slate-600">Train from real customer recommendation feedback. The model is used only if it beats the current ranking.</p>
+                <p className="mt-1 text-sm text-slate-600">Train now using feedback observed so far. Recent requests have provisional labels; a model is saved only if it beats the current ranking.</p>
               </div>
               <button type="button" onClick={startTraining}
                 disabled={trainingBusy || training?.state === 'running'}
                 className="rounded-lg bg-[#31543f] px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">
-                {training?.state === 'running' ? 'Training…' : 'Train model'}
+                {training?.state === 'running' ? 'Training…' : 'Train now'}
               </button>
             </div>
             <div className="mt-4 space-y-1 text-sm" aria-live="polite">
@@ -299,6 +303,7 @@ export default function AdminDashboard() {
                 ? `Active: ${training.model.source} model` : 'Active: hybrid ranker'}</p>
               {training?.model?.trainedAt && <p className="text-slate-600">Model trained: {new Date(training.model.trainedAt).toLocaleString()}</p>}
               <p className="text-slate-600">{training?.message || 'Loading training status…'}</p>
+              <Link href="/admin/dashboard/recommendations" className="inline-block pt-2 font-semibold text-[#31543f] underline">View training data and rankings</Link>
               {trainingError && <p className="text-red-600" role="alert">{trainingError}</p>}
             </div>
           </section>

@@ -82,6 +82,7 @@ export default function AdminUsersPage() {
             <div className="flex items-center gap-3 px-4 py-3 bg-white text-red-600 shadow-sm rounded-lg font-semibold"><span className="material-symbols-outlined">group</span><span>Users</span></div>
             <Link href="/admin/dashboard/categories" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg font-semibold"><span className="material-symbols-outlined">category</span><span>Categories</span></Link>
             <Link href="/admin/dashboard/reports" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg font-semibold"><span className="material-symbols-outlined">insights</span><span>Reports</span></Link>
+            <Link href="/admin/dashboard/recommendations" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg font-semibold"><span className="material-symbols-outlined">model_training</span><span>AI Recommendations</span></Link>
             <Link href="/notifications" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-[#eceef0] rounded-lg font-semibold"><span className="material-symbols-outlined">notifications</span><span>Notifications</span></Link>
           </nav>
           <button onClick={handleLogout} className="flex items-center gap-3 w-full py-3 px-4 text-red-500 font-bold text-sm hover:bg-red-50 rounded-lg"><span className="material-symbols-outlined">logout</span>Logout</button>
