@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Spinner from '@/components/Spinner';
@@ -12,6 +12,10 @@ export default function StoreDetailsPage() {
   const { ownerData, setOwnerData } = useBusinessRegistration();
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState('');
+  const [logoError, setLogoError] = useState('');
+  const [logoName, setLogoName] = useState('');
   const [location, setLocation] = useState(null);
   const [formData, setFormData] = useState({
     storeName: '',
@@ -22,24 +26,30 @@ export default function StoreDetailsPage() {
     logo: null
   });
 
-  useEffect(() => {
-    localStorage.removeItem('businessOwnerData');
-    localStorage.removeItem('businessRegistrationDraft');
-    if (!ownerData) router.replace('/business-register');
-
-    const fetchCategories = async () => {
-      try {
-        const res = await fetch(`/api/v1/categories`);
-        const data = await res.json();
-        if (data.success) {
-          setCategories(data.data.categories);
-        }
-      } catch (err) {
-        console.error('Failed to fetch categories:', err);
-      }
-    };
-    fetchCategories();
+  const fetchCategories = useCallback(async () => {
+    setCategoriesLoading(true);
+    setCategoriesError('');
+    try {
+      const res = await fetch('/api/v1/categories', { cache: 'no-store' });
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) throw new Error(`Category service unavailable (${res.status}).`);
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || `Could not load categories (${res.status}).`);
+      const available = Array.isArray(data.data?.categories) ? data.data.categories : [];
+      setCategories(available);
+      if (!available.length) setCategoriesError('No active store categories are available. Please ask an admin to enable one.');
+    } catch (err) {
+      setCategories([]);
+      setCategoriesError(err.message || 'Could not load categories.');
+    } finally {
+      setCategoriesLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    if (!ownerData) router.replace('/business-register');
+    fetchCategories();
+  }, [ownerData, router, fetchCategories]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -51,16 +61,22 @@ export default function StoreDetailsPage() {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({
-          ...prev,
-          logo: reader.result
-        }));
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    setLogoError('');
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type) || file.size > 2 * 1024 * 1024) {
+      setFormData(prev => ({ ...prev, logo: null }));
+      setLogoName('');
+      setLogoError('Choose a JPG, PNG, or WebP logo smaller than 2 MB.');
+      e.target.value = '';
+      return;
     }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setFormData(prev => ({ ...prev, logo: String(reader.result) }));
+      setLogoName(file.name);
+    };
+    reader.onerror = () => setLogoError('Could not read the logo. Please choose it again.');
+    reader.readAsDataURL(file);
   };
 
   const handleCompleteSetup = async (e) => {
@@ -79,6 +95,11 @@ export default function StoreDetailsPage() {
       alert('Owner data not found. Please start from the beginning.');
       return;
     }
+    if (categoriesLoading || categoriesError || !categories.some(cat => cat._id === formData.category)) {
+      setCategoriesError(categoriesError || 'Select an available category before continuing.');
+      return;
+    }
+    if (logoError) return;
 
     setLoading(true);
 
@@ -95,7 +116,7 @@ export default function StoreDetailsPage() {
         location,
         description: formData.description,
         storePhone: ownerData.phone,
-        logo: formData.logo || null
+        ...(formData.logo ? { logo: formData.logo } : {})
       };
 
       const response = await fetch(`/api/v1/auth/register/business`, {
@@ -108,7 +129,7 @@ export default function StoreDetailsPage() {
 
       const data = await response.json();
 
-      if (response.ok || response.status === 201) {
+      if (response.ok && data.success) {
         setOwnerData(null);
         alert('Business registered successfully! Awaiting admin approval.');
         router.push('/login');
@@ -245,13 +266,14 @@ export default function StoreDetailsPage() {
                         onChange={handleInputChange}
                         required
                       >
-                        <option value="">Select a category</option>
+                        <option value="">{categoriesLoading ? 'Loading categories…' : 'Select a category'}</option>
                         {categories.map(cat => (
                           <option key={cat._id} value={cat._id}>{cat.name}</option>
                         ))}
                       </select>
                       <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-outline">expand_more</span>
                     </div>
+                    {categoriesError && <div role="alert" className="text-sm text-red-700 mt-2">{categoriesError} <button type="button" onClick={fetchCategories} className="underline font-semibold">Retry</button></div>}
                   </div>
                 </div>
 
@@ -316,16 +338,18 @@ export default function StoreDetailsPage() {
                       </div>
                       <div className="text-center">
                         <p className="font-semibold text-on-surface">Click to upload or drag & drop</p>
-                        <p className="text-xs text-on-surface-variant mt-1">SVG, PNG, JPG (max. 800x800px)</p>
+                        <p className="text-xs text-on-surface-variant mt-1">JPG, PNG, or WebP, up to 2 MB</p>
                       </div>
                     </div>
                     <input
                       className="absolute inset-0 opacity-0 cursor-pointer"
                       type="file"
-                      accept="image/*"
+                      accept="image/jpeg,image/png,image/webp"
                       onChange={handleFileChange}
                     />
                   </div>
+                  {logoError && <p role="alert" className="text-sm text-red-700">{logoError}</p>}
+                  {formData.logo && <div className="flex items-center gap-3"><img src={formData.logo} alt="Selected store logo preview" className="w-16 h-16 rounded-lg object-cover border" /><span className="text-sm">{logoName} ready to upload</span><button type="button" className="text-sm text-red-700 underline" onClick={() => { setFormData(prev => ({ ...prev, logo: null })); setLogoName(''); }}>Remove</button></div>}
                 </div>
 
                 {/* Action Buttons */}
@@ -341,7 +365,7 @@ export default function StoreDetailsPage() {
                     <button
                       className="flex-1 sm:flex-none gradient-bg text-on-primary font-bold px-10 py-4 rounded-xl shadow-[0_10px_25px_rgba(70,72,212,0.2)] hover:shadow-[0_15px_30px_rgba(70,72,212,0.3)] active:scale-95 transition-all disabled:opacity-50 text-white"
                       type="submit"
-                      disabled={loading}
+                      disabled={loading || categoriesLoading || !!categoriesError}
                     >
                       {loading ? <Spinner /> : 'Complete Setup'}
                     </button>
