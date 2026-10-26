@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { getSession, routeForRole } from '../lib/session';
 
 const authPages = ['/login', '/register', '/business-register', '/admin/login'];
-const customerPages = ['/home', '/checkout', '/orders', '/profile', '/returns', '/notifications'];
+const customerPages = ['/home', '/checkout', '/orders', '/profile', '/returns', '/notifications', '/recommendations'];
 
 export default function SessionGate({ children }) {
   const pathname = usePathname();

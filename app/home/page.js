@@ -178,7 +178,7 @@ export default function CustomerDashboard() {
           </section>
 
           {recommendations.length > 0 && <section className="mb-10">
-            <h2 className="text-2xl font-bold text-[#253027] mb-4">Recommended for you</h2>
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h2 className="text-2xl font-bold text-[#253027]">Recommended for you</h2><Link href="/recommendations" className="text-sm font-semibold text-[#31543d] underline">View all recommendations →</Link></div>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
               {recommendations.map(product => <Link key={product._id} href={`/product/${product._id}`} className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-[#31543d] transition-colors">
                 {product.images?.[0] ? <img src={product.images[0]} alt="" className="w-full h-28 object-cover" /> : <div className="w-full h-28 bg-slate-100 flex items-center justify-center"><span className="material-symbols-outlined text-slate-400">inventory_2</span></div>}

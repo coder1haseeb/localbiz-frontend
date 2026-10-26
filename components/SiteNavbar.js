@@ -47,7 +47,7 @@ export default function SiteNavbar() {
   const conditionalSidebar = pathname.startsWith('/product/');
   const customerArea = pathname === '/home' || pathname === '/cart' || pathname === '/checkout' || pathname === '/notifications'
     || pathname === '/orders' || pathname.startsWith('/orders/') || pathname === '/returns' || pathname === '/profile'
-    || pathname === '/browse' || pathname === '/nearby' || pathname.startsWith('/product/') || pathname.startsWith('/store/');
+    || pathname === '/browse' || pathname === '/nearby' || pathname === '/recommendations' || pathname.startsWith('/product/') || pathname.startsWith('/store/');
 
   useEffect(() => {
     document.body.classList.toggle('customer-sidebar-layout', role === 'customer' && customerArea);
@@ -56,7 +56,7 @@ export default function SiteNavbar() {
 
   if (role === 'customer' && customerArea) {
     const links = [
-      ['/home', 'storefront', 'Home'], ['/browse', 'search', 'Search products'], ['/nearby', 'near_me', 'Nearby stores'],
+      ['/home', 'storefront', 'Home'], ['/recommendations', 'auto_awesome', 'Recommended'], ['/browse', 'search', 'Search products'], ['/nearby', 'near_me', 'Nearby stores'],
       ['/cart', 'shopping_cart', 'My Cart'], ['/orders', 'receipt_long', 'My Orders'], ['/returns', 'assignment_return', 'Returns'],
       ['/notifications', 'notifications', 'Notifications'], ['/profile', 'account_circle', 'Account settings'],
     ];

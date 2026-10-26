@@ -20,6 +20,9 @@ export default function AdminDashboard() {
   const [rejectionReason, setRejectionReason] = useState('');
   const [selectedBusiness, setSelectedBusiness] = useState(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
+  const [training, setTraining] = useState(null);
+  const [trainingBusy, setTrainingBusy] = useState(false);
+  const [trainingError, setTrainingError] = useState('');
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
@@ -34,7 +37,46 @@ export default function AdminDashboard() {
     setToken(authToken);
     fetchBusinesses(authToken);
     fetchSummary(authToken);
+    fetchTraining(authToken);
   }, []);
+
+  useEffect(() => {
+    if (!token || training?.state !== 'running') return;
+    const timer = setInterval(() => fetchTraining(token), 3000);
+    return () => clearInterval(timer);
+  }, [token, training?.state]);
+
+  const fetchTraining = async (authToken) => {
+    try {
+      const response = await fetch('/api/v1/admin/recommendations/training', {
+        headers: { Authorization: `Bearer ${authToken}` }, cache: 'no-store',
+      });
+      const result = await response.json();
+      if (!response.ok || !result.success) throw new Error(result.message || 'Could not load training status.');
+      setTraining(result.data);
+      setTrainingError('');
+    } catch (err) {
+      setTrainingError(err.message);
+    }
+  };
+
+  const startTraining = async () => {
+    if (!token || trainingBusy || training?.state === 'running') return;
+    setTrainingBusy(true);
+    setTrainingError('');
+    try {
+      const response = await fetch('/api/v1/admin/recommendations/train', {
+        method: 'POST', headers: { Authorization: `Bearer ${token}` },
+      });
+      const result = await response.json();
+      if (!response.ok && response.status !== 409) throw new Error(result.message || 'Could not start training.');
+      setTraining(result.data);
+    } catch (err) {
+      setTrainingError(err.message);
+    } finally {
+      setTrainingBusy(false);
+    }
+  };
 
   const fetchSummary = async (authToken) => {
     try {
@@ -239,6 +281,27 @@ export default function AdminDashboard() {
               <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Total Revenue</p><p className="text-2xl font-bold text-red-600">Rs. {summary.totalRevenue?.toLocaleString()}</p></div>
             </section>
           )}
+
+          <section className="glass-card rounded-2xl p-6" aria-labelledby="recommendation-training-title">
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 id="recommendation-training-title" className="text-xl font-bold text-[#253027]">Recommendation model</h2>
+                <p className="mt-1 text-sm text-slate-600">Train from real customer recommendation feedback. The model is used only if it beats the current ranking.</p>
+              </div>
+              <button type="button" onClick={startTraining}
+                disabled={trainingBusy || training?.state === 'running'}
+                className="rounded-lg bg-[#31543f] px-5 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50">
+                {training?.state === 'running' ? 'Training…' : 'Train model'}
+              </button>
+            </div>
+            <div className="mt-4 space-y-1 text-sm" aria-live="polite">
+              <p className="font-medium text-[#253027]">{training?.model?.active
+                ? `Active: ${training.model.source} model` : 'Active: hybrid ranker'}</p>
+              {training?.model?.trainedAt && <p className="text-slate-600">Model trained: {new Date(training.model.trainedAt).toLocaleString()}</p>}
+              <p className="text-slate-600">{training?.message || 'Loading training status…'}</p>
+              {trainingError && <p className="text-red-600" role="alert">{trainingError}</p>}
+            </div>
+          </section>
 
           {/* Tabs */}
           <div className="flex gap-4 border-b border-slate-200">
