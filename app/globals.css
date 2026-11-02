@@ -45,7 +45,7 @@ a,button,input,textarea,select { transition: background-color .2s ease, border-c
 .site-navbar nav b { display: inline-grid; place-items: center; min-width: 1.25rem; height: 1.25rem; padding: 0 .2rem; border-radius: 50%; background: var(--brand); color: white; font-size: .7rem; }
 aside.fixed.top-0 { overflow-y: auto; }
 body.customer-sidebar-layout aside[class*="w-72"][class*="fixed"]:not(.customer-global-sidebar) { display: none; }
-body.customer-sidebar-layout main:not([class*="ml-72"]) { margin-left: 18rem; }
+body.customer-sidebar-layout main:not([class*="ml-72"]) { margin-left: 18rem; width: auto; min-width: 0; }
 body.customer-sidebar-layout nav[aria-label="Mobile navigation"] { display: none; }
 @media (max-width: 540px) { .site-navbar nav { gap: .65rem; } .site-navbar nav a { font-size: .75rem; } .site-navbar nav a span:not(.material-symbols-outlined) { display: none; } }
 input:focus,textarea:focus,select:focus { border-color: var(--brand) !important; }
@@ -65,7 +65,7 @@ input:focus,textarea:focus,select:focus { border-color: var(--brand) !important;
 .marketplace-sidebar > div:first-child { border-bottom: 1px solid var(--border-soft); margin-bottom: 1rem; }
 .marketplace-sidebar nav a,.marketplace-sidebar nav > div { border-radius: 4px; }
 .marketplace-sidebar nav a:hover { background: #e1e7dc; color: var(--brand); transform: none; }
-.marketplace-main { max-width: 1440px; margin-right: auto; }
+.marketplace-main { min-width: 0; max-width: 1440px; margin-right: auto; }
 .marketplace-main h1 { font-size: clamp(2.3rem,4vw,3.5rem); }
 .marketplace-main h2 { font-size: clamp(1.6rem,2.5vw,2.2rem); }
 .marketplace-eyebrow { color: #a14f32; font-size: .7rem; letter-spacing: .14em; font-weight: 700; }
@@ -84,7 +84,7 @@ input:focus,textarea:focus,select:focus { border-color: var(--brand) !important;
 [class*="rounded-xl"] { border-radius: 5px !important; }
 
 @media(max-width:767px) {
-  body.customer-sidebar-layout main:not([class*="ml-72"]) { margin-left: 0; }
+  body.customer-sidebar-layout main:not([class*="ml-72"]) { margin-left: 0; padding-top: 6rem; }
   main[class*="ml-72"] { margin-left: 0; padding: 6rem 1.25rem 2rem; }
   aside[class*="w-72"][class*="fixed"] { width: 100%; height: auto; max-height: 4.5rem; overflow: hidden; padding: .25rem 1rem; border-bottom: 1px solid var(--border-soft); }
   aside[class*="w-72"][class*="fixed"]:focus-within,aside[class*="w-72"][class*="fixed"].menu-open { max-height: 90vh; overflow-y: auto; }

@@ -38,7 +38,7 @@ export default function CustomerDashboard() {
       })
       .catch(err => console.error('Failed to fetch stores:', err));
 
-    fetch(`/api/v1/recommendations?limit=4`, {
+    fetch(`/api/v1/recommendations?limit=5`, {
       headers: { Authorization: `Bearer ${token}` },
     }).then(r => r.json()).then(data => {
       if (data.success) setRecommendations(data.data.products || []);
@@ -179,17 +179,17 @@ export default function CustomerDashboard() {
 
           {recommendations.length > 0 && <section className="mb-10">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3"><h2 className="text-2xl font-bold text-[#253027]">Recommended for you</h2><Link href="/recommendations" className="text-sm font-semibold text-[#31543d] underline">View all recommendations →</Link></div>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl">
-              {recommendations.map(product => <Link key={product._id} href={`/product/${product._id}`} className="bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-[#31543d] transition-colors">
+            <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-4 w-full">
+              {recommendations.map(product => <Link key={product._id} href={`/product/${product._id}`} className="min-w-0 bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-[#31543d] transition-colors">
                 {product.images?.[0] ? <img src={product.images[0]} alt="" className="w-full h-28 object-cover" /> : <div className="w-full h-28 bg-slate-100 flex items-center justify-center"><span className="material-symbols-outlined text-slate-400">inventory_2</span></div>}
-                <div className="p-3"><h3 className="text-sm font-semibold line-clamp-2">{product.name}</h3><p className="text-xs text-slate-500">{product.business?.storeName}</p><p className="text-sm text-[#31543d] mt-1">Rs. {product.price?.toLocaleString()}</p></div>
+                <div className="p-3"><h3 className="text-sm font-semibold line-clamp-2">{product.name}</h3><p className="truncate text-xs text-slate-500">{product.business?.storeName}</p><p className="text-sm text-[#31543d] mt-1">Rs. {product.price?.toLocaleString()}</p></div>
               </Link>)}
             </div>
           </section>}
 
           {/* Stores Section */}
           <section className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-bold text-[#253027] flex items-center gap-2">
                   <span className="material-symbols-outlined text-[#31543d]" style={{ fontVariationSettings: "'FILL' 1" }}>store</span>
@@ -197,10 +197,13 @@ export default function CustomerDashboard() {
                 </h2>
                 <p className="text-sm text-slate-500 mt-1">Browse local stores and see what they offer.</p>
               </div>
+              <div className="flex flex-wrap items-center gap-4">
+              <Link href="/stores" className="text-sm font-semibold text-[#31543d] underline">View all stores →</Link>
               <Link href="/cart" className="flex items-center gap-2 px-4 py-2 bg-[#31543d] text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all">
                 <span className="material-symbols-outlined text-base">shopping_cart</span>
                 Cart ({stats.cartCount})
               </Link>
+              </div>
             </div>
 
             {stores.length === 0 ? (
