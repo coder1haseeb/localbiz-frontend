@@ -73,6 +73,12 @@ input:focus,textarea:focus,select:focus { border-color: var(--brand) !important;
 .marketplace-main .glass-card:hover { border-color: #9caf9f; }
 .marketplace-main section { scroll-margin-top: 2rem; }
 .marketplace-menu-toggle,.sidebar-menu-toggle { display: none; }
+.sidebar-global-toggle { position: fixed; z-index: 70; top: .65rem; left: 15rem; display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 4px; background: #dce5d9; color: var(--brand); }
+.sidebar-global-toggle.is-collapsed { left: 1rem; }
+@media(min-width:768px) {
+  body.sidebar-collapsed aside[class*="w-72"][class*="fixed"] { transform: translateX(-100%); visibility: hidden; }
+  body.sidebar-collapsed main[class*="ml-72"],body.sidebar-collapsed.customer-sidebar-layout main:not([class*="ml-72"]) { margin-left: 0; padding-top: 4.5rem; }
+}
 
 /* Older utility classes remain in route markup; these keep their finish consistent. */
 [class*="bg-gradient-to-"] { background-image: none !important; background-color: #e0e8dc; }
@@ -87,7 +93,8 @@ input:focus,textarea:focus,select:focus { border-color: var(--brand) !important;
   body.customer-sidebar-layout main:not([class*="ml-72"]) { margin-left: 0; padding-top: 6rem; }
   main[class*="ml-72"] { margin-left: 0; padding: 6rem 1.25rem 2rem; }
   aside[class*="w-72"][class*="fixed"] { width: 100%; height: auto; max-height: 4.5rem; overflow: hidden; padding: .25rem 1rem; border-bottom: 1px solid var(--border-soft); }
-  aside[class*="w-72"][class*="fixed"]:focus-within,aside[class*="w-72"][class*="fixed"].menu-open { max-height: 90vh; overflow-y: auto; }
+  aside[class*="w-72"][class*="fixed"].menu-open { max-height: 90vh; overflow-y: auto; }
+  .sidebar-global-toggle { left: auto; right: 1rem; top: .85rem; }
   .sidebar-menu-toggle,.marketplace-menu-toggle { display: flex; align-items: center; justify-content: center; position: absolute; top: .85rem; right: 1rem; width: 2.5rem; height: 2.5rem; border-radius: 4px; background: #dce5d9; color: var(--brand); }
   .marketplace-main { padding: 6rem 1.25rem 2rem; }
 }

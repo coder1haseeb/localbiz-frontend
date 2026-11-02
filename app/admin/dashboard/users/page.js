@@ -1,4 +1,5 @@
 'use client';
+import AdminRecordActions from '../../../../components/AdminRecordActions';
 import SidebarMenuButton from '../../../../components/SidebarMenuButton.js';
 import { clearSession } from '../../../../lib/session.js';
 
@@ -40,7 +41,7 @@ export default function AdminUsersPage() {
   useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
   const doAction = async (userId, action) => {
-    if (action === 'delete' && !confirm('Delete this user permanently?')) return;
+    if (action === 'delete' && !confirm('Delete this user permanently? Accounts linked to orders or stores must be suspended instead.')) return;
     setBusy(userId);
     const token = localStorage.getItem('authToken');
     try {
@@ -53,7 +54,7 @@ export default function AdminUsersPage() {
       if (data.success) fetchUsers();
       else alert(data.message || 'Action failed');
     } catch (err) {
-      console.error('Action failed:', err);
+      alert(err.message || 'Action failed. Please try again.');
     } finally {
       setBusy(null);
     }
@@ -88,7 +89,7 @@ export default function AdminUsersPage() {
           <button onClick={handleLogout} className="flex items-center gap-3 w-full py-3 px-4 text-red-500 font-bold text-sm hover:bg-red-50 rounded-lg"><span className="material-symbols-outlined">logout</span>Logout</button>
         </aside>
 
-        <main className="ml-72 flex-1 p-8">
+        <main className="ml-72 min-w-0 flex-1 p-8">
           <h1 className="text-3xl font-bold text-[#253027] mb-2">User Management</h1>
           <p className="text-slate-500 mb-6">Manage customer and business admin accounts</p>
 
@@ -109,7 +110,7 @@ export default function AdminUsersPage() {
           {loading ? (
             <div className="glass-card rounded-2xl p-16 text-center"><div className="animate-spin w-10 h-10 border-4 border-slate-200 border-t-red-500 rounded-full mx-auto"></div></div>
           ) : (
-            <div className="glass-card rounded-2xl overflow-hidden">
+            <div className="glass-card rounded-2xl overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
                   <tr>
@@ -134,7 +135,8 @@ export default function AdminUsersPage() {
                         </span>
                       </td>
                       <td className="p-4">
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap gap-2">
+                          <AdminRecordActions record={u} kind="users" onSaved={fetchUsers} />
                           {u.isActive !== false ? (
                             <button disabled={busy === u._id} onClick={() => doAction(u._id, 'suspend')} className="px-3 py-1.5 text-xs font-semibold bg-amber-50 text-amber-700 rounded-lg hover:bg-amber-100 disabled:opacity-50">Suspend</button>
                           ) : (

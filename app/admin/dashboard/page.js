@@ -1,4 +1,5 @@
 'use client';
+import AdminRecordActions from '../../../components/AdminRecordActions';
 import SidebarMenuButton from '../../../components/SidebarMenuButton.js';
 import { clearSession } from '../../../lib/session.js';
 
@@ -234,7 +235,7 @@ export default function AdminDashboard() {
                 className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm transition-all bg-white text-red-600 shadow-sm mb-1"
               >
                 <span className="material-symbols-outlined">domain_verification</span>
-                <span>Store Approvals</span>
+                <span>Store Management</span>
               </button>
               <Link href="/admin/dashboard/users" className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm text-slate-500 hover:bg-[#eceef0] transition-all">
                 <span className="material-symbols-outlined">group</span>
@@ -272,8 +273,8 @@ export default function AdminDashboard() {
         <main className="ml-72 flex-1 p-8 space-y-8">
           {/* Header */}
           <section className="space-y-2">
-            <h1 className="text-4xl font-bold text-[#253027]">Store Approvals</h1>
-            <p className="text-slate-500">Review and manage business store applications</p>
+            <h1 className="text-4xl font-bold text-[#253027]">Store Management</h1>
+            <p className="text-slate-500">Review applications, edit store details, and manage store availability</p>
           </section>
 
           {summary && (
@@ -451,6 +452,8 @@ export default function AdminDashboard() {
                     </div>
                   )}
 
+                  <p className="text-sm font-semibold text-slate-600">{business.isActive ? 'Active' : 'Inactive'}</p>
+                  <AdminRecordActions record={business} kind="businesses" onSaved={() => Promise.all([fetchBusinesses(token), fetchSummary(token)])} />
                   {/* Actions - Show only for Pending */}
                   {activeTab === 'pending' && (
                     <div className="flex gap-3 pt-4 border-t border-slate-200">
