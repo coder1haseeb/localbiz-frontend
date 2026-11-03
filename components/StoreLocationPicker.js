@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useId, useRef, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 
 const PAKISTAN_CENTER = [30.3753, 69.3451];
 const valid = (latitude, longitude) => Number.isFinite(latitude) && Number.isFinite(longitude) && latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180;
@@ -13,15 +13,18 @@ export default function StoreLocationPicker({ value, onChange, purpose = 'store'
   const leafletRef = useRef(null);
   const changeRef = useRef(onChange);
   const searchRequest = useRef(null);
+  const searchTimer = useRef(null);
+  const lastSearchAt = useRef(0);
   const searchId = useId();
   const [query, setQuery] = useState('');
+  const [selectedQuery, setSelectedQuery] = useState('');
   const [results, setResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [searchMessage, setSearchMessage] = useState('');
   const [message, setMessage] = useState('Use your location or click the map to place a pin.');
 
   useEffect(() => { changeRef.current = onChange; }, [onChange]);
-  useEffect(() => () => searchRequest.current?.abort(), []);
+  useEffect(() => () => { searchRequest.current?.abort(); clearTimeout(searchTimer.current); }, []);
   useEffect(() => {
     let active = true;
     import('leaflet').then(module => {
@@ -77,8 +80,9 @@ export default function StoreLocationPicker({ value, onChange, purpose = 'store'
     onChange(next);
   };
 
-  const searchPlaces = async () => {
-    const term = query.trim();
+  const searchPlaces = useCallback(async (text) => {
+    clearTimeout(searchTimer.current);
+    const term = text.trim();
     if (term.length < 3) { setSearchMessage('Enter at least 3 characters to search.'); return; }
     searchRequest.current?.abort();
     const controller = new AbortController();
@@ -87,7 +91,16 @@ export default function StoreLocationPicker({ value, onChange, purpose = 'store'
     setResults([]);
     setSearchMessage('');
     try {
-      const response = await fetch(`/api/v1/stores/locations/search?${new URLSearchParams({ q: term })}`, { signal: controller.signal });
+      const fetchResults = () => {
+        lastSearchAt.current = Date.now();
+        return fetch(`/api/v1/stores/locations/search?${new URLSearchParams({ q: term })}`, { signal: controller.signal });
+      };
+      let response = await fetchResults();
+      if (response.status === 429) {
+        await new Promise(resolve => setTimeout(resolve, 1100));
+        if (controller.signal.aborted) return;
+        response = await fetchResults();
+      }
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || 'Could not search locations.');
       if (controller.signal.aborted) return;
@@ -99,18 +112,28 @@ export default function StoreLocationPicker({ value, onChange, purpose = 'store'
     } finally {
       if (!controller.signal.aborted) setSearching(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (query.trim().length < 3 || query === selectedQuery) return;
+    const delay = Math.max(450, lastSearchAt.current + 1100 - Date.now());
+    searchTimer.current = setTimeout(() => searchPlaces(query), delay);
+    return () => clearTimeout(searchTimer.current);
+  }, [query, selectedQuery, searchPlaces]);
 
   return <div className="space-y-3">
     <div className="space-y-2">
       <label htmlFor={searchId} className="block text-sm font-semibold text-slate-600">Search for a city, area, or address in Pakistan</label>
       <div className="flex gap-2">
-        <input id={searchId} type="search" maxLength={160} value={query} placeholder="e.g. Gulberg, Lahore" onChange={event => { searchRequest.current?.abort(); setSearching(false); setQuery(event.target.value); setResults([]); setSearchMessage(''); }} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); searchPlaces(); } }} className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2" />
-        <button type="button" disabled={searching} onClick={searchPlaces} className="shrink-0 rounded-lg bg-[#31543d] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{searching ? 'Searching…' : 'Search'}</button>
+        <input id={searchId} type="search" maxLength={160} value={query} placeholder="Start typing, e.g. Gulberg, Lahore" aria-describedby={`${searchId}-status`} onChange={event => { searchRequest.current?.abort(); clearTimeout(searchTimer.current); setSearching(false); setSelectedQuery(''); setQuery(event.target.value); setResults([]); setSearchMessage(''); }} onKeyDown={event => {
+          if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); searchPlaces(query); }
+          if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); clearTimeout(searchTimer.current); searchRequest.current?.abort(); setSearching(false); setResults([]); setSearchMessage(''); }
+        }} className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2" />
+        <button type="button" disabled={searching} onClick={() => searchPlaces(query)} className="shrink-0 rounded-lg bg-[#31543d] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{searching ? 'Searching…' : 'Search'}</button>
       </div>
-      {searchMessage && <p role="status" className="text-sm text-slate-600">{searchMessage}</p>}
+      <p id={`${searchId}-status`} role="status" className="text-sm text-slate-600">{searching ? 'Finding locations…' : searchMessage || 'Suggestions appear after you type 3 characters.'}</p>
       {results.length > 0 && <ul aria-label="Location search results" className="max-h-52 overflow-y-auto rounded-lg border border-slate-200 bg-white">
-        {results.map((place, index) => <li key={`${place.latitude}-${place.longitude}-${index}`} className="border-b border-slate-100 last:border-0"><button type="button" onClick={() => { const point = { latitude: place.latitude, longitude: place.longitude }; onChange(point); mapRef.current?.setPin(point.latitude, point.longitude, true); setQuery(place.label); setResults([]); setSearchMessage('Location selected. Move the pin to adjust the exact position.'); }} className="w-full px-3 py-3 text-left text-sm hover:bg-[#e7eee5]">{place.label}</button></li>)}
+        {results.map((place, index) => <li key={`${place.latitude}-${place.longitude}-${index}`} className="border-b border-slate-100 last:border-0"><button type="button" onClick={() => { clearTimeout(searchTimer.current); searchRequest.current?.abort(); setSearching(false); const point = { latitude: place.latitude, longitude: place.longitude }; onChange(point); mapRef.current?.setPin(point.latitude, point.longitude, true); setSelectedQuery(place.label); setQuery(place.label); setResults([]); setSearchMessage('Location selected. Move the pin to adjust the exact position.'); }} className="w-full px-3 py-3 text-left text-sm hover:bg-[#e7eee5]">{place.label}</button></li>)}
       </ul>}
       <p className="text-xs text-slate-500">Search powered by <a href="https://github.com/komoot/photon" target="_blank" rel="noreferrer" className="underline">Photon</a> · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" className="underline">OpenStreetMap contributors</a></p>
     </div>
