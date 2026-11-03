@@ -79,9 +79,13 @@ input:focus,textarea:focus,select:focus { border-color: var(--brand) !important;
 .marketplace-menu-toggle,.sidebar-menu-toggle { display: none; }
 .sidebar-global-toggle { position: fixed; z-index: 70; top: .65rem; left: 15rem; display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 4px; background: #dce5d9; color: var(--brand); }
 .sidebar-global-toggle.is-collapsed { left: 1rem; }
-body.has-sidebar main { min-width: 0; }
+.sidebar-global-toggle { transition: left .28s ease, background-color .2s ease, color .2s ease; }
+.sidebar-global-toggle .material-symbols-outlined { transition: transform .28s ease; }
+.sidebar-global-toggle[aria-expanded="true"] .material-symbols-outlined { transform: rotate(90deg); }
+aside.fixed.top-0 { transition: transform .28s ease, max-height .28s ease, visibility 0s; }
+body.has-sidebar main { min-width: 0; transition: margin-left .28s ease, padding-top .28s ease; }
 @media(min-width:768px) {
-  body.sidebar-collapsed aside[class*="w-72"][class*="fixed"] { transform: translateX(-100%); visibility: hidden; }
+  body.sidebar-collapsed aside[class*="w-72"][class*="fixed"] { transform: translateX(-100%); visibility: hidden; transition: transform .28s ease, visibility 0s .28s; }
   body.sidebar-collapsed main[class*="ml-72"],body.sidebar-collapsed.customer-sidebar-layout main:not([class*="ml-72"]) { margin-left: 0; padding-top: 4.5rem; }
   body.sidebar-collapsed main { width: 100%; max-width: none; margin-right: 0; flex: 1 1 0%; }
   body.sidebar-collapsed main > .mx-auto[class*="max-w-"],body.sidebar-collapsed main > .page-content { width: 100%; max-width: none; }
@@ -105,4 +109,4 @@ body.has-sidebar main { min-width: 0; }
   .sidebar-global-toggle { left: auto; right: 1rem; top: .85rem; }
   .marketplace-main { padding: 6rem 1.25rem 2rem; }
 }
-@media(prefers-reduced-motion:reduce) { html { scroll-behavior: auto; } *,*::before,*::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+@media(prefers-reduced-motion:reduce) { html { scroll-behavior: auto; } *,*::before,*::after { animation-duration: .01ms !important; transition-duration: .01ms !important; transition-delay: 0s !important; } }

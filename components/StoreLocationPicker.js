@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 const PAKISTAN_CENTER = [30.3753, 69.3451];
 const valid = (latitude, longitude) => Number.isFinite(latitude) && Number.isFinite(longitude) && latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180;
@@ -12,9 +12,16 @@ export default function StoreLocationPicker({ value, onChange, purpose = 'store'
   const markerRef = useRef(null);
   const leafletRef = useRef(null);
   const changeRef = useRef(onChange);
+  const searchRequest = useRef(null);
+  const searchId = useId();
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [searching, setSearching] = useState(false);
+  const [searchMessage, setSearchMessage] = useState('');
   const [message, setMessage] = useState('Use your location or click the map to place a pin.');
 
   useEffect(() => { changeRef.current = onChange; }, [onChange]);
+  useEffect(() => () => searchRequest.current?.abort(), []);
   useEffect(() => {
     let active = true;
     import('leaflet').then(module => {
@@ -41,10 +48,13 @@ export default function StoreLocationPicker({ value, onChange, purpose = 'store'
       };
       map.on('click', event => { setPin(event.latlng.lat, event.latlng.lng); changeRef.current({ latitude: event.latlng.lat, longitude: event.latlng.lng }); setMessage('Pin selected. Drag it to adjust the location.'); });
       mapRef.current = { map, setPin };
+      const resizeObserver = new ResizeObserver(() => map.invalidateSize({ pan: false }));
+      resizeObserver.observe(containerRef.current);
+      mapRef.current.resizeObserver = resizeObserver;
       if (hasLocation) setPin(center[0], center[1]);
       setTimeout(() => map.invalidateSize(), 0);
     }).catch(() => { if (active) setMessage('Map could not load. Enter coordinates below.'); });
-    return () => { active = false; mapRef.current?.map.remove(); mapRef.current = null; markerRef.current = null; };
+    return () => { active = false; mapRef.current?.resizeObserver.disconnect(); mapRef.current?.map.remove(); mapRef.current = null; markerRef.current = null; };
   }, []);
 
   useEffect(() => {
@@ -67,7 +77,43 @@ export default function StoreLocationPicker({ value, onChange, purpose = 'store'
     onChange(next);
   };
 
+  const searchPlaces = async () => {
+    const term = query.trim();
+    if (term.length < 3) { setSearchMessage('Enter at least 3 characters to search.'); return; }
+    searchRequest.current?.abort();
+    const controller = new AbortController();
+    searchRequest.current = controller;
+    setSearching(true);
+    setResults([]);
+    setSearchMessage('');
+    try {
+      const response = await fetch(`/api/v1/stores/locations/search?${new URLSearchParams({ q: term })}`, { signal: controller.signal });
+      const data = await response.json();
+      if (!response.ok || !data.success) throw new Error(data.message || 'Could not search locations.');
+      if (controller.signal.aborted) return;
+      const locations = data.data?.locations || [];
+      setResults(locations);
+      setSearchMessage(locations.length ? 'Select a result to place the pin.' : 'No matching locations. Try adding a city name, or place a pin on the map.');
+    } catch (error) {
+      if (!controller.signal.aborted) setSearchMessage(error.message || 'Could not search locations.');
+    } finally {
+      if (!controller.signal.aborted) setSearching(false);
+    }
+  };
+
   return <div className="space-y-3">
+    <div className="space-y-2">
+      <label htmlFor={searchId} className="block text-sm font-semibold text-slate-600">Search for a city, area, or address in Pakistan</label>
+      <div className="flex gap-2">
+        <input id={searchId} type="search" maxLength={160} value={query} placeholder="e.g. Gulberg, Lahore" onChange={event => { searchRequest.current?.abort(); setSearching(false); setQuery(event.target.value); setResults([]); setSearchMessage(''); }} onKeyDown={event => { if (event.key === 'Enter') { event.preventDefault(); event.stopPropagation(); searchPlaces(); } }} className="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 py-2" />
+        <button type="button" disabled={searching} onClick={searchPlaces} className="shrink-0 rounded-lg bg-[#31543d] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">{searching ? 'Searching…' : 'Search'}</button>
+      </div>
+      {searchMessage && <p role="status" className="text-sm text-slate-600">{searchMessage}</p>}
+      {results.length > 0 && <ul aria-label="Location search results" className="max-h-52 overflow-y-auto rounded-lg border border-slate-200 bg-white">
+        {results.map((place, index) => <li key={`${place.latitude}-${place.longitude}-${index}`} className="border-b border-slate-100 last:border-0"><button type="button" onClick={() => { const point = { latitude: place.latitude, longitude: place.longitude }; onChange(point); mapRef.current?.setPin(point.latitude, point.longitude, true); setQuery(place.label); setResults([]); setSearchMessage('Location selected. Move the pin to adjust the exact position.'); }} className="w-full px-3 py-3 text-left text-sm hover:bg-[#e7eee5]">{place.label}</button></li>)}
+      </ul>}
+      <p className="text-xs text-slate-500">Search powered by <a href="https://github.com/komoot/photon" target="_blank" rel="noreferrer" className="underline">Photon</a> · © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer" className="underline">OpenStreetMap contributors</a></p>
+    </div>
     <div className="flex flex-wrap items-center gap-3"><button type="button" onClick={locate} className="rounded-lg bg-[#31543d] px-4 py-2 text-sm font-semibold text-white">Use my current location</button><p className="text-sm text-slate-600" role="status">{message}</p></div>
     <div ref={containerRef} className="h-72 w-full overflow-hidden rounded-lg border border-slate-300" role="application" aria-label={purpose === 'store' ? 'Store location map' : 'Search location map'} />
     <div className="grid grid-cols-2 gap-3"><label className="text-sm text-slate-600">Latitude<input type="number" step="any" min="-90" max="90" value={value?.latitude ?? ''} onChange={event => editCoordinate('latitude', event.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2" /></label><label className="text-sm text-slate-600">Longitude<input type="number" step="any" min="-180" max="180" value={value?.longitude ?? ''} onChange={event => editCoordinate('longitude', event.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2" /></label></div>
