@@ -75,8 +75,10 @@ export default function PublicCatalogue({ full = false }) {
       return;
     }
     if (!session) {
-      addGuestItem(product._id, 1);
-      setMessage(`${product.name} added to your cart.`);
+      try {
+        await addGuestItem(product._id, 1);
+        setMessage(`${product.name} added to your cart.`);
+      } catch (error) { setMessage(error.message || 'Could not add this product to your cart.'); }
       return;
     }
     try {
@@ -85,8 +87,9 @@ export default function PublicCatalogue({ full = false }) {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.token}` },
         body: JSON.stringify({ productId: product._id, quantity: 1 }),
       });
-      if (response.ok) window.dispatchEvent(new Event('localbiz:cart'));
-      setMessage(response.ok ? `${product.name} added to your cart.` : 'Could not add this product to your cart.');
+      const data = await response.json();
+      if (response.ok && data.success) window.dispatchEvent(new Event('localbiz:cart'));
+      setMessage(response.ok && data.success ? `${product.name} added to your cart.` : data.message || 'Could not add this product to your cart.');
     } catch { setMessage('Could not add this product to your cart.'); }
   }
 

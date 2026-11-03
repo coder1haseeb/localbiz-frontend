@@ -54,7 +54,11 @@ export default function ProductDetail() {
       return;
     }
     if (!session) {
-      if (addGuestItem(id, quantity)) setCartMsg('✅ Added to your cart!');
+      setCartLoading(true);
+      try {
+        if (await addGuestItem(id, quantity)) setCartMsg('✅ Added to your cart!');
+      } catch (error) { setCartMsg(error.message || 'Could not add this product to your cart.'); }
+      finally { setCartLoading(false); }
       return; 
     }
     const token = session.token;

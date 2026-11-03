@@ -25,7 +25,8 @@ export default function GuestCart() {
     writeGuestCart(next);
   };
   const subtotal = items.reduce((sum, item) => sum + (products[item.productId]?.price || 0) * item.quantity, 0);
-  const canCheckout = items.length > 0 && items.every(item => products[item.productId] && products[item.productId].stockQty >= item.quantity);
+  const mixedStores = new Set(items.map(item => products[item.productId]?.business?._id || products[item.productId]?.business).filter(Boolean).map(String)).size > 1;
+  const canCheckout = !mixedStores && items.length > 0 && items.every(item => products[item.productId]?.business && products[item.productId].stockQty >= item.quantity);
 
   return <div className="flex min-h-screen bg-[#f7f5ef]">
     <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 text-[13px] font-medium z-40">
@@ -51,7 +52,7 @@ export default function GuestCart() {
               </div>
             </div>;
           })}
-      </div><div className="lg:col-span-4 sticky top-8"><div className="bg-white p-8 rounded-3xl border border-white/50 shadow-md"><h2 className="font-bold text-2xl mb-8">Order Summary</h2><div className="flex justify-between text-slate-500 mb-4"><span>Subtotal</span><strong className="text-[#253027]">Rs. {subtotal.toLocaleString()}</strong></div><p className="text-xs text-slate-500 pb-4">No delivery or tax charge is added by the current checkout.</p><div className="pt-6 border-t border-[#d8ddd2] flex justify-between items-end mb-8"><span className="font-bold">Grand Total</span><strong className="text-3xl text-[#31543d]">Rs. {subtotal.toLocaleString()}</strong></div><Link href={canCheckout ? '/checkout' : '#'} aria-disabled={!canCheckout} className={`w-full py-4 bg-[#31543d] text-white font-bold rounded-2xl flex items-center justify-center gap-2 ${canCheckout ? '' : 'pointer-events-none opacity-50'}`}>Proceed to Checkout <span className="material-symbols-outlined">arrow_forward</span></Link><p className="text-xs text-slate-500 mt-4">Sign in to complete your order. Your cart will be added to your account.</p></div></div></div>
+      </div><div className="lg:col-span-4 sticky top-8"><div className="bg-white p-8 rounded-3xl border border-white/50 shadow-md"><h2 className="font-bold text-2xl mb-8">Order Summary</h2>{mixedStores && <p role="alert" className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">Checkout supports one store at a time. Remove items from other stores to continue.</p>}<div className="flex justify-between text-slate-500 mb-4"><span>Subtotal</span><strong className="text-[#253027]">Rs. {subtotal.toLocaleString()}</strong></div><p className="text-xs text-slate-500 pb-4">No delivery or tax charge is added by the current checkout.</p><div className="pt-6 border-t border-[#d8ddd2] flex justify-between items-end mb-8"><span className="font-bold">Grand Total</span><strong className="text-3xl text-[#31543d]">Rs. {subtotal.toLocaleString()}</strong></div><Link href={canCheckout ? '/checkout' : '#'} aria-disabled={!canCheckout} className={`w-full py-4 bg-[#31543d] text-white font-bold rounded-2xl flex items-center justify-center gap-2 ${canCheckout ? '' : 'pointer-events-none opacity-50'}`}>Proceed to Checkout <span className="material-symbols-outlined">arrow_forward</span></Link><p className="text-xs text-slate-500 mt-4">Sign in to complete your order. Your cart will be added to your account.</p></div></div></div>
     </main>
   </div>;
 }

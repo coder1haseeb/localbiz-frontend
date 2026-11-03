@@ -154,8 +154,8 @@ export default function CheckoutPage() {
       setError('Please enter a valid mobile number (10+ digits) for wallet payment.');
       return;
     }
-    if ((onlinePayment || paymentMethod === 'bank_transfer') && storeCount > 1) {
-      setError('This payment method supports one store at a time. Please order from each store separately.');
+    if (storeCount > 1) {
+      setError('Checkout supports one store at a time. Remove items from other stores before placing your order.');
       return;
     }
 
@@ -392,13 +392,14 @@ export default function CheckoutPage() {
                     <span className="text-3xl font-extrabold text-[#31543d]">Rs. {grandTotal.toLocaleString()}</span>
                   </div>
 
+                  {storeCount > 1 && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">Checkout supports one store at a time. <Link href="/cart" className="font-semibold underline">Return to your cart</Link> and remove items from other stores.</p>}
                   {error && (
                     <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm font-semibold">{error}</div>
                   )}
 
                   <button
                     onClick={handlePlaceOrder}
-                    disabled={placing}
+                    disabled={placing || storeCount > 1}
                     className="w-full mt-6 py-4 bg-gradient-to-br from-[#31543d] to-[#a96b4e] text-white font-bold rounded-2xl shadow-lg hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
                     {placing ? 'Placing Order...' : 'Place Order'}

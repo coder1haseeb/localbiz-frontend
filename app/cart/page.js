@@ -92,6 +92,9 @@ export default function CartPage() {
     const price = item.product?.price || 0;
     return sum + price * item.quantity;
   }, 0) || 0;
+  const storeIds = new Set((cart?.items || []).map(item => item.product?.business?._id || item.product?.business).filter(Boolean).map(String));
+  const mixedStores = storeIds.size > 1;
+  const canCheckout = cart?.items?.length > 0 && !mixedStores && cart.items.every(item => item.product?.business && item.product.stockQty >= item.quantity);
   // The order API charges product totals only; keep this estimate identical.
   const grandTotal = subtotal;
 
@@ -183,7 +186,7 @@ export default function CartPage() {
             <p className="text-slate-500 text-sm mt-1">Review your selections from Pakistani artisans and local creators.</p>
           </header>
           {unmergedItems.length > 0 && <div className="rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900">
-            {unmergedItems.length} saved {unmergedItems.length === 1 ? 'product could' : 'products could'} not be added to your account cart. Check stock or try again.
+            {unmergedItems.length} saved {unmergedItems.length === 1 ? 'product could' : 'products could'} not be added to your account cart. Your cart supports one store at a time; complete your current order or remove its items before adding products from another store. Also check product availability.
             <button type="button" onClick={retryGuestCart} className="ml-3 font-bold underline">Retry</button>
           </div>}
 
@@ -272,10 +275,12 @@ export default function CartPage() {
                   </div>
                 </div>
 
+                {mixedStores && <p role="alert" className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">Checkout supports one store at a time. Remove items from other stores to continue.</p>}
                 {/* CTA Button */}
                 <Link
-                  href="/checkout"
-                  className={`w-full py-4 bg-gradient-to-br from-[#31543d] to-[#a96b4e] text-white font-bold rounded-2xl shadow-[0_8px_20px_rgba(70,72,212,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group mb-6 ${!cart?.items || cart.items.length === 0 ? 'pointer-events-none opacity-50' : ''}`}
+                  href={canCheckout ? "/checkout" : "#"}
+                  aria-disabled={!canCheckout}
+                  className={`w-full py-4 bg-gradient-to-br from-[#31543d] to-[#a96b4e] text-white font-bold rounded-2xl shadow-[0_8px_20px_rgba(70,72,212,0.3)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 group mb-6 ${!canCheckout ? 'pointer-events-none opacity-50' : ''}`}
                 >
                   <span>Proceed to Checkout</span>
                   <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
