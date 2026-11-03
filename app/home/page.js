@@ -10,7 +10,6 @@ export default function CustomerDashboard() {
   const [stores, setStores] = useState([]);
   const [recommendations, setRecommendations] = useState([]);
   const [userName, setUserName] = useState('there');
-  const [menuOpen, setMenuOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [stats, setStats] = useState({ totalOrders: 0, totalSpent: 0, cartCount: 0 });
 
@@ -65,7 +64,7 @@ export default function CustomerDashboard() {
     <>
       <div className="marketplace-shell flex min-h-screen bg-[#f7f5ef]">
         {/* Sidebar Navigation */}
-        <aside className={`marketplace-sidebar h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-[var(--font-body-face)] text-[13px] font-medium z-40 ${menuOpen ? 'menu-open' : ''}`}>
+        <aside className={`marketplace-sidebar h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-[var(--font-body-face)] text-[13px] font-medium z-40`}>
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>storefront</span>
@@ -76,9 +75,6 @@ export default function CustomerDashboard() {
             </div>
           </div>
 
-          <button type="button" className="marketplace-menu-toggle" onClick={() => setMenuOpen(!menuOpen)} aria-expanded={menuOpen} aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}>
-            <span className="material-symbols-outlined">{menuOpen ? 'close' : 'menu'}</span>
-          </button>
 
           <nav className="flex-1 space-y-1">
             <div className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold">

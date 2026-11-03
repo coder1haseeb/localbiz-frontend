@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import SidebarMenuButton from './SidebarMenuButton';
 import { readGuestCart, writeGuestCart } from '../lib/guestCart';
 
 export default function GuestCart() {
@@ -30,7 +29,7 @@ export default function GuestCart() {
 
   return <div className="flex min-h-screen bg-[#f7f5ef]">
     <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 text-[13px] font-medium z-40">
-      <SidebarMenuButton />
+
       <Link href="/" className="flex items-center gap-3 px-3 py-6 mb-4"><span className="w-10 h-10 rounded-xl bg-[#31543d] flex items-center justify-center text-white"><span className="material-symbols-outlined">diamond</span></span><span><strong className="block text-lg text-[#253027] leading-none">LocalBiz</strong><small className="text-slate-500">Marketplace</small></span></Link>
       <nav className="flex-1 space-y-1"><Link href="/browse" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-white rounded-lg"><span className="material-symbols-outlined">storefront</span>Browse</Link><div className="flex items-center gap-3 px-4 py-3 bg-white text-[#31543d] shadow-sm rounded-lg font-semibold"><span className="material-symbols-outlined">shopping_cart</span>My Cart{items.length > 0 && <span className="ml-auto bg-[#31543d] text-white text-xs font-bold px-2 py-0.5 rounded-full">{items.length}</span>}</div></nav>
       <div className="p-4 bg-white/60 rounded-2xl border border-white/40"><p className="text-xs text-slate-400 uppercase font-semibold mb-1">Welcome</p><p className="text-sm font-bold text-[#253027]">Guest shopper</p><p className="text-xs text-slate-500 mt-2">Your cart is saved on this device until you sign in.</p></div>

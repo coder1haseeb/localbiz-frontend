@@ -1,6 +1,5 @@
 'use client';
 import AdminRecordActions from '../../../components/AdminRecordActions';
-import SidebarMenuButton from '../../../components/SidebarMenuButton.js';
 import { clearSession } from '../../../lib/session.js';
 
 import { useState, useEffect } from 'react';
@@ -207,7 +206,7 @@ export default function AdminDashboard() {
       <div className="flex min-h-screen bg-[#f7f5ef]">
         {/* Sidebar */}
         <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-[var(--font-body-face)] z-40">
-          <SidebarMenuButton />
+
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white">
               <span
@@ -278,12 +277,11 @@ export default function AdminDashboard() {
           </section>
 
           {summary && (
-            <section className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Customers</p><p className="text-2xl font-bold text-[#253027]">{summary.totalCustomers}</p></div>
               <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Business Owners</p><p className="text-2xl font-bold text-[#253027]">{summary.totalBusinessOwners}</p></div>
               <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Active Stores</p><p className="text-2xl font-bold text-emerald-600">{summary.activeBusinesses}</p></div>
               <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Total Orders</p><p className="text-2xl font-bold text-[#253027]">{summary.totalOrders}</p></div>
-              <div className="glass-card rounded-2xl p-5"><p className="text-xs text-slate-500 uppercase font-semibold mb-1">Total Revenue</p><p className="text-2xl font-bold text-red-600">Rs. {summary.totalRevenue?.toLocaleString()}</p></div>
             </section>
           )}
 

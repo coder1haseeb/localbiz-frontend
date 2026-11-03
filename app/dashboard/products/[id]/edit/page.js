@@ -1,5 +1,4 @@
 'use client';
-import SidebarMenuButton from '../../../../../components/SidebarMenuButton.js';
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -220,7 +219,7 @@ export default function EditProductPage() {
       <div className="flex min-h-screen bg-[#f7f5ef]">
         {/* Sidebar */}
         <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-[var(--font-body-face)] text-[13px] font-medium z-40">
-          <SidebarMenuButton />
+
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>
@@ -267,7 +266,7 @@ export default function EditProductPage() {
           )}
 
           {/* Form Card */}
-          <div className="glass-card rounded-2xl p-8 shadow-sm max-w-2xl">
+          <div className="page-content glass-card rounded-2xl p-8 shadow-sm max-w-2xl">
             <div className="flex items-center gap-3 mb-7">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
                 <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>edit</span>

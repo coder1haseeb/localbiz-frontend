@@ -3,6 +3,7 @@ import "./globals.css";
 import BackButton from "../components/BackButton";
 import SessionGate from "../components/SessionGate";
 import BusinessRegistrationProvider from "../components/BusinessRegistrationProvider";
+import SidebarMenuButton from "../components/SidebarMenuButton";
 import SiteNavbar from "../components/SiteNavbar";
 
 const bodyFont = Roboto({
@@ -33,6 +34,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-full flex flex-col bg-surface-bright text-on-surface">
         <SiteNavbar />
         <BusinessRegistrationProvider><SessionGate>{children}</SessionGate></BusinessRegistrationProvider>
+        <SidebarMenuButton />
         <BackButton />
       </body>
     </html>

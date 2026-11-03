@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { clearSession, getSession, routeForRole } from '../lib/session';
 import { guestCartCount } from '../lib/guestCart';
-import SidebarMenuButton from './SidebarMenuButton';
 
 export default function SiteNavbar() {
   const pathname = usePathname();
@@ -61,7 +60,7 @@ export default function SiteNavbar() {
       ['/notifications', 'notifications', 'Notifications'], ['/profile', 'account_circle', 'Account settings'],
     ];
     return <aside className="customer-global-sidebar h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-[var(--font-body-face)] text-[13px] font-medium z-50">
-      <SidebarMenuButton />
+
       <Link href="/home" className="flex items-center gap-3 px-3 py-6 mb-4 text-lg font-bold text-[#253027]">LocalBiz <span className="text-xs font-normal text-slate-500">Marketplace</span></Link>
       <nav aria-label="Customer navigation" className="flex-1 space-y-1">
         {links.map(([href, icon, label]) => {

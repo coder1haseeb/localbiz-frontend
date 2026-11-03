@@ -35,6 +35,9 @@ p { line-height: 1.65; }
 ::selection { background: #cbdacb; color: #253027; }
 :focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
 button { cursor: pointer; }
+.admin-edit-dialog { position: fixed; inset: 0; margin: auto; width: calc(100% - 2rem); max-width: 36rem; max-height: calc(100dvh - 2rem); padding: 0; overflow: hidden; border: 1px solid var(--border-soft); border-radius: 8px; background: #fffefa; color: var(--foreground); }
+.admin-edit-dialog::backdrop { background: rgb(0 0 0 / .5); }
+.admin-edit-form { display: flex; flex-direction: column; max-height: calc(100dvh - 2rem); }
 button,input,textarea,select { accent-color: var(--brand); }
 a,button,input,textarea,select { transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
 .site-navbar { position: sticky; top: 0; z-index: 60; min-height: 64px; padding: 0 clamp(1rem, 4vw, 3rem); display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: #fffefa; border-bottom: 1px solid var(--border-soft); }
@@ -76,9 +79,13 @@ input:focus,textarea:focus,select:focus { border-color: var(--brand) !important;
 .marketplace-menu-toggle,.sidebar-menu-toggle { display: none; }
 .sidebar-global-toggle { position: fixed; z-index: 70; top: .65rem; left: 15rem; display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; border-radius: 4px; background: #dce5d9; color: var(--brand); }
 .sidebar-global-toggle.is-collapsed { left: 1rem; }
+body.has-sidebar main { min-width: 0; }
 @media(min-width:768px) {
   body.sidebar-collapsed aside[class*="w-72"][class*="fixed"] { transform: translateX(-100%); visibility: hidden; }
   body.sidebar-collapsed main[class*="ml-72"],body.sidebar-collapsed.customer-sidebar-layout main:not([class*="ml-72"]) { margin-left: 0; padding-top: 4.5rem; }
+  body.sidebar-collapsed main { width: 100%; max-width: none; margin-right: 0; flex: 1 1 0%; }
+  body.sidebar-collapsed main > .mx-auto[class*="max-w-"],body.sidebar-collapsed main > .page-content { width: 100%; max-width: none; }
+  body.sidebar-collapsed .catalogue-search-page { padding-left: 2rem; padding-right: 2rem; }
 }
 
 /* Older utility classes remain in route markup; these keep their finish consistent. */
@@ -96,7 +103,6 @@ input:focus,textarea:focus,select:focus { border-color: var(--brand) !important;
   aside[class*="w-72"][class*="fixed"] { width: 100%; height: auto; max-height: 4.5rem; overflow: hidden; padding: .25rem 1rem; border-bottom: 1px solid var(--border-soft); }
   aside[class*="w-72"][class*="fixed"].menu-open { max-height: 90vh; overflow-y: auto; }
   .sidebar-global-toggle { left: auto; right: 1rem; top: .85rem; }
-  .sidebar-menu-toggle,.marketplace-menu-toggle { display: flex; align-items: center; justify-content: center; position: absolute; top: .85rem; right: 1rem; width: 2.5rem; height: 2.5rem; border-radius: 4px; background: #dce5d9; color: var(--brand); }
   .marketplace-main { padding: 6rem 1.25rem 2rem; }
 }
 @media(prefers-reduced-motion:reduce) { html { scroll-behavior: auto; } *,*::before,*::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }

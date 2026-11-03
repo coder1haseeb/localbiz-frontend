@@ -1,15 +1,32 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 
 export default function AdminRecordActions({ record, kind, onSaved }) {
   const [editing, setEditing] = useState(false);
   const [values, setValues] = useState({});
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
+  const dialogRef = useRef(null);
+  const titleId = useId();
   const store = kind === 'businesses';
   const fields = store ? ['storeName', 'description', 'address', 'city', 'phone'] : ['fullName', 'email', 'phone', ...(record.role === 'customer' ? ['city'] : [])];
   const labels = { storeName: 'Store name', fullName: 'Full name', description: 'Description', address: 'Address', city: 'City', phone: 'Phone', email: 'Email' };
+
+  useEffect(() => {
+    if (!editing) return;
+    const dialog = dialogRef.current;
+    const previousFocus = document.activeElement;
+    const previousOverflow = document.body.style.overflow;
+    dialog.showModal();
+    document.body.style.overflow = 'hidden';
+    return () => {
+      dialog.close();
+      document.body.style.overflow = previousOverflow;
+      if (previousFocus?.isConnected) previousFocus.focus();
+    };
+  }, [editing]);
 
   async function mutate(method, body) {
     setBusy(true);
@@ -38,19 +55,24 @@ export default function AdminRecordActions({ record, kind, onSaved }) {
       </>}
     </div>
     {message && <p role="status" className="text-sm text-[#31543d]">{message}</p>}
-    {editing && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onKeyDown={event => { if (event.key === 'Escape' && !busy) setEditing(false); }}>
-      <form role="dialog" aria-modal="true" aria-label={store ? 'Edit store' : 'Edit user'} onSubmit={event => { event.preventDefault(); mutate('PUT', values); }} className="max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-xl bg-white p-6">
-        <h2 className="text-xl font-bold">Edit {store ? 'store' : 'user'}</h2>
+    {editing && createPortal(<dialog ref={dialogRef} aria-labelledby={titleId} className="admin-edit-dialog" onCancel={event => { event.preventDefault(); if (!busy) setEditing(false); }}>
+      <form onSubmit={event => { event.preventDefault(); mutate('PUT', values); }} className="admin-edit-form">
+        <header className="flex shrink-0 items-center justify-between gap-4 border-b border-slate-200 px-6 py-4">
+          <h2 id={titleId} className="text-xl font-bold">Edit {store ? 'store' : 'user'}</h2>
+          <button type="button" disabled={busy} aria-label="Close edit dialog" onClick={() => setEditing(false)} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg hover:bg-slate-100 disabled:opacity-50"><span className="material-symbols-outlined" aria-hidden="true">close</span></button>
+        </header>
+        <div className="min-h-0 flex-1 space-y-4 overflow-y-auto overscroll-contain px-6 py-5">
         {fields.map((field, index) => <label key={field} className="block text-sm font-semibold">{labels[field]}
           {field === 'description' ? <textarea value={values[field]} maxLength={5000} onChange={event => setValues(previous => ({ ...previous, [field]: event.target.value }))} className="mt-1 w-full rounded-lg border border-slate-300 p-2" />
             : <input autoFocus={index === 0} required maxLength={field === 'address' ? 500 : 200} type={field === 'email' ? 'email' : field === 'phone' ? 'tel' : 'text'} pattern={field === 'phone' ? '[0-9]{10,}' : undefined} value={values[field]} onChange={event => setValues(previous => ({ ...previous, [field]: event.target.value }))} className="mt-1 w-full rounded-lg border border-slate-300 p-2" />}
         </label>)}
         {message && <p role="alert" className="text-sm text-red-700">{message}</p>}
-        <div className="flex justify-end gap-3">
+        </div>
+        <footer className="flex shrink-0 flex-wrap justify-end gap-3 border-t border-slate-200 px-6 py-4">
           <button type="button" disabled={busy} onClick={() => setEditing(false)} className="rounded-lg border px-4 py-2">Cancel</button>
           <button type="submit" disabled={busy} className="rounded-lg bg-[#31543d] px-4 py-2 text-white disabled:opacity-50">{busy ? 'Saving…' : 'Save changes'}</button>
-        </div>
+        </footer>
       </form>
-    </div>}
+    </dialog>, document.body)}
   </div>;
 }

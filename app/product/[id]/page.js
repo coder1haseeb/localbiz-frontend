@@ -1,5 +1,4 @@
 'use client';
-import SidebarMenuButton from '../../../components/SidebarMenuButton.js';
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -63,7 +62,7 @@ export default function ProductDetail() {
     setCartLoading(true);
     setCartMsg('');
     console.log('Adding to cart:', { productId: id, quantity });
-    
+
     try {
       const res = await fetch(`/api/v1/cart`, {
         method: 'POST',
@@ -72,7 +71,7 @@ export default function ProductDetail() {
       });
       const data = await res.json();
       console.log('Cart response:', res.status, data);
-      
+
       if (res.ok) {
         window.dispatchEvent(new Event('localbiz:cart'));
         setCartMsg('✅ Added to cart!');
@@ -126,7 +125,7 @@ export default function ProductDetail() {
       <div className="flex min-h-screen bg-[#f7f5ef]">
         {/* Sidebar */}
         {!isGuest && <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-[var(--font-body-face)] text-[13px] font-medium z-40">
-          <SidebarMenuButton />
+
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>

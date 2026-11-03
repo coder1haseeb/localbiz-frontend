@@ -1,5 +1,4 @@
 'use client';
-import SidebarMenuButton from '../../components/SidebarMenuButton.js';
 
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
@@ -49,7 +48,7 @@ export default function OrdersPage() {
 
       <div className="flex min-h-screen bg-[#f7f5ef]">
         <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-[var(--font-body-face)] text-[13px] font-medium z-40">
-          <SidebarMenuButton />
+
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#31543d] to-[#a96b4e] flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>diamond</span>

@@ -1,5 +1,4 @@
 'use client';
-import SidebarMenuButton from '../../../../components/SidebarMenuButton.js';
 import { clearSession } from '../../../../lib/session.js';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -61,7 +60,7 @@ export default function AdminReportsPage() {
     router.replace('/login');
   };
 
-  const maxOrders = Math.max(...(growth?.orders?.map(o => o.revenue) || [0]), 1);
+  const maxOrders = Math.max(...(growth?.orders?.map(o => o.count) || [0]), 1);
 
   return (
     <>
@@ -69,7 +68,7 @@ export default function AdminReportsPage() {
 
       <div className="flex min-h-screen bg-[#f7f5ef]">
         <aside className="h-screen w-72 fixed left-0 top-0 bg-[#efeee7] flex flex-col p-4 space-y-2 font-[var(--font-body-face)] z-40">
-          <SidebarMenuButton />
+
           <div className="flex items-center gap-3 px-3 py-6 mb-4">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-red-600 flex items-center justify-center text-white">
               <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>admin_panel_settings</span>
@@ -103,12 +102,12 @@ export default function AdminReportsPage() {
           ) : (
             <div className="space-y-6">
               <div className="glass-card rounded-2xl p-6">
-                <h3 className="font-bold text-[#253027] mb-4">Monthly Order Revenue</h3>
+                <h3 className="font-bold text-[#253027] mb-4">Monthly Orders</h3>
                 {!growth?.orders?.length ? <p className="text-sm text-slate-400 py-8 text-center">No data yet</p> : (
                   <div className="flex items-end gap-3 h-40">
                     {growth.orders.map((o, i) => (
                       <div key={i} className="flex-1 flex flex-col items-center gap-1">
-                        <div className="w-full bg-gradient-to-t from-red-500 to-red-400 rounded-t-lg" style={{ height: `${Math.max(4, (o.revenue / maxOrders) * 130)}px` }} title={`Rs. ${o.revenue}`}></div>
+                        <div className="w-full bg-gradient-to-t from-red-500 to-red-400 rounded-t-lg" style={{ height: `${Math.max(4, (o.count / maxOrders) * 130)}px` }} title={`${o.count} orders`}></div>
                         <span className="text-[10px] text-slate-400">{o._id}</span>
                       </div>
                     ))}
@@ -149,7 +148,6 @@ export default function AdminReportsPage() {
                           <p className="text-xs text-slate-500">{s.city} · {s.ordersCount} orders</p>
                         </div>
                       </div>
-                      <span className="font-bold text-red-600">Rs. {s.totalRevenue?.toLocaleString()}</span>
                     </div>
                   ))}
                 </div>
